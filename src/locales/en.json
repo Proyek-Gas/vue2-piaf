@@ -121,7 +121,8 @@
     "single": "Single",
     "datatable": "Datatable",
     "customerTable": "Table Customer",
-    "projectTable" : "Table Project"
+    "projectTable" : "Table Project",
+    "detail": "Customer Detail"
   },
   "dashboards": {
     "pending-orders": "Pending Orders",
@@ -373,7 +374,9 @@
     "middle": "Middle",
     "right": "Right",
     "dropdown": "Dropdown",
-    "dropdown-link": "Dropdown Link"
+    "dropdown-link": "Dropdown Link",
+    "edit": "Edit",
+    "delete": "Delete"
   },
   "cards": {
     "icon-card": "Icon Card",
@@ -630,5 +633,10 @@
     "prev": "Back",
     "registered": "Your registration completed successfully!",
     "async": "Async save for 3 seconds!"
+  },
+  "form":{
+    "addCust": "Add Customer",
+    "editCust": "Edit Customer",
+    "bAdd": "Add Customer"
   }
 }

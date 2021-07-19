@@ -28,7 +28,9 @@ import firebase from 'firebase/app'
 import 'firebase/auth'
 import { getCurrentLanguage } from './utils'
 import {  IconsPlugin } from 'bootstrap-vue'
+import VueMask from 'v-mask'
 
+Vue.use(VueMask);
 Vue.use(BootstrapVue);
 Vue.use(IconsPlugin);
 Vue.use(VueI18n);

@@ -17,6 +17,7 @@
     "firebase": "^7.15.5",
     "lodash": "^4.17.21",
     "v-contextmenu": "^2.9.0",
+    "v-mask": "^2.2.4",
     "video.js": "^7.8.3",
     "vue": "^2.6.11",
     "vue-autosuggest": "^2.2.0",
