@@ -14,7 +14,7 @@
       <b-colxx xxs="12">
         <b-button class="mb-1"  v-b-modal.modalright variant="success " style="width:15%; ">Filter</b-button>
             <filter-cust v-on:answers="onUpdateAnswer"></filter-cust>
-         <b-button class="mb-1" variant="primary ">Add Customer</b-button>
+         <b-button class="mb-1" variant="primary " @click="movePageAdd()">Add Customer</b-button>
       </b-colxx>
 
     </b-row>
@@ -60,9 +60,9 @@
             <template slot="id" slot-scope="props">
               <i  class="simple-icon-arrow-down" @click="cellClicked($event, props.rowData)"></i>
             </template>
-            <template slot="action">
-                <b-dropdown  text="actions" variant="outline-secondary">
-                  <b-dropdown-item>Detail</b-dropdown-item>
+            <template slot="action" slot-scope="props">
+                <b-dropdown text="actions" variant="outline-secondary">
+                  <b-dropdown-item @click="movePageDetail(props.rowData.id)">Detail</b-dropdown-item>
                   <b-dropdown-item>Edit</b-dropdown-item>
                   <b-dropdown-item>Delete</b-dropdown-item>
               </b-dropdown>
@@ -95,8 +95,8 @@
 </template>
 <script>
 import Vuetable from "vuetable-2/src/components/Vuetable";
-import VuetablePaginationBootstrap from "../../../components/Common/VuetablePaginationBootstrap";
-import DatatableHeading from "../../../containers/datatable/DatatableHeading";
+import VuetablePaginationBootstrap from "../../../../components/Common/VuetablePaginationBootstrap";
+import DatatableHeading from "../../../../containers/datatable/DatatableHeading";
 import _ from "lodash";
 import MyDetailRow from "./MyDetailRow";
 import filterCust from "./filterCustomer"
@@ -251,6 +251,12 @@ export default {
 
   },
   methods: {
+    movePageAdd(){
+			window.location = window.location.href+"/add";
+		},
+    movePageDetail(val){
+			window.location = window.location.href+"/detail?id="+val;
+		},
     onPaginationData(paginationData) {
       this.from = paginationData.from;
       this.to = paginationData.to;
@@ -382,7 +388,7 @@ export default {
     visibility: hidden;
     opacity: 0;
     transition: opacity 0.3s linear;
-    background: url('../../../../src/assets/logos/gif_loading.gif') no-repeat bottom center;
+    background: url('../../../../../src/assets/logos/gif_loading.gif') no-repeat bottom center;
     width: 200px;
     height: 30px;
     font-size: 1em;

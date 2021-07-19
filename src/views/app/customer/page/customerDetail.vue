@@ -332,7 +332,7 @@
 </template>
 
 <script>
-import IconCard from '../../../components/Cards/IconCard';
+import IconCard from '../../../../components/Cards/IconCard';
 
 export default {
     components: {

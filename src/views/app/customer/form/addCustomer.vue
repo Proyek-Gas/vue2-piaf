@@ -109,8 +109,8 @@
 import { VueAutosuggest } from "vue-autosuggest";
 import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
-import { getDirection } from "../../../utils";
-import selectCategory from "../../../components/selectCategory.vue";
+import { getDirection } from "../../../../utils";
+import selectCategory from "../../../../components/selectCategory.vue";
 
 import {
     validationMixin

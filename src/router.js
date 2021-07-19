@@ -10,12 +10,12 @@ const routes = [
   {
     path: "/",
     component: () => import(/* webpackChunkName: "home" */ "./views/home"),
-    redirect: `${adminRoot}/datatableCustomer`,
+    redirect: `${adminRoot}`,
   },
   {
     path: adminRoot,
     component: () => import(/* webpackChunkName: "app" */ "./views/app"),
-    redirect: `${adminRoot}/datatableCustomer`,
+    redirect: `${adminRoot}/datatable`,
     meta: { loginRequired: true },
     /*
    define with Authorization :
@@ -23,35 +23,33 @@ const routes = [
    */
     children: [
       {
-        path: "datatableCustomer",
+        path: "datatable",
         component: () =>
-          import(/* webpackChunkName: "piaf" */ "./views/app/datatableCustomer/customerTable"),
-        redirect: `${adminRoot}/datatableCustomer/customerTable`,
+          import(/* webpackChunkName: "piaf" */ "./views/app/customer/datatable"),
+        redirect: `${adminRoot}/datatable/customerTable`,
         children: [
           {
             path: 'customerTable',
-            component: () => import(/* webpackChunkName: "piaf" */ './views/app/datatableCustomer/customerTable')
+            component: () => import(/* webpackChunkName: "piaf" */ './views/app/customer/datatable/customerTable'),
+            // meta: { roles: [UserRole.Admin, UserRole.Editor] },
+          },
+          {
+            path: 'customerTable/detail',
+            component: () => import(/* webpackChunkName: "piaf" */ './views/app/customer/page/customerDetail'),
+            // meta: { roles: [UserRole.Admin, UserRole.Editor] },
+          },
+          {
+            path: 'customerTable/add',
+            component: () => import(/* webpackChunkName: "piaf" */ './views/app/customer/form/addCustomer'),
+            // meta: { roles: [UserRole.Admin, UserRole.Editor] },
+          },
+          {
+            path: 'projectTable',
+            component: () => import(/* webpackChunkName: "piaf" */ './views/app/project/datatable/projectTable'),
             // meta: { roles: [UserRole.Admin, UserRole.Editor] },
           }
-
-
-        ]
+        ],
       },
-      // {
-      //   path: "datatableProject",
-      //   component: () =>
-      //     import(/* webpackChunkName: "piaf" */ "./views/app/datatableProject/projectTable"),
-      //   redirect: `${adminRoot}/datatableProject/projectTable`,
-      //   children: [
-      //     {
-      //       path: 'projectTable',
-      //       component: () => import(/* webpackChunkName: "piaf" */ './views/app/datatableProject/projectTable')
-      //       // meta: { roles: [UserRole.Admin, UserRole.Editor] },
-      //     }
-
-
-      //   ]
-      // },
       {
         path: "piaf",
         component: () =>

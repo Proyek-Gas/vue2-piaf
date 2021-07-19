@@ -2,14 +2,6 @@
   <b-row>
     <b-colxx xxs="12">
       <h1>{{ title }}</h1>
-      <div class="top-right-button-container">
-        <b-button
-          v-b-modal.modalright
-          variant="primary"
-          size="lg"
-          @click="movePageAdd()">
-        {{ $t('form.bAdd') }}</b-button>
-      </div>
       <piaf-breadcrumb />
       <div class="mb-2 mt-2">
         <b-button

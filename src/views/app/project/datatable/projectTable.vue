@@ -1,7 +1,7 @@
 <template>
   <div>
     <datatable-heading
-      :title="$t('menu.customerTable')"
+      :title="$t('menu.projectTable')"
       :changePageSize="changePageSize"
       :searchChange="searchChange"
       :from="from"
@@ -14,7 +14,7 @@
       <b-colxx xxs="12">
         <b-button class="mb-1"  v-b-modal.modalright variant="success " style="width:15%; ">Filter</b-button>
             <filter-pro v-on:answers="onUpdateAnswer"></filter-pro>
-         <b-button class="mb-1" variant="primary ">Add Customer</b-button>
+         <b-button class="mb-1" variant="primary ">Add Project</b-button>
       </b-colxx>
 
     </b-row>
@@ -95,8 +95,8 @@
 </template>
 <script>
 import Vuetable from "vuetable-2/src/components/Vuetable";
-import VuetablePaginationBootstrap from "../../../components/Common/VuetablePaginationBootstrap";
-import DatatableHeading from "../../../containers/datatable/DatatableHeading";
+import VuetablePaginationBootstrap from "../../../../components/Common/VuetablePaginationBootstrap";
+import DatatableHeading from "../../../../containers/datatable/DatatableHeading";
 import _ from "lodash";
 import MyDetailRow from "./MyDetailRow";
 import filterPro from "./filterProject"
@@ -382,7 +382,7 @@ export default {
     visibility: hidden;
     opacity: 0;
     transition: opacity 0.3s linear;
-    background: url('../../../../src/assets/logos/gif_loading.gif') no-repeat bottom center;
+    background: url('../../../../../src/assets/logos/gif_loading.gif') no-repeat bottom center;
     width: 200px;
     height: 30px;
     font-size: 1em;
