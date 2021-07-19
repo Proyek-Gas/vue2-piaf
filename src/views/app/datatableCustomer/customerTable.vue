@@ -1,0 +1,406 @@
+<template>
+  <div>
+    <datatable-heading
+      :title="$t('menu.customerTable')"
+      :changePageSize="changePageSize"
+      :searchChange="searchChange"
+      :from="from"
+      :to="to"
+      :total="total"
+      :perPage="perPage"
+    ></datatable-heading>
+
+    <b-row class="mb-3">
+      <b-colxx xxs="12">
+        <b-button class="mb-1"  v-b-modal.modalright variant="success " style="width:15%; ">Filter</b-button>
+            <filter-cust v-on:answers="onUpdateAnswer"></filter-cust>
+         <b-button class="mb-1" variant="primary ">Add Customer</b-button>
+      </b-colxx>
+
+    </b-row>
+
+    <b-row>
+      <b-colxx xxs="12">
+        <b-card>
+          <div class="loader" >LOADING</div><!--Your Loading Message -->
+          <vuetable
+            ref="vuetable"
+            style="display:block; overflow-x:auto;width:auto"
+            :api-mode="false"
+            :fields="fields"
+            :per-page="perPage"
+            :data-manager="dataManager"
+            :detail-row-component="detailRow"
+            detail-row-transition="expand"
+            pagination-path="pagination"
+            @vuetable:pagination-data="onPaginationData"
+             @vuetable:cell-clicked="onCellClicked"
+          >
+            <template slot="avatar" slot-scope="props">
+              <router-link to="?" class="d-flex">
+                <div
+                  src="/assets/img/profiles/l-1.jpg"
+                  alt="Card image cap"
+                  class="align-self-center list-thumbnail-letters rounded-circle small"
+                >{{showAvatar(props.rowData.name)}}</div>
+              </router-link>
+            </template>
+            <template slot="name" slot-scope="props">
+                <h4>{{props.rowData.name}}</h4>
+                <i>{{props.rowData.email}}</i>
+            </template>
+            <template slot="mobilePhone" slot-scope="props">
+               <i>{{props.rowData.mobilePhone}}</i>
+               <br>
+                <i>{{props.rowData.workPhone}}</i>
+            </template>
+            <template slot="category.name" slot-scope="props">
+               <b-badge :variant="props.rowData.category.name === 'CUSTOMER' ?  'primary' : 'success'" >{{props.rowData.category.name}}</b-badge>
+            </template>
+            <template slot="id" slot-scope="props">
+              <i  class="simple-icon-arrow-down" @click="cellClicked($event, props.rowData)"></i>
+            </template>
+            <template slot="action">
+                <b-dropdown  text="actions" variant="outline-secondary">
+                  <b-dropdown-item>Detail</b-dropdown-item>
+                  <b-dropdown-item>Edit</b-dropdown-item>
+                  <b-dropdown-item>Delete</b-dropdown-item>
+              </b-dropdown>
+            </template>
+          </vuetable>
+        </b-card>
+        <vuetable-pagination-bootstrap
+          class="mt-4"
+          ref="pagination"
+          @vuetable-pagination:change-page="onChangePage"
+        />
+      </b-colxx>
+    </b-row>
+
+    <v-contextmenu ref="contextmenu">
+      <v-contextmenu-item @click="onContextMenuAction('copy')">
+        <i class="simple-icon-docs" />
+        <span>Copy</span>
+      </v-contextmenu-item>
+      <v-contextmenu-item @click="onContextMenuAction('move-to-archive')">
+        <i class="simple-icon-drawer" />
+        <span>Move to archive</span>
+      </v-contextmenu-item>
+      <v-contextmenu-item @click="onContextMenuAction('delete')">
+        <i class="simple-icon-trash" />
+        <span>Delete</span>
+      </v-contextmenu-item>
+    </v-contextmenu>
+  </div>
+</template>
+<script>
+import Vuetable from "vuetable-2/src/components/Vuetable";
+import VuetablePaginationBootstrap from "../../../components/Common/VuetablePaginationBootstrap";
+import DatatableHeading from "../../../containers/datatable/DatatableHeading";
+import _ from "lodash";
+import MyDetailRow from "./MyDetailRow";
+import filterCust from "./filterCustomer"
+
+
+export default {
+  props: ["title"],
+  components: {
+    vuetable: Vuetable,
+    "vuetable-pagination-bootstrap": VuetablePaginationBootstrap,
+    "datatable-heading": DatatableHeading,
+    "filter-cust" : filterCust,
+   //"my-detail-row" : MyDetailRow //->ini ga error namun ga ada datanya
+  },
+  data() {
+    return {
+      isLoad: false,
+      detailRow : MyDetailRow,
+      dataClone : [],
+      loadCek : true,
+      fields: [
+        {
+          name: "__slot:avatar",
+          titleClass: "",
+          width: "5%"
+        },
+        {
+          name: "__slot:name",
+          sortField: "name",
+          title: "Name",
+          titleClass: "",
+          dataClass: "text-muted",
+          width:"25%"
+
+        },
+        {
+          name: "customerNo",
+          sortField: "customerNo",
+          title: "Customer No",
+          titleClass: "",
+          dataClass: "text-muted",
+          togglable : true,
+          width:"15%"
+        },
+        {
+          name: "__slot:mobilePhone",
+          sortField: "mobilePhone",
+          title: "Telepon",
+          titleClass: "",
+          dataClass: "text-muted",
+          width:"10%"
+        },
+        {
+          name: "npwpNo",
+          sortField: "npwpNo",
+          title: "NPWP",
+          titleClass: "",
+          dataClass: "text-muted",
+         width:"10%"
+        },
+        {
+          name: "__slot:category.name",
+          sortField: "category.name",
+          title: "Kategori",
+          titleClass: "",
+          dataClass: "text-muted",
+          width:"15%"
+        },
+        {
+          name: "__slot:id",
+          title :"",
+          width: "5%",
+          titleClass: "center aligned",
+          dataClass: "center aligned",
+        },
+        {
+          name: "__slot:action",
+          title :"",
+          width: "15%",
+          titleClass: "center aligned",
+          dataClass: "center aligned",
+        },
+
+      ],
+      sort: "",
+      perPage: 4,
+      search: "",
+      from: 0,
+      to: 0,
+      total: 0,
+      data: [],
+      selectedItems: [],
+
+    };
+  },
+  watch: {
+    data(newVal, oldVal) {
+      this.$refs.vuetable.refresh();
+    },
+  },
+  mounted() {
+    fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: `
+               query{customers  {
+          count
+          customers{
+            id
+  			name
+        email
+  			customerNo
+  			npwpNo
+        priceCategory{
+          id
+          name
+        }
+  			mobilePhone
+  			workPhone
+        street
+  		  customerLimitAmountValue
+            isInAccurate
+  		    city
+          province
+          lastquote{
+            time
+          }
+
+        category{
+          name
+          id
+        }
+          }
+
+    }
+}
+      `
+      }),
+    }).then(function(response) {
+        return response.json()
+    }).then(function(text) {
+        return text.data.customers.customers;
+    })
+    .then(resp => {
+        this.data = resp;
+        this.dataClone = resp;
+        this.loadCek = false
+      });
+
+  },
+  methods: {
+    onPaginationData(paginationData) {
+      this.from = paginationData.from;
+      this.to = paginationData.to;
+      this.total = paginationData.total;
+      console.log(paginationData);
+      this.$refs.pagination.setPaginationData(paginationData);
+    },
+     onCellClicked (data, field, event) {
+        console.log('cellClicked: ', field.name)
+        console.log(data.id)
+        this.$refs.vuetable.toggleDetailRow(data.id)
+      },
+    cellClicked ($event, data) {
+      // console.log('cellClicked: ', $event)
+      this.$refs.vuetable.toggleDetailRow(data.id)
+    },
+    onChangePage(page) {
+      this.$refs.vuetable.changePage(page);
+    },
+    dataManager(sortOrder, pagination) {
+      if (this.data.length < 1) return;
+
+      let local = this.data;
+      console.log(this.search);
+      local = local.filter(row => {
+        return row.name.toLowerCase().indexOf(this.search.toLowerCase()) !== -1 ;
+      });
+      // sortOrder can be empty, so we have to check for that as well
+      if (sortOrder.length > 0) {
+        console.log("orderBy:", sortOrder[0].sortField, sortOrder[0].direction);
+        local = _.orderBy(
+          local,
+          sortOrder[0].sortField,
+          sortOrder[0].direction
+        );
+      }
+
+      pagination = this.$refs.vuetable.makePagination(
+        local.length,
+        this.perPage
+      );
+      console.log("pagination:", pagination);
+      let from = pagination.from - 1;
+      let to = from + this.perPage;
+
+      return {
+        pagination: pagination,
+        data: _.slice(local, from, to),
+      };
+    },
+    changePageSize(perPage) {
+      this.perPage = perPage;
+      console.log(this.perPage);
+      this.$refs.vuetable.refresh();
+    },
+     showAvatar(row){
+      const tmp = row.split(' ');
+      if(tmp.length  == 1){
+        return tmp[0].substring(0,2).toUpperCase();
+      }else{
+         return tmp[0].substring(0,1).toUpperCase()+tmp[1].substring(0,1).toUpperCase();
+      }
+    },
+
+    searchChange(val) {
+      this.search = val;
+      this.$refs.vuetable.refresh();
+    },
+
+    onUpdateAnswer: function(newAnswer){
+        let cek = true;
+        if(newAnswer){
+          if(newAnswer.name != ""){
+              this.search = newAnswer.name;
+              cek = false;
+          }
+
+          if(newAnswer.customerNo !=""){
+              cek = false
+              this.data = this.data.filter(row => {
+                return row.customerNo.toLowerCase().indexOf(newAnswer.customerNo.toLowerCase()) !== -1 ;
+              });
+          }
+        }
+        if(cek){
+          this.data = this.dataClone
+        }
+        this.$refs.vuetable.refresh()
+    }
+  },
+  computed: {
+    isSelectedAll() {
+      return this.selectedItems.length >= this.items.length;
+    },
+    isAnyItemSelected() {
+      return (
+        this.selectedItems.length > 0 &&
+        this.selectedItems.length < this.items.length
+      );
+    }
+  },
+   events: {
+    	/** Start the loader ----------------------------------
+    	 * Dispatched up the parent chain before vuetable
+    	 * starts to request the data from the server
+    	 */
+        'vuetable:loading': function() {
+            // display your loading notification
+            // console.log ("load started");
+        },
+
+       	/** Disable the loader ---------------------------------
+    	 * dispatched when vuetable receives response from server.
+    	 * Response from server passed as the event argument
+    	 */
+        'vuetable:load-success': function(response) {
+            // hide loading notification
+            // console.log ("load completed");
+        },
+    },
+};
+</script>
+<style>
+.vuetable-wrapper {
+    position: relative;
+    opacity: 1;
+}
+.loader {
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.3s linear;
+    background: url('../../../../src/assets/logos/gif_loading.gif') no-repeat bottom center;
+    width: 200px;
+    height: 30px;
+    font-size: 1em;
+    text-align: center;
+    margin-left: -100px;
+    letter-spacing: 4px;
+    color: #3E97F6;
+    position: absolute;
+    top: 160px;
+    left: 50%;
+}
+.loading .loader {
+    visibility: visible;
+    opacity: 1;
+    z-index: 100;
+}
+.loading .vuetable{
+    opacity:0.3;
+    filter: alpha(opacity=30); /* IE8 and earlier */
+}
+</style>

@@ -10,12 +10,12 @@ const routes = [
   {
     path: "/",
     component: () => import(/* webpackChunkName: "home" */ "./views/home"),
-    redirect: `${adminRoot}/datatable`,
+    redirect: `${adminRoot}/datatableCustomer`,
   },
   {
     path: adminRoot,
     component: () => import(/* webpackChunkName: "app" */ "./views/app"),
-    redirect: `${adminRoot}/datatable`,
+    redirect: `${adminRoot}/datatableCustomer`,
     meta: { loginRequired: true },
     /*
    define with Authorization :
@@ -23,18 +23,35 @@ const routes = [
    */
     children: [
       {
-        path: "datatable",
+        path: "datatableCustomer",
         component: () =>
-          import(/* webpackChunkName: "piaf" */ "./views/app/datatable/customerTable"),
-        redirect: `${adminRoot}/datatable/customerTable`,
+          import(/* webpackChunkName: "piaf" */ "./views/app/datatableCustomer/customerTable"),
+        redirect: `${adminRoot}/datatableCustomer/customerTable`,
         children: [
           {
             path: 'customerTable',
-            component: () => import(/* webpackChunkName: "piaf" */ './views/app/datatable/customerTable')
+            component: () => import(/* webpackChunkName: "piaf" */ './views/app/datatableCustomer/customerTable')
             // meta: { roles: [UserRole.Admin, UserRole.Editor] },
           }
+
+
         ]
       },
+      // {
+      //   path: "datatableProject",
+      //   component: () =>
+      //     import(/* webpackChunkName: "piaf" */ "./views/app/datatableProject/projectTable"),
+      //   redirect: `${adminRoot}/datatableProject/projectTable`,
+      //   children: [
+      //     {
+      //       path: 'projectTable',
+      //       component: () => import(/* webpackChunkName: "piaf" */ './views/app/datatableProject/projectTable')
+      //       // meta: { roles: [UserRole.Admin, UserRole.Editor] },
+      //     }
+
+
+      //   ]
+      // },
       {
         path: "piaf",
         component: () =>

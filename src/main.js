@@ -27,8 +27,10 @@ import VueScrollTo from 'vue-scrollto'
 import firebase from 'firebase/app'
 import 'firebase/auth'
 import { getCurrentLanguage } from './utils'
+import {  IconsPlugin } from 'bootstrap-vue'
 
 Vue.use(BootstrapVue);
+Vue.use(IconsPlugin);
 Vue.use(VueI18n);
 const messages = { en: en, es: es };
 const locale = getCurrentLanguage();

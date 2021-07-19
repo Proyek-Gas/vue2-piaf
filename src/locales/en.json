@@ -120,7 +120,8 @@
     "start": "Start",
     "single": "Single",
     "datatable": "Datatable",
-    "customerTable": "Tabel Customer"
+    "customerTable": "Table Customer",
+    "projectTable" : "Table Project"
   },
   "dashboards": {
     "pending-orders": "Pending Orders",
