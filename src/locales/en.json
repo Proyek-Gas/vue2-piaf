@@ -124,6 +124,7 @@
     "projectTable" : "Table Project",
     "schemeTable" : "Table Scheme",
     "itemTable" : "Table Item",
+    "quoteTable" : "Table Quote",
     "detail": "Customer Detail",
     "cDetail": "Customer Detail",
     "pDetail": "Project Detail"

@@ -73,6 +73,11 @@ const routes = [
             component: () => import(/* webpackChunkName: "piaf" */ './views/app/item/datatable/itemTable'),
             // meta: { roles: [UserRole.Admin, UserRole.Editor] },
           },
+          {
+            path: 'quoteTable',
+            component: () => import(/* webpackChunkName: "piaf" */ './views/app/quote/datatable/quoteTable'),
+            // meta: { roles: [UserRole.Admin, UserRole.Editor] },
+          }
         ],
       },
       {
