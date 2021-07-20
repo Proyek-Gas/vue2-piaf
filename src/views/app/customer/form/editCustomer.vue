@@ -1,7 +1,7 @@
 <template>
 <b-row>
     <b-colxx xxs="12">
-        <h1>Add Customer</h1>
+        <h1>Edit Customer</h1>
         <div class="separator mb-5"></div>
     </b-colxx>
     <b-colxx xxs="12" xl="8">
@@ -113,7 +113,7 @@
                 <b-row>
                 <b-colxx xxs="6" class="text-center">
                 <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip">
-                    <b-button type="submit" variant="primary" style="width: 100%">Add</b-button>
+                    <b-button type="submit" variant="primary" style="width: 100%">Edit</b-button>
                 </b-form>
                 </b-colxx>
                 <b-colxx xxs="6" class="text-center">
@@ -194,7 +194,6 @@ export default {
             required,
             minLength: minLength(3),
             maxLength: maxLength(50),
-            alpha
         },
         limit: {
             numeric,
@@ -228,10 +227,6 @@ export default {
                 }else{
                     floatLimit = 0;
                 }
-                console.log(floatLimit);
-                console.log(this.alamat);
-                console.log(this.kota);
-                console.log(this.provinsi);
                 fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
                     method: 'POST',
                     headers: {
@@ -240,7 +235,9 @@ export default {
                     body: JSON.stringify({
                         query: `
                             mutation{
-                                addCustomerDB(params:{
+                                updateCustomer(
+                                    customer_id:"${this.custId}"
+                                    params:{
                                     customerNo:"${this.kode}"
                                     name: "${this.name}"
                                     mobilePhone:"${this.hp}"
@@ -267,7 +264,7 @@ export default {
                 })
                 .then(function(text) {
                     console.log(text.data);
-                    return text.data.addCustomerDB;
+                    return text.data.updateCustomer;
                     
                 })
                 .then(resp => {
@@ -278,7 +275,7 @@ export default {
                             timeout: 2000
                         });
                         setTimeout(() => {
-                            window.location = window.location.origin+"/app/datatable/customerTable";
+                            window.location = window.location.origin+"/app/datatable/customerTable/cDetail?id="+this.custId;
                         }, 1000);
                     }else{
                         this.$toast(resp.message, {
@@ -341,6 +338,71 @@ export default {
         this.arrKota = jsonCity;
         this.arrProv = jsonProvince;
         this.arrNegara = jsonCountry;
+        this.custId = this.$route.query.id;
+		this.period = 'M';
+		fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+		method: 'POST',
+		headers: {
+		'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({
+			query: `
+				query{ customerDetail(customer_id:"${this.custId}") {
+                    customerNo
+                    name
+                    mobilePhone
+                    workPhone
+                    npwpNo
+                    customerLimitAmountValue
+                    email
+                    billStreet
+                    billCity
+                    billProvince
+                    billCountry
+                    category{
+                        name
+                    }
+                    priceCategory{
+                        name
+                    }
+                }
+            }
+			`,
+		})
+		})
+		.then(function(response) {
+			return response.json()
+		})
+		.then(function(text) {
+            console.log(text.data);
+			return text.data.customerDetail;
+		})
+		.then(resp => {
+			this.detail = resp
+			if(this.detail == null){
+                console.log("masuk");
+                // setTimeout(() => {
+                //     window.location = window.location.origin +"/error?id=404&name=customer";
+                // }, 50)
+			}else{
+				console.log(this.detail.name);
+                this.kode = this.detail.customerNo;
+				this.name = this.detail.name;
+				this.kategori = this.detail.category.name;
+				this.katHarga = this.detail.priceCategory.name;
+                this.limit = this.detail.customerLimitAmountValue;
+                if(this.detail.customerLimitAmountValue == 0 || !this.detail.email || !this.detail.workPhone || !this.detail.mobilePhone){
+                    this.email = "";
+                    this.workPhone = "";
+                    this.mobilePhone = "";
+                    this.limit = "";
+                }else{
+                    this.email = this.detail.email;
+                    this.workPhone = this.detail.workPhone;
+                    this.mobilePhone = this.detail.mobilePhone;
+                }
+			}
+		})
         fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
 			method: 'POST',
 			headers: {

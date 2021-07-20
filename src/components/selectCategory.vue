@@ -1,6 +1,6 @@
 <template>
     <b-form-group label-cols="3" horizontal label="Kategori">
-        <v-select v-model="kategori" :options="kategoriOption" :dir="direction" :getOptionLabel="kategoriOption => kategoriOption.name" @change="$emit('answers', kategori)"/>
+        <v-select v-model="kategori" :options="kategoriOption" :dir="direction" :getOptionLabel="kategoriOption => kategoriOption.name"/>
     </b-form-group>
 </template>
 
@@ -13,6 +13,7 @@ export default {
     components: {
         "v-select": vSelect,
     },
+	props: ['parent-Data'],
     data(){
         return {
             kategori: "",
@@ -20,29 +21,13 @@ export default {
             direction: getDirection().direction
         }
     },
+	watch: {
+		kategori: function (newVal) {
+			this.$emit('answers',newVal);
+		}
+	},
     async mounted(){
-        fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
-			method: 'POST',
-			headers: {
-			'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				query: `
-					query{ customerCategory { 
-						name    
-					}}
-				`,
-			}),
-		})
-		.then(function(response) {
-			return response.json()
-		})
-		.then(function(text) {
-			return text.data.customerCategory;
-		})
-		.then(resp => {
-            this.kategoriOption = resp;
-		})
+        
     }
 }
 </script>

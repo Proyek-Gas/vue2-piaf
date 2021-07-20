@@ -36,12 +36,24 @@
 <script>
 import { adminRoot } from '../constants/config';
 export default {
+  data(){
+    return {
+      id: 0
+    }
+  },
   methods: {
     goBack() {
       this.$router.push(adminRoot);
     },
   },
   mounted: function () {
+    if(this.$route.query.id == 404){
+      this.$toast(`Detail ${this.$route.query.name} tidak ditemukan`, {
+          type: "error",
+          hideProgressBar: true,
+          timeout: 2000
+      });
+    }
     document.body.classList.add("background");
   },
   beforeDestroy() {

@@ -124,7 +124,9 @@
     "projectTable" : "Table Project",
     "schemeTable" : "Table Scheme",
     "itemTable" : "Table Item",
-    "detail": "Customer Detail"
+    "detail": "Customer Detail",
+    "cDetail": "Customer Detail",
+    "pDetail": "Project Detail"
   },
   "dashboards": {
     "pending-orders": "Pending Orders",

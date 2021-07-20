@@ -1,0 +1,172 @@
+[
+  {
+    "id": 1,
+    "name": "Aceh",
+    "country_id": 102
+  },
+  {
+    "id": 2,
+    "name": "Sumatera Utara",
+    "country_id": 102
+  },
+  {
+    "id": 3,
+    "name": "Sumatera Barat",
+    "country_id": 102
+  },
+  {
+    "id": 4,
+    "name": "Riau",
+    "country_id": 102
+  },
+  {
+    "id": 5,
+    "name": "Jambi",
+    "country_id": 102
+  },
+  {
+    "id": 6,
+    "name": "Sumatera Selatan",
+    "country_id": 102
+  },
+  {
+    "id": 7,
+    "name": "Bengkulu",
+    "country_id": 102
+  },
+  {
+    "id": 8,
+    "name": "Lampung",
+    "country_id": 102
+  },
+  {
+    "id": 9,
+    "name": "Kepulauan Bangka Belitung",
+    "country_id": 102
+  },
+  {
+    "id": 10,
+    "name": "Kepulauan Riau",
+    "country_id": 102
+  },
+  {
+    "id": 11,
+    "name": "Daerah Khusus Ibukota Jakarta",
+    "country_id": 102
+  },
+  {
+    "id": 12,
+    "name": "Jawa Barat",
+    "country_id": 102
+  },
+  {
+    "id": 13,
+    "name": "Jawa Tengah",
+    "country_id": 102
+  },
+  {
+    "id": 14,
+    "name": "DI Yogyakarta",
+    "country_id": 102
+  },
+  {
+    "id": 15,
+    "name": "Jawa Timur",
+    "country_id": 102
+  },
+  {
+    "id": 16,
+    "name": "Banten",
+    "country_id": 102
+  },
+  {
+    "id": 17,
+    "name": "Bali",
+    "country_id": 102
+  },
+  {
+    "id": 18,
+    "name": "Nusa Tenggara Barat",
+    "country_id": 102
+  },
+  {
+    "id": 19,
+    "name": "Nusa Tenggara Timur",
+    "country_id": 102
+  },
+  {
+    "id": 20,
+    "name": "Kalimantan Barat",
+    "country_id": 102
+  },
+  {
+    "id": 21,
+    "name": "Kalimantan Tengah",
+    "country_id": 102
+  },
+  {
+    "id": 22,
+    "name": "Kalimantan Selatan",
+    "country_id": 102
+  },
+  {
+    "id": 23,
+    "name": "Kalimantan Timur",
+    "country_id": 102
+  },
+  {
+    "id": 24,
+    "name": "Kalimantan Utara",
+    "country_id": 102
+  },
+  {
+    "id": 25,
+    "name": "Sulawesi Utara",
+    "country_id": 102
+  },
+  {
+    "id": 26,
+    "name": "Sulawesi Tengah",
+    "country_id": 102
+  },
+  {
+    "id": 27,
+    "name": "Sulawesi Selatan",
+    "country_id": 102
+  },
+  {
+    "id": 28,
+    "name": "Sulawesi Tenggara",
+    "country_id": 102
+  },
+  {
+    "id": 29,
+    "name": "Gorontalo",
+    "country_id": 102
+  },
+  {
+    "id": 30,
+    "name": "Sulawesi Barat",
+    "country_id": 102
+  },
+  {
+    "id": 31,
+    "name": "Maluku",
+    "country_id": 102
+  },
+  {
+    "id": 32,
+    "name": "Maluku Utara",
+    "country_id": 102
+  },
+  {
+    "id": 33,
+    "name": "Papua",
+    "country_id": 102
+  },
+  {
+    "id": 34,
+    "name": "Papua Barat",
+    "country_id": 102
+  }
+]
