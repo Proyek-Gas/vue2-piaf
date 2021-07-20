@@ -1,21 +1,14 @@
 <template>
   <div @click="onClick" >
     <div class="row">
-      <div class="col-6" style="text-align:right" ><b>Customer Limit: </b></div>
-      <div class="col-6">{{shortNumber(rowData.customerLimitAmountValue)}}</div>
+      <div class="col-6" style="text-align:right" ><b>Tanggal Reminder: </b></div>
+      <div class="col-6">{{timeLayout(rowData.tgl_reminder)}}</div>
     </div>
-    <div class="row">
-      <div class="col-6" style="text-align:right"><b>LastQuote tanggal: </b></div>
-      <div class="col-6">{{timeLayout(rowData.lastquote.time)}}</div>
+     <div class="row">
+      <div class="col-6" style="text-align:right" ><b>Status: </b></div>
+      <div class="col-6">{{rowData.lastQuote.status.name}}</div>
     </div>
-    <div class="row">
-      <div class="col-6" style="text-align:right"><b>Alamat: </b></div>
-      <div class="col-6">{{showAddress(rowData)}}</div>
-    </div>
-    <div class="row">
-      <div class="col-6" style="text-align:right"><b>Price Category: </b></div>
-      <div class="col-6"> <b-badge :variant="rowData.priceCategory.name === 'Umum' ? '3' ? 'primary' : 'success' : 'danger'" close-transition>{{rowData.priceCategory.name}}</b-badge></div>
-    </div>
+
 
   </div>
 </template>

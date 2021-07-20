@@ -11,12 +11,15 @@
     ></datatable-heading>
 
     <b-row class="mb-3">
-      <b-colxx xxs="12">
-        <b-button class="mb-1"  v-b-modal.modalright variant="success " style="width:15%; ">Filter</b-button>
-            <filter-cust v-on:answers="onUpdateAnswer"></filter-cust>
+      <b-colxx xxs="6">
+        <b-button class="mb-1"  v-b-modal.modalright variant="success " >Filter</b-button>
+              <filter-cust v-on:answers="onUpdateAnswer"></filter-cust>
          <b-button class="mb-1" variant="primary " @click="movePageAdd()">Add Customer</b-button>
       </b-colxx>
-
+      <b-colxx xxs="6" style="text-align:left">
+          <h5 v-if="tag.length >0">Filter By</h5>
+          <b-badge style="margin :2px" variant="primary" v-for="tg in tag" :key="tg"  v-b-modal.modalright>{{tg}} </b-badge>
+      </b-colxx>
     </b-row>
 
     <b-row>
@@ -117,6 +120,7 @@ export default {
       detailRow : MyDetailRow,
       dataClone : [],
       loadCek : true,
+      tag : [],
       fields: [
         {
           name: "__slot:avatar",
@@ -224,10 +228,6 @@ export default {
             isInAccurate
   		    city
           province
-          lastquote{
-            time
-          }
-
         category{
           name
           id
@@ -327,11 +327,13 @@ export default {
     },
 
     onUpdateAnswer: function(newAnswer){
+        this.tag = [];
         let cek = true;
         if(newAnswer){
           if(newAnswer.name != ""){
               this.search = newAnswer.name;
               cek = false;
+              this.tag.push("Nama")
           }
 
           if(newAnswer.customerNo !=""){
@@ -339,7 +341,113 @@ export default {
               this.data = this.data.filter(row => {
                 return row.customerNo.toLowerCase().indexOf(newAnswer.customerNo.toLowerCase()) !== -1 ;
               });
+              this.tag.push("CustomerNo")
           }
+
+          if(newAnswer.mobilePhone !=""){
+            cek = false;
+            this.data = this.data .filter(row=>
+            {
+              if(row.mobilePhone){
+                 return row.mobilePhone.toLowerCase().indexOf(newAnswer.mobilePhone.toLowerCase()) != -1;
+              }
+            })
+            this.tag.push("Mobile Phone")
+          }
+
+           if(newAnswer.workPhone !=""){
+            cek = false;
+            this.data = this.data .filter(row=>
+            {
+              if(row.workPhone){
+                return row.workPhone.toLowerCase().indexOf(newAnswer.workPhone.toLowerCase()) != -1;
+              }
+            })
+            this.tag.push("Work Phone")
+           }
+
+
+           if(newAnswer.address !=""){
+              cek = false;
+              this.data = this.data.filter(row=>
+              {
+                if(row.street){
+                  return row.street.toLowerCase().indexOf(newAnswer.address.toLowerCase()) != -1;
+                }
+              })
+              this.tag.push("Alamat")
+           }
+
+           if(newAnswer.npwp !=""){
+             cek = false;
+             this.data = this.data.filter(row=>{
+                if(row.npwpNo){
+                  return row.npwpNo.toLowerCase().indexOf(newAnswer.npwp.toLowerCase()) !== -1
+                }
+             })
+             this.tag.push("NPWP")
+           }
+
+           if(newAnswer.email !=""){
+             cek = false;
+             this.data = this.data.filter(row=>{
+                if(row.email){
+                  return row.email.toLowerCase().indexOf(newAnswer.email.toLowerCase()) !== -1
+                }
+             })
+             this.tag.push("Email")
+           }
+
+           if(newAnswer.priceCategory != ""){
+             console.log(newAnswer.priceCategory)
+             cek = false;
+             this.data = this.data.filter(row=>{
+                if(row.priceCategory &&row.$index != -1){
+                  return row.priceCategory.id == newAnswer.priceCategory
+                }
+             })
+             this.tag.push("Kategori harga")
+           }
+          if(newAnswer.customerCategory != ""){
+             cek = false;
+             this.data = this.data.filter(row=>{
+                if(row.category &&  row.$index != -1){
+                  return row.category.id == newAnswer.customerCategory
+                }
+             })
+             this.tag.push("Kategori Kustomer")
+           }
+
+           if(newAnswer.minimum != 0 && newAnswer.maximum == 0 ){
+            cek = false;
+            const val1 = newAnswer.minimum;
+            this.data = this.data.filter(row => {
+              return row.customerLimitAmountValue>= val1;
+            });
+            this.tag.push("Limit Amount > min")
+          }
+          if(newAnswer.maximum != 0 && newAnswer.minimum == 0){
+            cek = false;
+            const val1 = newAnswer.maximum;
+            this.data = this.data.filter(row => {
+              return row.customerLimitAmountValue<= val1;
+            });
+            this.tag.push("Limit Amount < max")
+          }
+          if(newAnswer.maximum != 0 && newAnswer.minimum != 0){
+            cek = false;
+            const val1 = newAnswer.minimum;
+            const val2 = newAnswer.maximum
+            if(val1< val2){
+                   this.data = this.data.filter(row => {
+                    return row.customerLimitAmountValue>= val1 && row.customerLimitAmountValue<= val2;
+                  });
+              this.tag.push("Limit Amount")
+            }
+          }
+
+
+
         }
         if(cek){
           this.data = this.dataClone

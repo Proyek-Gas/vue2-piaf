@@ -1,7 +1,7 @@
 <template>
   <div>
     <datatable-heading
-      :title="$t('menu.projectTable')"
+      :title="$t('menu.itemTable')"
       :changePageSize="changePageSize"
       :searchChange="searchChange"
       :from="from"
@@ -13,8 +13,8 @@
     <b-row class="mb-3">
       <b-colxx xxs="6">
         <b-button class="mb-1"  v-b-modal.modalright variant="success " >Filter</b-button>
-            <filter-pro v-on:answers="onUpdateAnswer"></filter-pro>
-         <b-button class="mb-1" variant="primary ">Add Project</b-button>
+            <filter-item v-on:answers="onUpdateAnswer"></filter-item>
+         <b-button class="mb-1" variant="primary ">Add Item</b-button>
       </b-colxx>
       <b-colxx xxs="6" style="text-align:left">
           <h5 v-if="tag.length >0">Filter By</h5>
@@ -42,16 +42,10 @@
             <template slot="name" slot-scope="props">
                 <a href=""><h5>{{props.rowData.name}}</h5></a>
             </template>
-            <template slot="category" slot-scope="props">
-               <b-badge :variant="props.rowData.status=== 1 ?  'primary' : 'danger'" >{{props.rowData.category.name}}</b-badge>
+            <template slot="color" slot-scope="props">
+                <div class="btn btn-sm" v-bind:style="returnColor(props.rowData.color.hex_code)">{{props.rowData.color.eng_name}}</div>
             </template>
-            <template slot="lastQuote" slot-scope="props">
-                  <a href=""><h5>{{props.rowData.lastQuote.userCreate.name}}</h5></a>
-                  <b-badge v-if="props.rowData.lastQuote.userCreate.role" variant="primary">{{props.rowData.userCreate.role.name}}</b-badge>
-            </template>
-            <template slot="lastQuote.total" slot-scope="props">
-                  <a href="">{{shortNumber(props.rowData.lastQuote.total)}}</a>
-            </template>
+
             <template slot="id" slot-scope="props">
               <i  class="simple-icon-arrow-down" @click="cellClicked($event, props.rowData)"></i>
             </template>
@@ -94,7 +88,7 @@ import VuetablePaginationBootstrap from "../../../../components/Common/VuetableP
 import DatatableHeading from "../../../../containers/datatable/DatatableHeading";
 import _ from "lodash";
 import MyDetailRow from "./MyDetailRow";
-import filterPro from "./filterProject"
+import filterItem from "./filterItem"
 
 
 export default {
@@ -103,7 +97,7 @@ export default {
     vuetable: Vuetable,
     "vuetable-pagination-bootstrap": VuetablePaginationBootstrap,
     "datatable-heading": DatatableHeading,
-    "filter-pro" : filterPro,
+    "filter-item" : filterItem,
    //"my-detail-row" : MyDetailRow //->ini ga error namun ga ada datanya
   },
   data() {
@@ -114,39 +108,49 @@ export default {
       loadCek : true,
       fields: [
         {
+          name:"id",
+          sortField:"id",
+          title:"ID",
+          titleClass: "",
+          dataClass:"text-muted"
+          , width :"5%"
+        },
+        {
           name: "__slot:name",
           sortField: "name",
           title: "Name",
           titleClass: "",
           dataClass: "text-muted",
-          width:"25%"
+          width:"20%"
 
         },
         {
-          name: "__slot:category",
-          sortField: "category.name",
+          name:"itemCategory.name",
+          sortField:"itemCategory.name",
           title: "Kategori",
+          titleClass: "",
+          dataClass : "",
+          width : "10%"
+        },
+        {
+          name: "type.name",
+          sortField: "type.name",
+          title: "Tipe",
           titleClass: "",
           dataClass: "text-muted",
           togglable : true,
-          width:"5%"
-        },
-        {
-          name: "__slot:lastQuote",
-          sortField: "lastQuote.userCreate.name",
-          title: "lastQuote",
-          titleClass: "",
-          dataClass: "text-muted",
-          width:"30%"
-        },
-        {
-          name: "__slot:lastQuote.total",
-          sortField: "lastQuote.total",
-          title: "Total",
-          titleClass: "",
-          dataClass: "text-muted",
           width:"15%"
         },
+        {
+          name: "__slot:color",
+          sortField: "color.eng_name",
+          title: "Warna",
+          titleClass: "",
+          dataClass: "text-muted",
+          togglable : true,
+          width:"15%"
+        },
+
         {
           name: "__slot:id",
           title :"",
@@ -187,44 +191,46 @@ export default {
         },
         body: JSON.stringify({
           query: `
-            query {projects {
+           query{
+        items{
             count
-  					projects{
-              name
+          	items{
+              id
+            balance
+            availableToSell
+            name
+            no
+            itemCategory{
                 id
-                status
-                category {
-                    id
-                    name
-                }
-              	status
-                lastQuote{
-                    total
-                    id
-                    status{
-                      id
-                      name
-                    }
-                    userCreate{
-                    id
-                    name
-                    photo
-                    role{
-                        id
-                        name
-                    }
-                    }
-
-                }
-  tgl_reminder
+                name
             }
-                }}
-      `
+            isInDB
+            vs_volume_solid
+            color{
+            id_ral
+            hex_code
+            ind_name
+            eng_name
+            }
+            packaging_name
+            liter
+            agent_item_id
+            ratio_agent
+            recommended_thinner_id
+            ratio_recommended_thinner_id
+            type{
+            name
+            id
+            }
+            }
+        }
+        }
+              `
       }),
     }).then(function(response) {
         return response.json()
     }).then(function(text) {
-        return text.data.projects.projects;
+        return text.data.items.items;
     })
     .then(resp => {
         this.data = resp;
@@ -261,7 +267,7 @@ export default {
         else if (n >= 1e12) return +(n / 1e12).toFixed(1) + " T";
     },
     dataManager(sortOrder, pagination) {
-    //  if (this.data.length < 1) return;
+     // if (this.data.length < 1) return;
 
       let local = this.data;
       console.log(this.search);
@@ -309,162 +315,63 @@ export default {
       this.search = val;
       this.$refs.vuetable.refresh();
     },
+    returnColor(a){
+      const style = {
+          "background-color": "#"+a,
+          "color" : "white"
 
+      }
+      return style
+  },
     onUpdateAnswer: function(newAnswer){
         let cek = true;
         this.tag =[]
         if(newAnswer){
-          let status = null
-          let kategori = null
-          let cekFetch = true;
-          if(newAnswer.status != "-1"){
-              status = parseInt(newAnswer.status)
-              this.tag.push("Status");
-              cek = false
-          }
           if(newAnswer.name != ""){
-              this.search = newAnswer.name;
+            this.data = this.data.filter(row => {
+                return row.name.toLowerCase().indexOf(newAnswer.name.toLowerCase())  !== -1 ;
+            });
               cek = false;
               this.tag.push("Nama")
           }
-          if(newAnswer.kategori !=""){
-             kategori = parseInt(newAnswer.kategori)
-             cek = false
-             this.tag.push("Kategori")
+          if(newAnswer.no != ""){
+            this.data = this.data.filter(row=>{
+              return (row.id.toString()).indexOf(newAnswer.no)  !== -1 ;
+            })
+            cek = false;
+            this.tag.push("no")
           }
 
-           if(newAnswer.minimum != 0 && newAnswer.maximum == 0 ){
-            cek = false;
-            const val1 = newAnswer.minimum;
-            this.data = this.data.filter(row => {
-              return row.lastQuote.total>= val1;
-            });
-            cekFetch = false
-            this.tag.push("Total > Min")
-          }
-          if(newAnswer.maximum != 0 && newAnswer.minimum == 0){
-            cek = false;
-            const val1 = newAnswer.maximum;
-            this.data = this.data.filter(row => {
-              return row.lastQuote.total<= val1;
-            });
-            cekFetch = false
-            this.tag.push("Total < Max")
-          }
-          if(newAnswer.maximum != 0 && newAnswer.minimum != 0){
-            cek = false;
-            const val1 = newAnswer.minimum;
-            const val2 = newAnswer.maximum
-            if(val1< val2){
-                   this.data = this.data.filter(row => {
-                    return row.lastQuote.total>= val1 && row.lastQuote.total<= val2;
-                  });
-            cekFetch = false
-              this.tag.push("Total")
-            }
-
-          if( newAnswer.dateAkhir!= "" && newAnswer.dateAwal != ""){
-            cek = false;
-            const dt1 = new Date(newAnswer.dateAkhir);
-            const dt2 = new Date(newAnswer.dateAwal);
-            if(dt1.getTime()> dt2.getTime()){
-                 this.data = this.data.filter(row =>{
-                  return new Date(row.tgl_reminder).getTime()>= dt2.getTime() && new Date(row.tgl_reminder).getTime()<=dt1.getTime();
-                })
-              this.tag.push("Tanggal Reminder")
-              cekFetch = false
-            }
-          }
-
-          if( newAnswer.dateAkhir!= "" && newAnswer.dateAwal == ""){
-            cek = false;
-            const dt1 = new Date(newAnswer.dateAkhir);
-            this.data = this.data.filter(row =>{
-                return new Date(row.tgl_reminder).getTime()<=dt1.getTime();
+          if(newAnswer.warna != ""){
+              cek = false;
+              this.data = this.data.filter(row=>{
+                return row.color.id_ral == newAnswer.warna.id_ral
               })
-            this.tag.push("tanggal reminder")
-            cekFetch = false
+            this.tag.push("Warna")
           }
 
-          if( newAnswer.dateAkhir== "" && newAnswer.dateAwal != ""){
-            cek = false;
-            const dt2 = new Date(newAnswer.dateAwal);
-              this.data = this.data.filter(row =>{
-                return new Date(row.tgl_reminder).getTime()>= dt2.getTime();
+           if(newAnswer.kategori != ""){
+              cek = false;
+              this.data = this.data.filter(row=>{
+                return row.itemCategory == newAnswer.kategori
               })
-            this.tag.push("tanggal reminder")
-            cekFetch = false
-
+            this.tag.push("Kategori")
           }
 
-
-
-          if(cekFetch){
-             this.fetchAgain(kategori,status)
+           if(newAnswer.tipe   != ""){
+              cek = false;
+              this.data = this.data.filter(row=>{
+                return row.type.id == newAnswer.tipe
+              })
+            this.tag.push("Tipe")
           }
         }
         if(cek){
           this.data = this.dataClone
         }
+
          this.$refs.vuetable.refresh()
-      }
     },
-     fetchAgain(kategori, status){
-
-            fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              query: `
-                query {projects(filter : {category : ${kategori} status: ${status}}) {
-                count
-                projects{
-                  name
-                    id
-                    status
-                    category {
-                        id
-                        name
-                    }
-                    status
-                    lastQuote{
-                        total
-                        id
-                        status{
-                          name
-                          id
-                        }
-                        userCreate{
-                        id
-                        name
-                        photo
-                        role{
-                            id
-                            name
-                        }
-                        }
-
-                    }
-      tgl_reminder
-                }
-                    }}
-          `
-          }),
-        }).then(function(response) {
-          console.log(response)
-            return response.json()
-        }).then(function(text) {
-          console.log(text)
-            return text.data.projects.projects;
-        })
-        .then(resp => {
-
-            this.data = resp;
-             this.$refs.vuetable.refresh()
-          });
-    }
   },
 
   computed: {

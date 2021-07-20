@@ -19,6 +19,18 @@ const data = [
     to: `${adminRoot}/datatable/projectTable`,
     // roles: [UserRole.Admin, UserRole.Editor],
   },
+  {
+    icon: "simple-icon-paper-plane",
+    label: "menu.schemeTable",
+    to: `${adminRoot}/datatable/schemeTable`,
+    // roles: [UserRole.Admin, UserRole.Editor],
+  },
+  {
+    icon: "simple-icon-paper-plane",
+    label: "menu.itemTable",
+    to: `${adminRoot}/datatable/itemTable`,
+    // roles: [UserRole.Admin, UserRole.Editor],
+  },
   ]
 }
 ];

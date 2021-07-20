@@ -12,35 +12,27 @@
             <b-form-group label="Nama" v-if="vueSelected == '1'">
                 <b-form-input v-model="dataReturn.name"  placeholder="Masukkan Nama"/>
             </b-form-group>
-            <b-form-group label="Kategori" v-if="vueSelected == '2'">
-                <v-select v-model="dataReturn.kategori" :options="ListKategoriProject" :reduce="ListKategoriProject => ListKategoriProject.id" label="name" placeholder="Silahkan Pilih Kategori"  />
+            <b-form-group label="Warna" v-if="vueSelected == '2'">
+                <v-select
+                  v-model="dataReturn.warna"
+                  :options="ListWarna"
+                  label="ind_name"
+                  item-text="eng_name"
+                  placeholder ="Silahkan pilih warna"
+                >
+                  <template v-slot:option="option" style="width:auto">
+                     <div
+                        class="btn"
+                        style="width:100%; text-align :center"
+                        v-bind:style="returnColor(option.hex_code)"
+                      >{{ option.eng_name }} <br>{{option.ind_name}}</div>
+                  </template>
+                </v-select>
             </b-form-group>
-            <b-form-group label="Tanggal Reminder" v-if="vueSelected == '3'">
-              Tanggal Awal :
-                <datepicker
-                  :bootstrap-styling="true"
-                  placeholder="Tanggal Awal"
-                  v-model="dataReturn.dateAwal"
-                ></datepicker>
-                  <br>
-                  Tanggal Akhir
-                  <datepicker
-                  :bootstrap-styling="true"
-                  placeholder="Tanggal Akhir"
-                  v-model="dataReturn.dateAkhir"
-                ></datepicker>
-            </b-form-group>
-            <b-form-group label="Total" v-if="vueSelected == '4'">
-                 Minimum :
-                <b-form-input type="number" v-model="dataReturn.minimum"  placeholder="Minimum"/>
-                <br>
-                Maximum :
-                <b-form-input type="number" v-model="dataReturn.maximum"  placeholder="MAximum" />
-            </b-form-group>
-             <b-form-radio-group stacked label="Status" v-model="dataReturn.status" v-if="vueSelected == '5'">
+             <b-form-radio-group stacked label="Status" v-model="dataReturn.status" v-if="vueSelected == '3'">
                 <b-form-radio value="1">Active</b-form-radio>
                 <b-form-radio value="0">Non Active</b-form-radio>
-                  <b-form-radio value="-1">All</b-form-radio>
+                 <b-form-radio value="-1">All</b-form-radio>
             </b-form-radio-group>
         </b-colxx>
      </b-row>
@@ -70,30 +62,18 @@ export default {
         },
         {
           value : "2",
-          label : "Kategori"
+          label : "Warna"
         },
         {
           value : "3",
-          label : "Tanggal Reminder"
-        },
-        {
-          value : "4",
-          label : "Total"
-        },
-        {
-          value : "5",
           label : "Status"
         },
       ],
-      ListKategoriProject : [],
+      ListWarna : [],
       dataReturn : {
          name:'',
-         status : "-1",
-         kategori : "",
-         minimum :0,
-         maximum :0,
-         dateAwal : "",
-         dateAkhir :""
+         status :"-1",
+         warna : ""
       }
     };
   },
@@ -106,17 +86,20 @@ export default {
         this.$refs['modalnested'].show()
       }
     },
+     returnColor(a){
+      const style = {
+          "background-color": "#"+a,
+          "color" : "white"
 
+      }
+      return style
+  },
     reset(){
       this.vueSelected = ""
       this.dataReturn = {
          name:'',
-         status : "-1",
-        minimum : 0,
-        maximum : 0,
-         kategori : "",
-         dateAwal : "",
-         dateAkhir :""
+         status :"-1",
+         warna : ""
       }
     }
 
@@ -129,9 +112,11 @@ export default {
       },
       body: JSON.stringify({
         query: `
-          query{projectCategory{
-            id
-            name
+          query{ralColors{
+            id_ral
+            ind_name
+            eng_name
+            hex_code
           }
           }
         `,
@@ -142,10 +127,10 @@ export default {
           return response.json()
       }).then(function(text) {
         console.log(text.data)
-          return text.data.projectCategory;
+          return text.data.ralColors;
       })
       .then(resp => {
-        this.ListKategoriProject = resp
+        this.ListWarna = resp
       });
   }
 };

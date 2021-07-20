@@ -47,6 +47,16 @@ const routes = [
             path: 'projectTable',
             component: () => import(/* webpackChunkName: "piaf" */ './views/app/project/datatable/projectTable'),
             // meta: { roles: [UserRole.Admin, UserRole.Editor] },
+          },
+          {
+            path: 'schemeTable',
+            component: () => import(/* webpackChunkName: "piaf" */ './views/app/scheme/datatable/schemeTable'),
+            // meta: { roles: [UserRole.Admin, UserRole.Editor] },
+          },
+          {
+            path: 'itemTable',
+            component: () => import(/* webpackChunkName: "piaf" */ './views/app/item/datatable/itemTable'),
+            // meta: { roles: [UserRole.Admin, UserRole.Editor] },
           }
         ],
       },

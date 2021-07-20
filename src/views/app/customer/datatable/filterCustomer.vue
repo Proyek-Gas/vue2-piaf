@@ -28,7 +28,7 @@
                 <b-form-input type="email" v-model="dataReturn.email"  placeholder="Masukkan Email"/>
             </b-form-group>
              <b-form-group label="NPWP" v-if="vueSelected == '7'">
-                <b-form-input type="number" v-model="dataReturn.npwp"  placeholder="Masukkan NPWP"/>
+                <b-form-input type="text" v-model="dataReturn.npwp"  placeholder="Masukkan NPWP" v-mask="'##.###.###.#-###.###'"/>
             </b-form-group>
             <b-form-group label="Limit Amount Value" v-if="vueSelected == '8'">
               Minimum :
@@ -61,7 +61,7 @@
         </b-colxx>
      </b-row>
      <template slot="modal-footer">
-         <b-button variant="danger" @click="$emit('answers',null);hideModal('modalright')">Reset</b-button>
+         <b-button variant="danger" @click="$emit('answers',null);hideModal('modalright');reset()">Reset</b-button>
          <b-button variant="primary" @click="$emit('answers', dataReturn);hideModal('modalright')" class="mr-1">Apply</b-button>
       </template>
    </b-modal>
@@ -154,7 +154,24 @@ export default {
         this.$refs['modalnested'].show()
       }
     },
-
+    reset(){
+        this.vueSelected = "",
+        this.dataReturn ={
+         name:'',
+          email : '',
+          mobilePhone : '',
+          workPhone :'',
+          address : '',
+          customerNo :'',
+          minimum : 0,
+          maximum : 0,
+          npwp :0,
+          dateAwal:'',
+          dateAkhir : '',
+          priceCategory : this.value ||'',
+          customerCategory : this.value||'',
+      }
+    }
   },
   mounted(){
       fetch('https://dev.quotation.node.zoomit.co.id/graphql', {

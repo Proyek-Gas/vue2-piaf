@@ -5,8 +5,8 @@
       <div class="col-6">{{shortNumber(rowData.customerLimitAmountValue)}}</div>
     </div>
     <div class="row">
-      <div class="col-6" style="text-align:right"><b>LastQuote tanggal: </b></div>
-      <div class="col-6">{{timeLayout(rowData.lastquote.time)}}</div>
+      <!-- <div class="col-6" style="text-align:right"><b>LastQuote tanggal: </b></div>
+      <div class="col-6">{{timeLayout(rowData.lastquote.time)}}</div> -->
     </div>
     <div class="row">
       <div class="col-6" style="text-align:right"><b>Alamat: </b></div>

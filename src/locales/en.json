@@ -122,6 +122,8 @@
     "datatable": "Datatable",
     "customerTable": "Table Customer",
     "projectTable" : "Table Project",
+    "schemeTable" : "Table Scheme",
+    "itemTable" : "Table Item",
     "detail": "Customer Detail"
   },
   "dashboards": {
