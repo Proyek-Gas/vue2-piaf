@@ -2,16 +2,7 @@
 <div v-if="isLoad">
     <b-row>
         <b-colxx xxs="12">
-            <h1>Project Detail</h1>
-            <div class="top-right-button-container">
-                <b-dropdown id="ddown5" :text="$t('pages.actions')" size="lg" variant="outline-primary" class="top-right-button top-right-button-single" no-fade="true">
-                    <b-dropdown-header>{{ $t('pages.header') }}</b-dropdown-header>
-                    <b-dropdown-item>{{ $t('pages.delete') }}</b-dropdown-item>
-                    <b-dropdown-item>{{ $t('pages.another-action') }}</b-dropdown-item>
-                    <b-dropdown-divider></b-dropdown-divider>
-                    <b-dropdown-item>{{ $t('pages.another-action') }}</b-dropdown-item>
-                </b-dropdown>
-            </div>
+            <h1>Customer Detail</h1>
             <piaf-breadcrumb />
             <div class="separator mb-5"></div>
         </b-colxx>
@@ -21,15 +12,13 @@
             <b-row>
                 <b-colxx md="6" sm="12" lg="6" xxs="12">
                 <b-card class="mb-4 text-center">
-                    <router-link to="?">
-                        <img
-                            src="/assets/img/profiles/l-1.jpg"
-                            alt="Card image cap"
-                            class="img-thumbnail list-thumbnail rounded-circle border-0 mb-4"
-                        />
-                        <h6 class="mb-1 card-subtitle">{{ namaCust }}</h6>
-                        <p class="text-muted text-small mb-4">{{ tlpCust }}</p>
-                    </router-link>
+                    <img
+                        src="/assets/img/profiles/l-1.jpg"
+                        alt="Card image cap"
+                        class="img-thumbnail list-thumbnail rounded-circle border-0 mb-4"
+                    />
+                    <h6 class="mb-1 card-subtitle">{{ detail.name }}</h6>
+                    <p class="text-muted text-small mb-4"></p>
                     <h6>
                         <b-badge class="mb-4" pill variant="warning">{{ katCust }}</b-badge>
                         <b-badge class="mb-4" pill variant="secondary">{{ katHargaCust }}</b-badge>
@@ -298,52 +287,28 @@
         </b-colxx>
         <b-colxx xxs="12" xl="4" class="col-right">
             <b-card class="mb-4">
-                <b-card-title class="mb-5">Details
+                <b-card-title>Details
                 <div class="top-right-button-container">
                     <b-button
                         class="glyph-icon simple-icon-pencil"
                         v-b-modal.modalright
                         variant="warning"
                         size="sm"
-                        @click="movePageEdit(proId)">
+                        @click="movePageEdit(custId)">
                     </b-button>
-                    <b-button
-                        class="glyph-icon simple-icon-trash"
-                        v-b-modal.modalright
-                        variant="danger"
-                        size="sm"
-                        v-b-modal.modalbasic>
-                    </b-button>
-                    <b-modal id="modalbasic" ref="modalbasic" title="Konfirmasi">
-                        Anda yakin ingin menghapus project dengan judul {{ detail.name }} ?
-                        <template slot="modal-footer">
-                            <b-button variant="primary" @click="deletePro(proId,'modalbasic')" class="mr-1">OK</b-button>
-                            <b-button variant="danger" @click="hideModal('modalbasic')">Cancel</b-button>
-                        </template>
-                    </b-modal>
                 </div>
                 </b-card-title>
-                <b-card-title>{{ detail.name }}</b-card-title>
-                <h6>
-                    <b-badge class="mb-4" pill variant="success">{{ katPro }}</b-badge> 
-                </h6>
-                <p class="text text-medium mb-4" v-if="detail.tgl_reminder != ''">{{ detail.tgl_reminder }}</p>
-                <p class="text text-medium mb-4" style="font-style:italic;" v-else>No date selected</p>
-                <b-card-title class="mb-3">Kategori Area</b-card-title>
-                <b-row>
-                    <b-colxx xxs="12" xl="12">
-                        <div v-if="katArea.length > 0">
-                            <div v-for="area in katArea" :key="area">
-                                <h6>
-                                    <b-badge class="mb-0" pill variant="secondary">{{ area }}</b-badge> 
-                                </h6>
-                            </div>
-                        </div>
-                        <div v-else>
-                            <p class="text text-medium mb-4" style="font-style:italic;">No data of area categories</p>
-                        </div>
-                    </b-colxx>
-                </b-row>
+                <p class="text text-medium mb-2">ID Pelanggan</p>
+                <p class="mb-3">{{ custId }}</p>
+                <p class="text text-medium mb-2">Email</p>
+                <p v-if="detail.email != ''" class="mb-3">{{ detail.email }}</p>
+                <p v-else class="text-muted mb-3" style="font-style: italic;">No data</p>
+                <p class="text text-medium mb-2">Alamat</p>
+                <p class="mb-3">{{ detail.billStreet }}</p>
+                <p class="text text-medium mb-2">Limit</p>
+                <p class="mb-3">{{ shortNumber(detail.customerLimitAmountValue) }}</p>
+                <p class="text text-medium mb-2">NPWP</p>
+                <p class="mb-3">{{ detail.npwpNo }}</p>
             </b-card>
         </b-colxx>
     </b-row>
@@ -361,13 +326,11 @@ export default {
         return {
             isLoad: false,
             custId: 0,
-            proId: 0,
 			period: '',
 			detail: [],
-            katArea: [],
-            namaCust: '',
-            tlpCust: '',
-            katPro: '',
+			katCust: "",
+			katHargaCust: "",
+            period: '',
 			performance: [],
 			recent:[],
 			previous:[],
@@ -378,55 +341,7 @@ export default {
     },
     methods: {
         movePageEdit(val){
-            window.location = window.location.origin+"/app/datatable/projectTable/pDetail/edit?id="+val;
-        },
-        deletePro(val,refname){
-            fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
-                method: 'POST',
-                headers: {
-                'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    query: `
-                        mutation{
-                            deleteProject(project_id:${val}){
-                                status
-                                message
-                            }
-                        }
-                    `,
-                }),
-            })
-            .then(function(response) {
-                return response.json()
-            })
-            .then(function(text) {
-                console.log(text.data);
-                return text.data.deleteProject;
-            })
-            .then(resp => {
-                console.log(resp.message);
-					if(resp.status.toLowerCase() == "success"){
-                        this.$toast(resp.message, {
-                            type: "success",
-                            hideProgressBar: true,
-                            timeout: 2000
-                        });
-                        setTimeout(() => {
-                            window.location = window.location.origin+"/app/datatable/projectTable";
-                        }, 1000);
-                    }else{
-                        this.$toast(resp.message, {
-                            type: "error",
-                            hideProgressBar: true,
-                            timeout: 2000
-                        });
-                    }
-            });
-            this.hideModal(refname);
-        },
-        hideModal(refname){
-            this.$refs[refname].hide()
+            window.location = window.location.origin+"/app/datatable/customerTable/cDetail/edit?id="+val;
         },
         handleClick(n){
             this.period = n;
@@ -582,10 +497,8 @@ export default {
 		}
     },
     async mounted() {
-        this.proId = this.$route.query.id;
-        console.log(this.proId);
-        if(this.proId){
-        this.period = 'M';
+        this.custId = this.$route.query.id;
+		this.period = 'M';
 		fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
 		method: 'POST',
 		headers: {
@@ -593,30 +506,20 @@ export default {
 		},
 		body: JSON.stringify({
 			query: `
-				query{
-					projectDetail(project_id:${this.proId}){
-						name
-						customer{
-                            id
-                            name
-                            workPhone
-                            category{
-                                name
-                            }
-                            priceCategory{
-                                name
-                            }
-						}
-						category{
-                            id
-                            name
-						}
-						areaCategories{
-						    name
-						}
-						tgl_reminder
-					}
+				query{ customerDetail(customer_id:"${this.custId}") {
+				name
+				email
+				npwpNo
+				billStreet
+				category{
+					name
 				}
+				priceCategory{
+					name
+				}
+				customerLimitAmountValue
+				}
+			}
 			`,
 		})
 		})
@@ -624,32 +527,28 @@ export default {
 			return response.json()
 		})
 		.then(function(text) {
-            return text.data.projectDetail;
+            console.log(text.data);
+			return text.data.customerDetail;
 		})
 		.then(resp => {
-            this.detail = resp;
-            console.log(resp);
+			this.detail = resp
 			if(this.detail == null){
-				window.location = window.location.origin +"/error?id=404&name=project";
+                console.log("masuk");
+                setTimeout(() => {
+                    window.location = window.location.origin +"/error?id=404&name=customer";
+                }, 50)
 			}else{
                 this.isLoad = true;
-				this.katCust = this.detail.customer.category.name;
-				this.katHargaCust = this.detail.customer.priceCategory.name;
-				this.custId = this.detail.customer.id;
-				this.namaCust = this.detail.customer.name;
-                this.tlpCust = this.detail.customer.workPhone;
-                this.katPro = this.detail.category.name;
-                this.katArea = this.detail.areaCategories;
-                if(!this.detail.tgl_reminder){
-                    this.detail.tgl_reminder = '';
+				console.log(this.detail.name);
+				this.nama = this.detail.name;
+				this.katCust = this.detail.category.name;
+				this.katHargaCust = this.detail.priceCategory.name;
+                if(!this.detail.email){
+                    this.detail.email = '';
                 }
                 this.fetching();
 			}
 		})
-        }else{
-            window.location = window.location.origin +"/error?id=404&name=project";
-        }
-
     }
 }
 </script>

@@ -14,7 +14,7 @@
       <b-colxx xxs="6">
         <b-button class="mb-1"  v-b-modal.modalright variant="success " >Filter</b-button>
             <filter-item v-on:answers="onUpdateAnswer"></filter-item>
-         <b-button class="mb-1" variant="primary ">Add Item</b-button>
+         <b-button class="mb-1" variant="primary" @click="movePageAdd()">Add Item</b-button>
       </b-colxx>
       <b-colxx xxs="6" style="text-align:left">
           <h5 v-if="tag.length >0">Filter By</h5>
@@ -240,6 +240,9 @@ export default {
 
   },
   methods: {
+    movePageAdd(){
+			window.location = window.location.href+"/add";
+		},
     onPaginationData(paginationData) {
       this.from = paginationData.from;
       this.to = paginationData.to;

@@ -2,7 +2,7 @@
 <div v-if="isLoad">
 <b-row>
     <b-colxx xxs="12">
-        <h1>Add Project</h1>
+        <h1>Edit Project</h1>
         <div class="separator mb-5"></div>
     </b-colxx>
     <b-colxx xxs="12" xl="8">
@@ -11,13 +11,12 @@
                 <b-form-group label-cols="3" horizontal label="Customer">
                     <vue-autosuggest
                         class="autosuggest"
-                        :input-props="{id:'autosuggest__input', class:'form-control', placeholder:'Ketik nama customer'}"
+                        :input-props="{id:'autosuggest__input', class:'form-control', placeholder:$t('form-components.type-a-cake')}"
                         :suggestions="filteredOptions"
                         :render-suggestion="renderSuggestion"
                         :get-suggestion-value="getSuggestionValue"
                         :limit="6"
-                        clearable
-                        v-model="custNama" 
+                        v-model="custNama"
                         @selected="onAutosuggestSelected"
                         @input="onAutoSuggestInputChange"
                     >
@@ -28,8 +27,9 @@
                     <b-form-input type="text" v-model="$v.custNama.$model" :state="!$v.custNama.$error" style="display:none;" placeholder="Masukkan judul proyek"/>
                     <b-form-invalid-feedback v-if="!$v.custNama.required">Harap pilih customer</b-form-invalid-feedback>
                 </b-form-group>
-                <b-form-group label-cols="3" horizontal label="Nama" >
-                    <b-form-input type="text" v-model="$v.namaPro.$model" :state="!$v.namaPro.$error" placeholder="Masukkan judul proyek"/>
+
+                <b-form-group label-cols="3" horizontal label="Nama">
+                    <b-form-input type="text" v-model="$v.namaPro.$model" :state="!$v.namaPro.$error" />
                     <b-form-invalid-feedback v-if="!$v.namaPro.required">Harap isi nama</b-form-invalid-feedback>
                     <b-form-invalid-feedback v-else-if="!$v.namaPro.minLength || !$v.namaPro.maxLength">Panjang nama 10-255 karakter</b-form-invalid-feedback>
                 </b-form-group>
@@ -47,8 +47,7 @@
                     <v-select 
                     v-model="katPro" 
                     :options="katProOption" 
-                    label="name" 
-                    @input="choose"
+                    label="name" @input="choose" 
                     placeholder="Pilih kategori"/>
                     <b-form-input type="text" v-model="$v.katPro.$model" :state="!$v.katPro.$error" style="display:none;" placeholder="Masukkan judul proyek"/>
                     <b-form-invalid-feedback v-if="!$v.katPro.required">Harap pilih kategori</b-form-invalid-feedback>
@@ -60,7 +59,7 @@
         </b-form>
     </b-colxx>
     <b-colxx xxs="12" xl="4" class="col-right">
-            <b-card class="mb-4">
+            <b-card class="mb-4" style="position: sticky; top: 20vh">
                 <b-card-title>Project Summary</b-card-title>
                 <b-card v-if="custNama != ''" class="mb-3 d-flex flex-row" no-body>
                     <img src="/assets/img/profiles/l-1.jpg" alt="Card image cap" class="img-thumbnail list-thumbnail rounded-circle align-self-center m-2 small"/>
@@ -96,7 +95,7 @@
                 <b-row>
                     <b-colxx xxs="6" class="text-center">
                     <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip">
-                        <b-button type="submit" variant="primary" style="width: 100%">Add</b-button>
+                        <b-button type="submit" variant="primary" style="width: 100%">Edit</b-button>
                     </b-form>
                     </b-colxx>
                     <b-colxx xxs="6" class="text-center">
@@ -145,20 +144,21 @@ export default {
     data() {
         return {
             isLoad: false,
-            custPhone: "",
-            custId: "",
-            custNama: "",
+            proId: 0,
+            custPhone: '',
+            custNama: '',
 			customer: "",
 			namaPro: "",
 			tglPro: "",
 			katPro: "",
-            katProId: 0,
+			katProId: 0,
+			katStr: "",
             katProOption: [],
             katArea: [],
 
             filteredOptions: [],
             selected: {},
-            dataCust: [],
+            dataCust: []
         };
     },
     mixins: [validationMixin],
@@ -177,8 +177,8 @@ export default {
     },
     methods: {
         choose(value) {
-            this.katPro = value.name;
             this.katProId = value.id;
+            this.katPro = value.name;
             this.fetchArea(value.id);
         },
         fetchArea(val){
@@ -211,9 +211,10 @@ export default {
         dateFormat(date){
             let d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
             let ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(d);
-            let mo = new Intl.DateTimeFormat('en', { month: '2-digit' }).format(d);
+            let mo = new Intl.DateTimeFormat('en', { month: 'short' }).format(d);
             let da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(d);
             return da + " "+ mo + " " +ye;
+        
         },
         clear(){
             this.tglPro = "";
@@ -240,8 +241,9 @@ export default {
                 body: JSON.stringify({
                     query: `
                         mutation{
-                            addProject(params:{
-                                customer_id:"${this.custId}"
+                            updateProject(
+                                project_id:${this.proId}
+                                params:{
                                 name:"${this.namaPro}"
                                 project_category:${this.katProId}
                                 ${str}
@@ -258,7 +260,7 @@ export default {
 				})
 				.then(function(text) {
 					console.log(text);
-					return text.data.addProject;
+					return text.data.updateProject;
 				})
 				.then(resp => {
 					console.log(resp.message);
@@ -318,7 +320,6 @@ export default {
             return <b-card class="mb-0 d-flex flex-row" no-body><img src="/assets/img/profiles/l-1.jpg" alt="Card image cap" class="img-thumbnail list-thumbnail rounded-circle align-self-center m-2 small"/><div class="d-flex flex-grow-1 min-width-zero"><div class="pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero"><div class="min-width-zero"><h6 class="text-muted text-medium mb-1">{character.name}</h6><p class="text-muted text-small mb-2">{character.workPhone}</p></div></div></div></b-card>
         },
         getSuggestionValue(suggestion) {
-            this.custId = suggestion.item.id;
             this.custNama = suggestion.item.name;
             this.custPhone = suggestion.item.workPhone;
             console.log(this.custPhone);
@@ -326,6 +327,61 @@ export default {
         }
     },
     async mounted(){
+        this.proId = this.$route.query.id;
+		fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+		method: 'POST',
+		headers: {
+		'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({
+			query: `
+				query{
+					projectDetail(project_id:${this.proId}){
+						name
+						customer{
+                            id
+                            name
+                            workPhone
+						}
+						category{
+                            id
+                            name
+						}
+						areaCategories{
+						    name
+						}
+						tgl_reminder
+					}
+				}
+			`,
+		})
+		})
+		.then(function(response) {
+			return response.json()
+		})
+		.then(function(text) {
+            console.log(text.data.projectDetail);
+			return text.data.projectDetail;
+		})
+		.then(resp => {
+            this.detail = resp;
+            console.log(resp);
+			if(this.detail == null){
+				window.location = window.location.origin +"/error?id=404&name=project";
+			}else{
+                this.isLoad = true;
+				this.custId = this.detail.customer.id;
+				this.custNama = this.detail.customer.name;
+                this.custPhone = this.detail.customer.workPhone;
+                this.namaPro = this.detail.name;
+                this.katPro = this.detail.category.name;
+                this.katProId = this.detail.category.id;
+                this.katArea = this.detail.areaCategories;
+                if(!this.detail.tgl_reminder){
+                    this.tglPro = '';
+                }
+			}
+		})
         fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
 			method: 'POST',
 			headers: {
@@ -378,6 +434,7 @@ export default {
 		.then(resp => {
             this.isLoad = true;
             this.dataCust = resp;
+			console.log(resp);
 		})
     }
     
