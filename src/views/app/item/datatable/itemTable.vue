@@ -367,6 +367,7 @@ export default {
           }
         }
         if(cek){
+            this.search = ""
           this.data = this.dataClone
         }
 

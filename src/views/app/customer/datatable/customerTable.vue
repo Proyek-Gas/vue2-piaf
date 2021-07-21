@@ -33,7 +33,7 @@
             :fields="fields"
             :per-page="perPage"
             :data-manager="dataManager"
-            :detail-row-component="detailRow"
+           :detail-row-component="detailRow"
             detail-row-transition="expand"
             pagination-path="pagination"
             @vuetable:pagination-data="onPaginationData"
@@ -112,7 +112,7 @@ export default {
     "vuetable-pagination-bootstrap": VuetablePaginationBootstrap,
     "datatable-heading": DatatableHeading,
     "filter-cust" : filterCust,
-   //"my-detail-row" : MyDetailRow //->ini ga error namun ga ada datanya
+  // mydetailrow : MyDetailRow //->ini ga error namun ga ada datanya
   },
   data() {
     return {
@@ -449,7 +449,9 @@ export default {
 
 
         }
+        console.log(cek)
         if(cek){
+          this.search = ""
           this.data = this.dataClone
         }
         this.$refs.vuetable.refresh()

@@ -379,6 +379,7 @@ export default {
           // this.fetchAgain(kategori,status)
         }
         if(cek){
+            this.search = ""
           this.data = this.dataClone
         }
 
