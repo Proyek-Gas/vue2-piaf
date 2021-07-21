@@ -50,7 +50,7 @@
         </b-form>
     </b-colxx>
     <b-colxx xxs="12" xl="4" class="col-right">
-            <b-card class="mb-4">
+            <b-card class="mb-4" style="position: sticky; top: 20vh">
                 <b-card-title>Project Summary</b-card-title>
                 <b-card v-if="custNama != ''" class="mb-3 d-flex flex-row" no-body>
                     <img src="/assets/img/profiles/l-1.jpg" alt="Card image cap" class="img-thumbnail list-thumbnail rounded-circle align-self-center m-2 small"/>

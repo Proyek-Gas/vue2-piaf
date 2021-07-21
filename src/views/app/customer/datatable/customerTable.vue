@@ -64,10 +64,9 @@
               <i  class="simple-icon-arrow-down" @click="cellClicked($event, props.rowData)"></i>
             </template>
             <template slot="action" slot-scope="props">
-                <b-dropdown text="actions" variant="outline-secondary">
+                <b-dropdown text="Actions" variant="outline-secondary">
                   <b-dropdown-item @click="movePageDetail(props.rowData.id)">Detail</b-dropdown-item>
-                  <b-dropdown-item>Edit</b-dropdown-item>
-                  <b-dropdown-item>Delete</b-dropdown-item>
+                  <b-dropdown-item @click="movePageEdit(props.rowData.id)">Edit</b-dropdown-item>
               </b-dropdown>
             </template>
           </vuetable>
@@ -255,7 +254,10 @@ export default {
 			window.location = window.location.href+"/add";
 		},
     movePageDetail(val){
-			window.location = window.location.href+"/detail?id="+val;
+			window.location = window.location.href+"/cDetail?id="+val;
+		},
+    movePageEdit(val){
+			window.location = window.location.origin+"/app/datatable/customerTable/cDetail/edit?id="+val;
 		},
     onPaginationData(paginationData) {
       this.from = paginationData.from;

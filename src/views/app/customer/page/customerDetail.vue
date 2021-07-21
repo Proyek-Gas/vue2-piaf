@@ -1,17 +1,8 @@
 <template>
-<div>
+<div v-if="isLoad">
     <b-row>
         <b-colxx xxs="12">
             <h1>Customer Detail</h1>
-            <div class="top-right-button-container">
-                <b-dropdown id="ddown5" :text="$t('pages.actions')" size="lg" variant="outline-primary" class="top-right-button top-right-button-single" no-fade="true">
-                    <b-dropdown-header>{{ $t('pages.header') }}</b-dropdown-header>
-                    <b-dropdown-item>{{ $t('pages.delete') }}</b-dropdown-item>
-                    <b-dropdown-item>{{ $t('pages.another-action') }}</b-dropdown-item>
-                    <b-dropdown-divider></b-dropdown-divider>
-                    <b-dropdown-item>{{ $t('pages.another-action') }}</b-dropdown-item>
-                </b-dropdown>
-            </div>
             <piaf-breadcrumb />
             <div class="separator mb-5"></div>
         </b-colxx>
@@ -21,15 +12,13 @@
             <b-row>
                 <b-colxx md="6" sm="12" lg="6" xxs="12">
                 <b-card class="mb-4 text-center">
-                    <router-link to="?">
-                        <img
-                            src="/assets/img/profiles/l-1.jpg"
-                            alt="Card image cap"
-                            class="img-thumbnail list-thumbnail rounded-circle border-0 mb-4"
-                        />
-                        <h6 class="mb-1 card-subtitle">{{ detail.name }}</h6>
-                        <p class="text-muted text-small mb-4"></p>
-                    </router-link>
+                    <img
+                        src="/assets/img/profiles/l-1.jpg"
+                        alt="Card image cap"
+                        class="img-thumbnail list-thumbnail rounded-circle border-0 mb-4"
+                    />
+                    <h6 class="mb-1 card-subtitle">{{ detail.name }}</h6>
+                    <p class="text-muted text-small mb-4"></p>
                     <h6>
                         <b-badge class="mb-4" pill variant="warning">{{ katCust }}</b-badge>
                         <b-badge class="mb-4" pill variant="secondary">{{ katHargaCust }}</b-badge>
@@ -38,7 +27,7 @@
                 </b-colxx>
                 <b-colxx xxs="12" sm="12" md="6" lg="6" class="mb-3">
                     <b-card class="mb-4" no-body>
-                    <div class="m-2">
+                    <div class="m-3">
                     <b-nav pills class="justify-content-center">
                         <b-nav-item :active="period == 'M'" @click="handleClick('M')">Month</b-nav-item>
                         <b-nav-item :active="period == 'S'" @click="handleClick('S')">Semester</b-nav-item>
@@ -48,7 +37,7 @@
                     </b-card>
                     <b-row class="icon-cards-row mb-0">
                         <b-colxx xxs="6" sm="6" md="6" lg="6">
-                        <b-card class="mb-0 text-center">
+                        <b-card class="mb-0 text-center" style="height: 185px;">
                             <table style="width: 100%;">
                                 <div v-if="performance.length == 0" class="mb-2">
                                     <center>
@@ -153,18 +142,11 @@
                                 </tr>												
                             </table> 
                         </b-card>
-                        <b-button
-                        class="glyph-icon simple-icon-pencil"
-                            v-b-modal.modalright
-                            variant="warning"
-                            size="sm"
-                            style="width: 100%;"
-                            @click="movePageEdit(custId)">
-                        </b-button>
+                        
                         </b-colxx>
 
                         <b-colxx xxs="6" sm="6" md="6" lg="6">
-                        <b-card class="mb-0 text-center">
+                        <b-card class="mb-0 text-center" style="height: 185px;">
                             <table style="width: 100%;">    
                                 <div v-if="performance.length == 0" class="mb-2">
                                     <center>
@@ -269,14 +251,6 @@
                                 </tr>
                             </table>
                         </b-card>
-                        <b-button
-                        class="glyph-icon simple-icon-trash"
-                            v-b-modal.modalright
-                            variant="danger"
-                            size="sm"
-                            style="width: 100%;"
-                            >
-                        </b-button>
                         </b-colxx>
                     </b-row>
                 </b-colxx>
@@ -313,7 +287,17 @@
         </b-colxx>
         <b-colxx xxs="12" xl="4" class="col-right">
             <b-card class="mb-4">
-                <b-card-title>Details</b-card-title>
+                <b-card-title>Details
+                <div class="top-right-button-container">
+                    <b-button
+                        class="glyph-icon simple-icon-pencil"
+                        v-b-modal.modalright
+                        variant="warning"
+                        size="sm"
+                        @click="movePageEdit(custId)">
+                    </b-button>
+                </div>
+                </b-card-title>
                 <p class="text text-medium mb-2">ID Pelanggan</p>
                 <p class="mb-3">{{ custId }}</p>
                 <p class="text text-medium mb-2">Email</p>
@@ -344,8 +328,8 @@ export default {
             custId: 0,
 			period: '',
 			detail: [],
-			katCust: '',
-			katHargaCust:'',
+			katCust: "",
+			katHargaCust: "",
             period: '',
 			performance: [],
 			recent:[],
@@ -554,6 +538,7 @@ export default {
                     window.location = window.location.origin +"/error?id=404&name=customer";
                 }, 50)
 			}else{
+                this.isLoad = true;
 				console.log(this.detail.name);
 				this.nama = this.detail.name;
 				this.katCust = this.detail.category.name;
@@ -564,9 +549,6 @@ export default {
                 this.fetching();
 			}
 		})
-        setTimeout(() => {
-            this.isLoad = true
-        }, 50)
     }
 }
 </script>

@@ -1,5 +1,5 @@
 <template>
-<div>
+<div v-if="isLoad">
     <b-row>
         <b-colxx xxs="12">
             <h1>Project Detail</h1>
@@ -38,7 +38,7 @@
                 </b-colxx>
                 <b-colxx xxs="12" sm="12" md="6" lg="6" class="mb-3">
                     <b-card class="mb-4" no-body>
-                    <div class="m-2">
+                    <div class="m-3">
                     <b-nav pills class="justify-content-center">
                         <b-nav-item :active="period == 'M'" @click="handleClick('M')">Month</b-nav-item>
                         <b-nav-item :active="period == 'S'" @click="handleClick('S')">Semester</b-nav-item>
@@ -48,7 +48,7 @@
                     </b-card>
                     <b-row class="icon-cards-row mb-0">
                         <b-colxx xxs="6" sm="6" md="6" lg="6">
-                        <b-card class="mb-0 text-center">
+                        <b-card class="mb-0 text-center" style="height: 185px;">
                             <table style="width: 100%;">
                                 <div v-if="performance.length == 0" class="mb-2">
                                     <center>
@@ -153,18 +153,11 @@
                                 </tr>												
                             </table> 
                         </b-card>
-                        <b-button
-                        class="glyph-icon simple-icon-pencil"
-                            v-b-modal.modalright
-                            variant="warning"
-                            size="sm"
-                            style="width: 100%;"
-                            @click="movePageAdd()">
-                        </b-button>
+                        
                         </b-colxx>
 
                         <b-colxx xxs="6" sm="6" md="6" lg="6">
-                        <b-card class="mb-0 text-center">
+                        <b-card class="mb-0 text-center" style="height: 185px;">
                             <table style="width: 100%;">    
                                 <div v-if="performance.length == 0" class="mb-2">
                                     <center>
@@ -269,14 +262,6 @@
                                 </tr>
                             </table>
                         </b-card>
-                        <b-button
-                        class="glyph-icon simple-icon-trash"
-                            v-b-modal.modalright
-                            variant="danger"
-                            size="sm"
-                            style="width: 100%;"
-                            @click="movePageAdd()">
-                        </b-button>
                         </b-colxx>
                     </b-row>
                 </b-colxx>
@@ -315,7 +300,7 @@
             <b-card class="mb-4">
                 <b-card-title>{{ detail.name }}</b-card-title>
                 <h6>
-                    <b-badge class="mb-4" pill variant="success">{{ detail.category.name }}</b-badge> 
+                    <b-badge class="mb-4" pill variant="success">{{ katPro }}</b-badge> 
                 </h6>
                 <p class="text text-medium mb-4" v-if="detail.tgl_reminder != ''">{{ detail.tgl_reminder }}</p>
                 <p class="text text-medium mb-4" style="font-style:italic;" v-else>No date selected</p>
@@ -323,18 +308,11 @@
                 <b-row>
                     <b-colxx xxs="12" xl="12">
                         <div v-if="katArea.length > 0">
+                            <div v-for="area in katArea" :key="area">
                                 <h6>
-                                    <b-badge class="mb-0" pill variant="secondary">{{ detail.category.name }}</b-badge> 
+                                    <b-badge class="mb-0" pill variant="secondary">{{ area }}</b-badge> 
                                 </h6>
-                                <h6>
-                                    <b-badge class="mb-0" pill variant="secondary">{{ detail.category.name }}</b-badge> 
-                                </h6>
-                                <h6>
-                                    <b-badge class="mb-0" pill variant="secondary">{{ detail.category.name }}</b-badge> 
-                                </h6>
-                                <h6>
-                                    <b-badge class="mb-0" pill variant="secondary">{{ detail.category.name }}</b-badge> 
-                                </h6>
+                            </div>
                         </div>
                         <div v-else>
                             <p class="text text-medium mb-4" style="font-style:italic;">No data of area categories</p>
@@ -364,6 +342,7 @@ export default {
             katArea: [],
             namaCust: '',
             tlpCust: '',
+            katPro: '',
 			performance: [],
 			recent:[],
 			previous:[],
@@ -529,7 +508,6 @@ export default {
     async mounted() {
         this.proId = this.$route.query.id;
         this.period = 'M';
-		console.log(this.proId);
 		fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
 		method: 'POST',
 		headers: {
@@ -575,26 +553,24 @@ export default {
 		.then(resp => {
             this.detail = resp;
             console.log(resp);
-            console.log(this.detail.name);
-			if(this.proId == undefined){
+			if(this.detail == null){
 				window.location = window.location.origin +"/error?id=404&name=project";
 			}else{
+                this.isLoad = true;
 				this.katCust = this.detail.customer.category.name;
 				this.katHargaCust = this.detail.customer.priceCategory.name;
 				this.custId = this.detail.customer.id;
 				this.namaCust = this.detail.customer.name;
                 this.tlpCust = this.detail.customer.workPhone;
+                this.katPro = this.detail.category.name;
                 this.katArea = this.detail.areaCategories;
                 if(!this.detail.tgl_reminder){
                     this.detail.tgl_reminder = '';
                 }
+                this.fetching();
 			}
 		})
-        this.fetching();
 
-        setTimeout(() => {
-            this.isLoad = true
-        }, 50)
     }
 }
 </script>

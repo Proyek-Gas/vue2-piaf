@@ -77,7 +77,7 @@
         </b-form>
     </b-colxx>
     <b-colxx xxs="12" xl="4" class="col-right">
-            <b-card class="mb-4">
+            <b-card class="mb-4" style="position: sticky; top: 20vh">
                 <b-card-title>Summary</b-card-title>
                 <p v-if="name != ''" class="mb-3">{{ name }}</p>
                 <p v-else class="text-muted mb-3" style="font-style: italic;">Your name</p>
@@ -194,7 +194,6 @@ export default {
             required,
             minLength: minLength(3),
             maxLength: maxLength(50),
-            alpha
         },
         limit: {
             numeric,
