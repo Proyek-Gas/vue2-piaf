@@ -59,6 +59,11 @@ const routes = [
             // meta: { roles: [UserRole.Admin, UserRole.Editor] },
           },
           {
+            path: 'projectTable/pdetail/edit',
+            component: () => import(/* webpackChunkName: "piaf" */ './views/app/project/form/editProject'),
+            // meta: { roles: [UserRole.Admin, UserRole.Editor] },
+          },
+          {
             path: 'projectTable/add',
             component: () => import(/* webpackChunkName: "piaf" */ './views/app/project/form/addProject'),
             // meta: { roles: [UserRole.Admin, UserRole.Editor] },

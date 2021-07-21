@@ -59,7 +59,7 @@
                 <b-dropdown text="Actions" variant="outline-secondary">
                   <b-dropdown-item @click="movePageDetail(props.rowData.id)">Detail</b-dropdown-item>
                   <b-dropdown-item @click="movePageEdit(props.rowData.id)">Edit</b-dropdown-item>
-                  <b-dropdown-item @click="deletePro(props.rowData.id)">Delete</b-dropdown-item>
+                  <b-dropdown-item @click="showModal(props.rowData.id,'modalbasic')">Delete</b-dropdown-item>
               </b-dropdown>
             </template>
           </vuetable>
@@ -86,7 +86,15 @@
         <span>Delete</span>
       </v-contextmenu-item>
     </v-contextmenu>
+    <b-modal id="modalbasic" ref="modalbasic" title="Konfirmasi">
+        Anda yakin ingin menghapus project {{proId}} ?
+        <template slot="modal-footer">
+            <b-button variant="primary" @click="deletePro(proId,'modalbasic')" class="mr-1">OK</b-button>
+            <b-button variant="danger" @click="hideModal('modalbasic')">Cancel</b-button>
+        </template>
+    </b-modal>
   </div>
+  
 </template>
 <script>
 import Vuetable from "vuetable-2/src/components/Vuetable";
@@ -169,6 +177,7 @@ export default {
       from: 0,
       to: 0,
       total: 0,
+      proId:0,
       data: [],
       selectedItems: [],
       tag: []
@@ -243,6 +252,56 @@ export default {
     movePageEdit(val){
 			window.location = window.location.origin+"/app/datatable/projectTable/pDetail/edit?id="+val;
 		},
+    deletePro(val, refname){
+        fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                query: `
+                    mutation{
+                        deleteProject(project_id:${val}){
+                            status
+                            message
+                        }
+                    }
+                `,
+            }),
+        })
+        .then(function(response) {
+            return response.json()
+        })
+        .then(function(text) {
+            console.log(text.data);
+            return text.data.deleteProject;
+        })
+        .then(resp => {
+            console.log(resp.message);
+            if(resp.status.toLowerCase() == "success"){
+              this.$toast(resp.message, {
+                  type: "success",
+                  hideProgressBar: true,
+                  timeout: 2000
+              });
+              this.$refs[refname].hide();
+              this.$refs.vuetable.refresh();
+            }else{
+                this.$toast(resp.message, {
+                    type: "error",
+                    hideProgressBar: true,
+                    timeout: 2000
+                });
+            }
+        });
+    },
+    hideModal(refname){
+        this.$refs[refname].hide()
+    },
+    showModal(val,refname){
+        this.proId = val;
+        this.$refs[refname].show()
+    },
     onPaginationData(paginationData) {
       this.from = paginationData.from;
       this.to = paginationData.to;

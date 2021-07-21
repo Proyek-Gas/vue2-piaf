@@ -298,6 +298,31 @@
         </b-colxx>
         <b-colxx xxs="12" xl="4" class="col-right">
             <b-card class="mb-4">
+                <b-card-title class="mb-5">Details
+                <div class="top-right-button-container">
+                    <b-button
+                        class="glyph-icon simple-icon-pencil"
+                        v-b-modal.modalright
+                        variant="warning"
+                        size="sm"
+                        @click="movePageEdit(proId)">
+                    </b-button>
+                    <b-button
+                        class="glyph-icon simple-icon-trash"
+                        v-b-modal.modalright
+                        variant="danger"
+                        size="sm"
+                        v-b-modal.modalbasic>
+                    </b-button>
+                    <b-modal id="modalbasic" ref="modalbasic" title="Konfirmasi">
+                        Anda yakin ingin menghapus project dengan judul {{ detail.name }} ?
+                        <template slot="modal-footer">
+                            <b-button variant="primary" @click="deletePro(proId,'modalbasic')" class="mr-1">OK</b-button>
+                            <b-button variant="danger" @click="hideModal('modalbasic')">Cancel</b-button>
+                        </template>
+                    </b-modal>
+                </div>
+                </b-card-title>
                 <b-card-title>{{ detail.name }}</b-card-title>
                 <h6>
                     <b-badge class="mb-4" pill variant="success">{{ katPro }}</b-badge> 
@@ -352,6 +377,57 @@ export default {
         }
     },
     methods: {
+        movePageEdit(val){
+            window.location = window.location.origin+"/app/datatable/projectTable/pDetail/edit?id="+val;
+        },
+        deletePro(val,refname){
+            fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    query: `
+                        mutation{
+                            deleteProject(project_id:${val}){
+                                status
+                                message
+                            }
+                        }
+                    `,
+                }),
+            })
+            .then(function(response) {
+                return response.json()
+            })
+            .then(function(text) {
+                console.log(text.data);
+                return text.data.deleteProject;
+            })
+            .then(resp => {
+                console.log(resp.message);
+					if(resp.status.toLowerCase() == "success"){
+                        this.$toast(resp.message, {
+                            type: "success",
+                            hideProgressBar: true,
+                            timeout: 2000
+                        });
+                        setTimeout(() => {
+                            window.location = window.location.origin+"/app/datatable/projectTable";
+                        }, 1000);
+                    }else{
+                        this.$toast(resp.message, {
+                            type: "error",
+                            hideProgressBar: true,
+                            timeout: 2000
+                        });
+                    }
+            });
+            this.hideModal(refname);
+        },
+        hideModal(refname){
+            this.$refs[refname].hide()
+        },
         handleClick(n){
             this.period = n;
             this.recent = [];
@@ -507,6 +583,8 @@ export default {
     },
     async mounted() {
         this.proId = this.$route.query.id;
+        console.log(this.proId);
+        if(this.proId){
         this.period = 'M';
 		fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
 		method: 'POST',
@@ -517,7 +595,6 @@ export default {
 			query: `
 				query{
 					projectDetail(project_id:${this.proId}){
-						id
 						name
 						customer{
                             id
@@ -547,8 +624,7 @@ export default {
 			return response.json()
 		})
 		.then(function(text) {
-            console.log(text.data.projectDetail);
-			return text.data.projectDetail;
+            return text.data.projectDetail;
 		})
 		.then(resp => {
             this.detail = resp;
@@ -570,6 +646,9 @@ export default {
                 this.fetching();
 			}
 		})
+        }else{
+            window.location = window.location.origin +"/error?id=404&name=project";
+        }
 
     }
 }
