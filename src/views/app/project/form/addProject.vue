@@ -96,7 +96,7 @@
                 <b-row>
                     <b-colxx xxs="6" class="text-center">
                     <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip">
-                        <b-button type="submit" variant="primary" style="width: 100%">{{ $t('forms.submit') }}</b-button>
+                        <b-button type="submit" variant="primary" style="width: 100%">Add</b-button>
                     </b-form>
                     </b-colxx>
                     <b-colxx xxs="6" class="text-center">

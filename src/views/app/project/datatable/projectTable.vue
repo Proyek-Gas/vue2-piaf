@@ -59,7 +59,7 @@
                 <b-dropdown text="Actions" variant="outline-secondary">
                   <b-dropdown-item @click="movePageDetail(props.rowData.id)">Detail</b-dropdown-item>
                   <b-dropdown-item @click="movePageEdit(props.rowData.id)">Edit</b-dropdown-item>
-                  <b-dropdown-item @click="showModal(props.rowData.id,'modalbasic')">Delete</b-dropdown-item>
+                  <b-dropdown-item @click="showModal(props.rowData.name,'modalbasic')">Delete</b-dropdown-item>
               </b-dropdown>
             </template>
           </vuetable>
@@ -87,7 +87,7 @@
       </v-contextmenu-item>
     </v-contextmenu>
     <b-modal id="modalbasic" ref="modalbasic" title="Konfirmasi">
-        Anda yakin ingin menghapus project {{proId}} ?
+        Anda yakin ingin menghapus project {{ proName }} ?
         <template slot="modal-footer">
             <b-button variant="primary" @click="deletePro(proId,'modalbasic')" class="mr-1">OK</b-button>
             <b-button variant="danger" @click="hideModal('modalbasic')">Cancel</b-button>
@@ -177,7 +177,7 @@ export default {
       from: 0,
       to: 0,
       total: 0,
-      proId:0,
+      proName: "",
       data: [],
       selectedItems: [],
       tag: []
@@ -299,7 +299,7 @@ export default {
         this.$refs[refname].hide()
     },
     showModal(val,refname){
-        this.proId = val;
+        this.proName = val;
         this.$refs[refname].show()
     },
     onPaginationData(paginationData) {

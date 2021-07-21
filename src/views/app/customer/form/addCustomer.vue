@@ -111,15 +111,15 @@
                     <p v-if="kota != ''" class="mb-3">{{ kota }}</p>
                     <p v-else class="text-muted mb-3" style="font-style: italic;">Your city</p>
                 <b-row>
-                <b-colxx xxs="6" class="text-center">
-                <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip">
-                    <b-button type="submit" variant="primary" style="width: 100%">Add</b-button>
-                </b-form>
-                </b-colxx>
-                <b-colxx xxs="6" class="text-center">
-                <b-button @click="onFormReset" type="submit" variant="danger" style="width: 100%">Reset</b-button>
-                </b-colxx>
-            </b-row>
+                    <b-colxx xxs="6" class="text-center">
+                    <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip">
+                        <b-button type="submit" variant="primary" style="width: 100%">Add</b-button>
+                    </b-form>
+                    </b-colxx>
+                    <b-colxx xxs="6" class="text-center">
+                    <b-button @click="onFormReset" type="submit" variant="danger" style="width: 100%">Reset</b-button>
+                    </b-colxx>
+                </b-row>
             </b-card>
         </b-colxx>
 </b-row>
