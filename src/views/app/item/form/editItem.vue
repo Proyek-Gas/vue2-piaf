@@ -1,7 +1,7 @@
 <template>
 <b-row>
     <b-colxx xxs="12">
-        <h1>Add Item</h1>
+        <h1>Edit Item</h1>
         <div class="separator mb-5"></div>
     </b-colxx>
     <b-colxx xxs="12" xl="8">
@@ -45,12 +45,12 @@
                     <vue-autosuggest
                         class="autosuggest"
                         :input-props="{id:'autosuggest__input2', class:'form-control', placeholder:'Ketik nama agent'}"
-                        :suggestions="filteredOptions"
+                        :suggestions="filteredOptions2"
                         :render-suggestion="renderSuggestion"
                         :get-suggestion-value="getSuggestionValue"
                         :limit="6"
                         clearable
-                        v-model="warna" 
+                        v-model="agent" 
                         @selected="onAutosuggestSelected"
                         @input="onAutoSuggestInputChange"
                     >
@@ -67,12 +67,12 @@
                     <vue-autosuggest
                         class="autosuggest"
                         :input-props="{id:'autosuggest__input3', class:'form-control', placeholder:'Ketik nama thinner'}"
-                        :suggestions="filteredOptions"
+                        :suggestions="filteredOptions3"
                         :render-suggestion="renderSuggestion"
                         :get-suggestion-value="getSuggestionValue"
                         :limit="6"
                         clearable
-                        v-model="warna" 
+                        v-model="thin" 
                         @selected="onAutosuggestSelected"
                         @input="onAutoSuggestInputChange"
                     >
@@ -324,12 +324,12 @@ export default {
         const filteredData = this.dataWarna.filter(option => {
             return option.ind_name.toLowerCase().indexOf(text.toLowerCase()) > -1 || option.eng_name.toLowerCase().indexOf(text.toLowerCase()) > -1 || option.id_ral.toLowerCase().indexOf(text.toLowerCase()) > -1;
         });
-        const filteredData2 = this.dataAgent.filter(option => {
-            return option.ind_name.toLowerCase().indexOf(text.toLowerCase()) > -1;
-        });
-        const filteredData3 = this.dataThin.filter(option => {
-            return option.ind_name.toLowerCase().indexOf(text.toLowerCase()) > -1;
-        });
+        // const filteredData2 = this.dataWarna.filter(option => {
+        //     return option.ind_name.toLowerCase().indexOf(text.toLowerCase()) > -1 || option.eng_name.toLowerCase().indexOf(text.toLowerCase()) > -1 || option.id_ral.toLowerCase().indexOf(text.toLowerCase()) > -1;
+        // });
+        // const filteredData3 = this.dataWarna.filter(option => {
+        //     return option.ind_name.toLowerCase().indexOf(text.toLowerCase()) > -1 || option.eng_name.toLowerCase().indexOf(text.toLowerCase()) > -1 || option.id_ral.toLowerCase().indexOf(text.toLowerCase()) > -1;
+        // });
 
         // Store data in one property, and filtered in another
         this.filteredOptions = [
@@ -337,16 +337,16 @@ export default {
             data: filteredData
             }
         ];
-        this.filteredOptions2 = [
-            {
-            data: filteredData2
-            }
-        ];
-        this.filteredOptions3 = [
-            {
-            data: filteredData3
-            }
-        ];
+        // this.filteredOptions2 = [
+        //     {
+        //     data: filteredData2
+        //     }
+        // ];
+        // this.filteredOptions3 = [
+        //     {
+        //     data: filteredData3
+        //     }
+        // ];
         },
         onAutosuggestSelected(item) {
             this.selected = item;
@@ -379,7 +379,6 @@ export default {
         getSuggestionValue(suggestion) {
             this.warna = suggestion.item.ind_name;
             this.hex = suggestion.item.hex_code;
-            console.log(this.hex);
             this.select1 = 1;
             return suggestion.item.ind_name;
         },
@@ -454,24 +453,36 @@ export default {
             if(this.detail == null){
 				window.location = window.location.origin +"/error?id=404&name=item";
 			}else{
-                console.log("aman");
-                this.warna = this.detail.color.ind_name;
-                this.hex = this.detail.color.hex_code;
-                this.itemCode = this.detail.no;
-                this.itemName = this.detail.name;
-                this.itemCate = this.detail.itemCategory.name;
-                this.dataHarga = this.detail.detailSellingPrice;
-                if(!this.detail.ratio2){
-                        this.liter = "";
+                if(this.detail.packaging_name && this.detail.type){
+                    console.log("aman");
+                    this.warna = this.detail.color.ind_name;
+                    this.hex = this.detail.color.hex_code;
+                    this.itemCode = this.detail.no;
+                    this.itemName = this.detail.name;
+                    this.itemCate = this.detail.itemCategory.name;
+                    this.dataHarga = this.detail.detailSellingPrice;
+                    if(!this.detail.ratio2){
+                         this.liter = "";
+                    }else{
+                        this.liter = this.detail.ratio2;
+                    }
+                    if(this.detail.unit2Name == "GLN"){
+                        this.kemas = 1;
+                    }else{
+                        this.kemas = 2;
+                    }
+                    console.log(this.dataHarga);
                 }else{
-                    this.liter = this.detail.ratio2;
+                    this.$toast("Item ini tidak ada dalam DB", {
+                        type: "warning",
+                        hideProgressBar: true,
+                        timeout: 2000
+                    });
+                    console.log("masuk");
+                    setTimeout(() => {
+                        window.location = window.location.origin+"/app/datatable/itemTable/add?id="+this.itemId;
+                    }, 1000);
                 }
-                if(this.detail.unit2Name == "GLN"){
-                    this.kemas = 1;
-                }else{
-                    this.kemas = 2;
-                }
-                console.log(this.dataHarga);
             }
         })
         }else{
@@ -555,6 +566,57 @@ export default {
         .then(resp => {
             this.dataTipe = resp;
             this.tipe = this.dataTipe[0].id;
+        })
+        fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                query: `
+                    query{
+                        items{
+                            count
+                            items{
+                                no
+                                name
+                                itemCategory{
+                                    id
+                                    name
+                                }
+                                color{
+                                    id_ral
+                                    hex_code
+                                    ind_name
+                                    eng_name
+                                }
+                                type{
+                                    id
+                                    name
+                                }
+                            }
+                        }
+                    }
+                `,
+            }),
+        })
+        .then(function(response) {
+            return response.json()
+        })
+        .then(function(text) {
+            return text.data.items.items;
+        })
+        .then(resp => {
+            this.tmp = resp;
+            for (let i = 0; i < this.tmp.length; i++) {
+                if(this.tmp[i].type.id == 1){
+                    this.dataAgent = this.tmp[i];
+                }else if(this.tmp[i].type.id == 3){
+                    this.dataThin = this.tmp[i];
+                }
+                
+            }
+            
         })
     }
 };

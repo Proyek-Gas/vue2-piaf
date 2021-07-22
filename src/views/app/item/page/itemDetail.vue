@@ -2,7 +2,7 @@
 <div v-if="isLoad">
     <b-row>
         <b-colxx xxs="12">
-            <h1>Customer Detail</h1>
+            <h1>Item Detail</h1>
             <piaf-breadcrumb />
             <div class="separator mb-5"></div>
         </b-colxx>
@@ -12,17 +12,20 @@
             <b-row>
                 <b-colxx md="6" sm="12" lg="6" xxs="12">
                 <b-card class="mb-4 text-center">
-                    <img
+                    <div
                         src="/assets/img/profiles/l-1.jpg"
                         alt="Card image cap"
                         class="img-thumbnail list-thumbnail rounded-circle border-0 mb-4"
-                    />
+                        :style="returnColor(hex)">
+                        <label class="mt-3">{{detail.color.ind_name}}</label><br>
+                        <label>{{detail.color.eng_name}}</label>
+                    </div>
+                    <p class="text-muted text-small mb-2">{{ detail.no }}</p>
                     <h6 class="mb-1 card-subtitle">{{ detail.name }}</h6>
-                    <p class="text-muted text-small mb-4"></p>
-                    <h6>
+                    <!-- <h6>
                         <b-badge class="mb-4" pill variant="warning">{{ katCust }}</b-badge>
                         <b-badge class="mb-4" pill variant="secondary">{{ katHargaCust }}</b-badge>
-                    </h6>
+                    </h6> -->
                 </b-card>
                 </b-colxx>
                 <b-colxx xxs="12" sm="12" md="6" lg="6" class="mb-3">
@@ -294,21 +297,20 @@
                         v-b-modal.modalright
                         variant="warning"
                         size="sm"
-                        @click="movePageEdit(custId)">
+                        @click="movePageEdit(itemId)">
                     </b-button>
                 </div>
                 </b-card-title>
-                <p class="text text-medium mb-2">ID Pelanggan</p>
-                <p class="mb-3">{{ custId }}</p>
-                <p class="text text-medium mb-2">Email</p>
-                <p v-if="detail.email != ''" class="mb-3">{{ detail.email }}</p>
+                <p class="text text-medium mb-2">Tipe</p>
+                <p class="mb-3">{{ detail.type.name }}</p>
+                <p class="text text-medium mb-2">Kategori</p>
+                <p v-if="detail.itemCategory.name != ''" class="mb-3">{{ detail.itemCategory.name }}</p>
                 <p v-else class="text-muted mb-3" style="font-style: italic;">No data</p>
-                <p class="text text-medium mb-2">Alamat</p>
-                <p class="mb-3">{{ detail.billStreet }}</p>
-                <p class="text text-medium mb-2">Limit</p>
-                <p class="mb-3">{{ shortNumber(detail.customerLimitAmountValue) }}</p>
-                <p class="text text-medium mb-2">NPWP</p>
-                <p class="mb-3">{{ detail.npwpNo }}</p>
+                <p class="text text-medium mb-2">VS</p>
+                <p v-if="detail.vs_volume_solid != null" class="mb-3">{{ detail.vs_volume_solid }}</p>
+                <p v-else class="text-muted mb-3" style="font-style: italic;">No data</p>
+                <p class="text text-medium mb-2">Balance</p>
+                <p class="mb-3">{{ detail.balance }}</p>
             </b-card>
         </b-colxx>
     </b-row>
@@ -326,11 +328,12 @@ export default {
         return {
             isLoad: false,
             custId: 0,
+            itemId: 0,
 			period: '',
+
+        hex: "",
 			detail: [],
-			katCust: "",
-			katHargaCust: "",
-            period: '',
+
 			performance: [],
 			recent:[],
 			previous:[],
@@ -341,7 +344,13 @@ export default {
     },
     methods: {
         movePageEdit(val){
-            window.location = window.location.origin+"/app/datatable/customerTable/cDetail/edit?id="+val;
+            window.location = window.location.origin+"/app/datatable/itemTable/iDetail/edit?id="+val;
+        },
+        returnColor(a){
+            const style = {
+                background: "#"+a,
+            }
+            return style
         },
         handleClick(n){
             this.period = n;
@@ -494,61 +503,91 @@ export default {
 					this.arrow.push(0);
 				}
 			}
-		}
+		},
     },
     async mounted() {
-        this.custId = this.$route.query.id;
-		this.period = 'M';
-		fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
-		method: 'POST',
-		headers: {
-		'Content-Type': 'application/json',
-		},
-		body: JSON.stringify({
-			query: `
-				query{ customerDetail(customer_id:"${this.custId}") {
-				name
-				email
-				npwpNo
-				billStreet
-				category{
-					name
-				}
-				priceCategory{
-					name
-				}
-				customerLimitAmountValue
-				}
-			}
-			`,
-		})
-		})
-		.then(function(response) {
-			return response.json()
-		})
-		.then(function(text) {
-            console.log(text.data);
-			return text.data.customerDetail;
-		})
-		.then(resp => {
-			this.detail = resp
-			if(this.detail == null){
-                console.log("masuk");
-                setTimeout(() => {
-                    window.location = window.location.origin +"/error?id=404&name=customer";
-                }, 50)
+        this.itemId = this.$route.query.id;
+        console.log(this.itemId);
+        if(this.itemId){
+        fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                query: `
+                    query{
+                        itemDetail(item_id:${this.itemId}){
+                            no
+                            name
+                            balance
+                            itemCategory{
+                                id
+                                name
+                            }
+                            vs_volume_solid
+                            color{
+                                id_ral
+                                hex_code
+                                ind_name
+                                eng_name
+                            }
+                            packaging_name
+                            liter
+                            agent_item_id
+                            ratio_agent
+                            unit2Name
+                            ratio2
+                            unit3Name
+                            ratio3
+                            type{
+                                id
+                                name
+                            }
+                            detailSellingPrice{
+                                priceCategory{
+                                    id
+                                    name
+                                }
+                                price
+                            }
+                        }
+                    }
+                `,
+            }),
+        })
+        .then(function(response) {
+            return response.json()
+        })
+        .then(function(text) {
+            console.log(text.data.itemDetail);
+            return text.data.itemDetail;
+        })
+        .then(resp => {
+            this.detail = resp;
+            console.log(this.detail);
+            if(this.detail == null){
+				window.location = window.location.origin +"/error?id=404&name=item";
 			}else{
-                this.isLoad = true;
-				console.log(this.detail.name);
-				this.nama = this.detail.name;
-				this.katCust = this.detail.category.name;
-				this.katHargaCust = this.detail.priceCategory.name;
-                if(!this.detail.email){
-                    this.detail.email = '';
+                if(this.detail.packaging_name && this.detail.type){
+                    console.log("aman");
+                    this.isLoad = true; 
+                    this.hex = this.detail.color.hex_code;
+                }else{
+                    this.$toast("Item ini tidak ada dalam DB", {
+                        type: "warning",
+                        hideProgressBar: true,
+                        timeout: 2000
+                    });
+                    setTimeout(() => {
+                        window.location = window.location.origin +"/app/datatable/itemTable/add";
+                    }, 1000);
                 }
-                this.fetching();
-			}
-		})
+            }
+        })
+        }else{
+            window.location = window.location.origin +"/error?id=404&name=item";
+        }
     }
 }
 </script>

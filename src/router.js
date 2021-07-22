@@ -74,6 +74,11 @@ const routes = [
             // meta: { roles: [UserRole.Admin, UserRole.Editor] },
           },
           {
+            path: 'schemeTable/add',
+            component: () => import(/* webpackChunkName: "piaf" */ './views/app/scheme/form/addScheme'),
+            // meta: { roles: [UserRole.Admin, UserRole.Editor] },
+          },
+          {
             path: 'itemTable',
             component: () => import(/* webpackChunkName: "piaf" */ './views/app/item/datatable/itemTable'),
             // meta: { roles: [UserRole.Admin, UserRole.Editor] },
@@ -81,6 +86,16 @@ const routes = [
           {
             path: 'itemTable/add',
             component: () => import(/* webpackChunkName: "piaf" */ './views/app/item/form/addItem'),
+            // meta: { roles: [UserRole.Admin, UserRole.Editor] },
+          },
+          {
+            path: 'itemTable/iDetail',
+            component: () => import(/* webpackChunkName: "piaf" */ './views/app/item/page/itemDetail'),
+            // meta: { roles: [UserRole.Admin, UserRole.Editor] },
+          },
+          {
+            path: 'itemTable/iDetail/edit',
+            component: () => import(/* webpackChunkName: "piaf" */ './views/app/item/form/editItem'),
             // meta: { roles: [UserRole.Admin, UserRole.Editor] },
           },
           {

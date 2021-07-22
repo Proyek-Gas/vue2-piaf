@@ -32,6 +32,7 @@ import VueMask from 'v-mask'
 import Toast from "vue-toastification";
 // Import the CSS or use your own!
 import "vue-toastification/dist/index.css";
+import VueCurrencyFilter from 'vue-currency-filter'
 
 
 Vue.use(Toast);
@@ -39,6 +40,16 @@ Vue.use(VueMask);
 Vue.use(BootstrapVue);
 Vue.use(IconsPlugin);
 Vue.use(VueI18n);
+Vue.use(VueCurrencyFilter,
+  {
+    symbol : 'Rp.',
+    thousandsSeparator: '.',
+    fractionCount: 0,
+    fractionSeparator: ',',
+    symbolPosition: 'front',
+    symbolSpacing: true
+});
+ 
 const messages = { en: en, es: es };
 const locale = getCurrentLanguage();
 const i18n = new VueI18n({

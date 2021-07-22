@@ -127,7 +127,8 @@
     "quoteTable" : "Table Quote",
     "detail": "Customer Detail",
     "cDetail": "Customer Detail",
-    "pDetail": "Project Detail"
+    "pDetail": "Project Detail",
+    "iDetail": "Item Detail"
   },
   "dashboards": {
     "pending-orders": "Pending Orders",
