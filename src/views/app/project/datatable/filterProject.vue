@@ -21,6 +21,7 @@
                   :bootstrap-styling="true"
                   placeholder="Tanggal Awal"
                   v-model="dataReturn.dateAwal"
+                  format ="yyyy-MM-dd"
                 ></datepicker>
                   <br>
                   Tanggal Akhir
@@ -28,8 +29,31 @@
                   :bootstrap-styling="true"
                   placeholder="Tanggal Akhir"
                   v-model="dataReturn.dateAkhir"
+                   format ="yyyy-MM-dd"
                 ></datepicker>
+                <!-- <date-range-picker
+            ref="picker"
+            :opens="opens"
+            :locale-data="{ firstDay: 1, format: 'dd-mm-yyyy HH:mm:ss' }"
+            :minDate="minDate" :maxDate="maxDate"
+            :singleDatePicker="singleDatePicker"
+            :timePicker="timePicker"
+            :timePicker24Hour="timePicker24Hour"
+            :showWeekNumbers="showWeekNumbers"
+            :showDropdowns="showDropdowns"
+            :autoApply="autoApply"
+            v-model="dataReturn.dateRange"
+            @update="updateValues"
+            @toggle="checkOpen"
+            :linkedCalendars="linkedCalendars"
+            :dateFormat="dateFormat"
+    >
+        <template v-slot:input="picker" style="min-width: 350px;">
+            {{ picker.startDate | date }} - {{ picker.endDate | date }}
+        </template>
+    </date-range-picker> -->
             </b-form-group>
+
             <b-form-group label="Total" v-if="vueSelected == '4'">
                  Minimum :
                 <b-form-input type="number" v-model="dataReturn.minimum"  placeholder="Minimum"/>
@@ -43,6 +67,7 @@
                   <b-form-radio value="-1">All</b-form-radio>
             </b-form-radio-group>
         </b-colxx>
+
      </b-row>
      <template slot="modal-footer">
          <b-button variant="danger" @click="$emit('answers',null);hideModal('modalright');reset()">Reset</b-button>
@@ -54,11 +79,15 @@
 import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
 import Datepicker from "vuejs-datepicker";
+import DateRangePicker from 'vue2-daterange-picker'
+//you need to import the CSS manually
+import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
 
 export default {
   components: {
     "v-select": vSelect,
      datepicker: Datepicker,
+    // "date-range-picker" : DateRangePicker
   },
   data() {
     return {
@@ -93,7 +122,8 @@ export default {
          minimum :0,
          maximum :0,
          dateAwal : "",
-         dateAkhir :""
+         dateAkhir :"",
+         dateRange : []
       }
     };
   },
@@ -116,10 +146,10 @@ export default {
         maximum : 0,
          kategori : "",
          dateAwal : "",
-         dateAkhir :""
+         dateAkhir :"",
+         dateRange : []
       }
-    }
-
+    },
   },
   mounted(){
       fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
@@ -150,3 +180,4 @@ export default {
   }
 };
 </script>
+

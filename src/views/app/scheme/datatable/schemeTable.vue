@@ -334,6 +334,8 @@ export default {
         let cek = true;
         this.tag =[]
         if(newAnswer){
+          let cekFetch = false;
+          let status = -1;
           if(newAnswer.name != ""){
             this.data = this.data.filter(row => {
                 return row.name.toLowerCase().indexOf(newAnswer.name.toLowerCase())  !== -1 ;
@@ -342,11 +344,9 @@ export default {
               this.tag.push("Nama")
           }
           if(newAnswer.status != "-1"){
-            this.data = this.data.filter(row=>{
-              return parseInt(row.status) == parseInt(newAnswer.status);
-            })
+            cekFetch = true
+            status = parseInt(newAnswer.status)
             cek = false;
-            console.log(parseInt(newAnswer.status))
             this.tag.push("Status")
           }
 
@@ -357,7 +357,9 @@ export default {
               })
             this.tag.push("Warna")
           }
-          // this.fetchAgain(kategori,status)
+          if(cekFetch){
+            this.fetchAgain(status)
+          }
         }
         if(cek){
           this.search = ""
@@ -366,10 +368,52 @@ export default {
 
          this.$refs.vuetable.refresh()
     },
-    //  fetchAgain(kategori, status){
+    fetchAgain(status){
 
+      fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: `
+            query{
+          scheme(filter:{status : ${status}}){
+          count
+            schemes{
+              id
+            color{
+              id_ral
+              eng_name
+              hex_code
+              ind_name
+            }
+            name
+            notes
+            status
+            jum_item
+            min_coat
+            max_coat
+            min_dft
+            max_dft
+            min_loss
+            max_loss
+            }
+          }
+        }
+              `
+      }),
+    }).then(function(response) {
+        return response.json()
+    }).then(function(text) {
+        return text.data.scheme.schemes;
+    })
+    .then(resp => {
+        this.data = resp;
+        this.$refs.vuetable.refresh()
+      });
 
-    // }
+    }
   },
 
   computed: {

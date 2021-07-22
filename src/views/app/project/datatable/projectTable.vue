@@ -378,12 +378,14 @@ export default {
       this.$refs.vuetable.refresh();
     },
 
-    onUpdateAnswer: function(newAnswer){
+     onUpdateAnswer: function(newAnswer){
         let cek = true;
         this.tag =[]
         if(newAnswer){
           let status = null
           let kategori = null
+          let dtAwal = null
+          let dtAkhir = null
           let cekFetch = true;
           if(newAnswer.status != "-1"){
               status = parseInt(newAnswer.status)
@@ -393,9 +395,11 @@ export default {
           if(newAnswer.name != ""){
               this.search = newAnswer.name;
               cek = false;
+              cekFetch = false
               this.tag.push("Nama")
           }
           if(newAnswer.kategori !=""){
+            console.log(newAnswer.kategori)
              kategori = parseInt(newAnswer.kategori)
              cek = false
              this.tag.push("Kategori")
@@ -423,118 +427,166 @@ export default {
             cek = false;
             const val1 = newAnswer.minimum;
             const val2 = newAnswer.maximum
-            if(val1< val2){
-                   this.data = this.data.filter(row => {
-                    return row.lastQuote.total>= val1 && row.lastQuote.total<= val2;
-                  });
+                if(val1< val2){
+                      this.data = this.data.filter(row => {
+                        return row.lastQuote.total>= val1 && row.lastQuote.total<= val2;
+                      });
+                }
             cekFetch = false
               this.tag.push("Total")
             }
 
-          if( newAnswer.dateAkhir!= "" && newAnswer.dateAwal != ""){
+
+          // if( newAnswer.dateAkhir!= "" && newAnswer.dateAwal != ""){
+          //   cek = false;
+          //   const dt1 = new Date(newAnswer.dateAkhir);
+          //   const dt2 = new Date(newAnswer.dateAwal);
+          //   if(dt1.getTime()> dt2.getTime()){
+          //        this.data = this.data.filter(row =>{
+          //         return new Date(row.tgl_reminder).getTime()>= dt2.getTime() && new Date(row.tgl_reminder).getTime()<=dt1.getTime();
+          //       })
+          //     this.tag.push("Tanggal Reminder")
+          //     cekFetch = false
+          //   }
+          // }
+
+          // if( newAnswer.dateAkhir!= "" && newAnswer.dateAwal == ""){
+          //   cek = false;
+          //   const dt1 = new Date(newAnswer.dateAkhir);
+          //   this.data = this.data.filter(row =>{
+          //       return new Date(row.tgl_reminder).getTime()<=dt1.getTime();
+          //     })
+          //   this.tag.push("tanggal reminder")
+          //   cekFetch = false
+          // }
+
+          // if( newAnswer.dateAkhir== "" && newAnswer.dateAwal != ""){
+          //   cek = false;
+          //   const dt2 = new Date(newAnswer.dateAwal);
+          //     this.data = this.data.filter(row =>{
+          //       return new Date(row.tgl_reminder).getTime()>= dt2.getTime();
+          //     })
+          //   this.tag.push("tanggal reminder")
+          //   cekFetch = false
+
+          // }
+
+          if(newAnswer.dateAwal != ""){
+            //Sat 02 Jul .....
+            // 2021-07-21
+            //""
+           // dtAwal =new Date( this.formatDate(newAnswer.dtAwal)).toISOString()
+            dtAwal =`date_min:"${ this.formatDate(newAnswer.dateAwal)}"`
             cek = false;
-            const dt1 = new Date(newAnswer.dateAkhir);
-            const dt2 = new Date(newAnswer.dateAwal);
-            if(dt1.getTime()> dt2.getTime()){
-                 this.data = this.data.filter(row =>{
-                  return new Date(row.tgl_reminder).getTime()>= dt2.getTime() && new Date(row.tgl_reminder).getTime()<=dt1.getTime();
-                })
-              this.tag.push("Tanggal Reminder")
-              cekFetch = false
-            }
+            this.tag.push("Tanggal Reminder dateMin")
+          }else{
+            dtAwal = `date_min:null`
           }
 
-          if( newAnswer.dateAkhir!= "" && newAnswer.dateAwal == ""){
+          console.log(dtAwal)
+
+           if(newAnswer.dateAkhir != ""){
+           // dtAkhir = new Date(this.formatDate(newAnswer.dtAkhir)).toISOString()
+           dtAkhir = `date_max:"${this.formatDate(newAnswer.dateAkhir)}"`
             cek = false;
-            const dt1 = new Date(newAnswer.dateAkhir);
-            this.data = this.data.filter(row =>{
-                return new Date(row.tgl_reminder).getTime()<=dt1.getTime();
-              })
-            this.tag.push("tanggal reminder")
-            cekFetch = false
+            this.tag.push("Tanggal Reminder dateMax")
+          }else{
+            dtAkhir = `date_max:null`
           }
-
-          if( newAnswer.dateAkhir== "" && newAnswer.dateAwal != ""){
-            cek = false;
-            const dt2 = new Date(newAnswer.dateAwal);
-              this.data = this.data.filter(row =>{
-                return new Date(row.tgl_reminder).getTime()>= dt2.getTime();
-              })
-            this.tag.push("tanggal reminder")
-            cekFetch = false
-
-          }
-
-
-
+          console.log(dtAkhir)
           if(cekFetch){
-             this.fetchAgain(kategori,status)
+            console.log("woy")
+             this.fetchAgain(kategori,status,dtAwal,dtAkhir)
           }
         }
+        console.log("wy")
         if(cek){
+          console.log("dy")
           this.search = ""
           this.data = this.dataClone
         }
          this.$refs.vuetable.refresh()
-      }
-    },
-     fetchAgain(kategori, status){
+      },
 
-            fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              query: `
-                query {projects(filter : {category : ${kategori} status: ${status}}) {
-                count
-                projects{
-                  name
-                    id
-                    status
-                    category {
-                        id
-                        name
-                    }
-                    status
-                    lastQuote{
-                        total
-                        id
-                        status{
-                          name
+
+      fetchAgain(kategori, status,dtAwal, dtAkhir){
+
+              fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                query: `
+                  query {projects(filter : { date :{
+                     ${dtAwal}
+                     ${dtAkhir}
+                  }}) {
+                  count
+                  projects{
+                    name
+                      id
+                      status
+                      category {
                           id
-                        }
-                        userCreate{
-                        id
-                        name
-                        photo
-                        role{
-                            id
+                          name
+                      }
+                      status
+                      lastQuote{
+                          total
+                          id
+                          status{
                             name
-                        }
-                        }
+                            id
+                          }
+                          userCreate{
+                          id
+                          name
+                          photo
+                          role{
+                              id
+                              name
+                          }
+                          }
 
-                    }
-      tgl_reminder
-                }
-                    }}
-          `
-          }),
-        }).then(function(response) {
-          console.log(response)
-            return response.json()
-        }).then(function(text) {
-          console.log(text)
-            return text.data.projects.projects;
-        })
-        .then(resp => {
+                      }
+        tgl_reminder
+                  }
+                      }}
+            `
+            }),
+          }).then(function(response) {
+            console.log(response)
 
-            this.data = resp;
-             this.$refs.vuetable.refresh()
-          });
-    }
-  },
+              return response.json()
+          }).then(function(text) {
+            console.log(text)
+              return text.data.projects.projects;
+          })
+          .then(resp => {
+
+              this.data = resp;
+              this.$refs.vuetable.refresh()
+            });
+      },
+      formatDate(date) {
+          var d = new Date(date),
+              month = '' + (d.getMonth() + 1),
+              day = '' + d.getDate(),
+              year = d.getFullYear();
+
+          if (month.length < 2)
+              month = '0' + month;
+          if (day.length < 2)
+              day = '0' + day;
+
+          return [year, month, day].join('-');
+      }
+
+    },
+
+
+
 
   computed: {
     isSelectedAll() {
