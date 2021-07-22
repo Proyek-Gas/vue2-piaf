@@ -40,13 +40,11 @@
              @vuetable:cell-clicked="onCellClicked"
           >
             <template slot="avatar" slot-scope="props">
-              <router-link to="?" class="d-flex">
                 <div
                   src="/assets/img/profiles/l-1.jpg"
                   alt="Card image cap"
                   class="align-self-center list-thumbnail-letters rounded-circle small"
                 >{{showAvatar(props.rowData.name)}}</div>
-              </router-link>
             </template>
             <template slot="name" slot-scope="props">
                 <h4>{{props.rowData.name}}</h4>
@@ -401,22 +399,40 @@ export default {
            }
 
            if(newAnswer.priceCategory != ""){
-             console.log(newAnswer.priceCategory)
              cek = false;
-             this.data = this.data.filter(row=>{
-                if(row.priceCategory &&row.$index != -1){
-                  return row.priceCategory.id == newAnswer.priceCategory
+              let newdata = []
+              for(let i=0; i< newAnswer.priceCategory.length; i++){
+                for(let j=0; j< this.data.length; j++){
+                  if(this.data[j].priceCategory){
+                      if(newAnswer.priceCategory [i] == this.data[j].priceCategory.id){
+                          newdata.push(this.data[j])
+                        }
+                  }
                 }
-             })
+              }
+             this.data = newdata
              this.tag.push("Kategori harga")
            }
           if(newAnswer.customerCategory != ""){
-             cek = false;
-             this.data = this.data.filter(row=>{
-                if(row.category &&  row.$index != -1){
-                  return row.category.id == newAnswer.customerCategory
+             cek = false
+             let newdata = []
+              for(let i=0; i< newAnswer.customerCategory.length; i++){
+                for(let j=0; j< this.data.length; j++){
+                  if(this.data[j].category){
+                       if(newAnswer.customerCategory [i] == this.data[j].category.id){
+                          newdata.push(this.data[j])
+                        }
+                  }
                 }
-             })
+              }
+             this.data = newdata
+
+
+            //  this.data = this.data.filter(row=>{
+            //     if(row.category &&  row.$index != -1){
+            //       return row.category.id == newAnswer.customerCategory
+            //     }
+            //  })
              this.tag.push("Kategori Kustomer")
            }
 

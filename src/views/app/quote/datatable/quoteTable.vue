@@ -33,8 +33,6 @@
             :fields="fields"
             :per-page="perPage"
             :data-manager="dataManager"
-            :detail-row-component="detailRow"
-            detail-row-transition="expand"
             pagination-path="pagination"
             @vuetable:pagination-data="onPaginationData"
              @vuetable:cell-clicked="onCellClicked"
@@ -109,10 +107,25 @@
                 </p>
                 <b-progress :value="(props.rowData.subtotal_hpp / props.rowData.total) * 100"></b-progress>
             </template>
-
-            <template slot="id" slot-scope="props">
-              <i  class="simple-icon-arrow-down" @click="cellClicked($event, props.rowData)"></i>
+             <template slot="validuntil" slot-scope="props">
+                <p>{{timeLayout(props.rowData.valid_until)}}</p> <br>
+                <i>{{timeLayout(props.rowData.created_at)}}</i>
             </template>
+            <template slot="avatar" slot-scope="props">
+                   <div
+                      src="/assets/img/profiles/l-1.jpg"
+                      alt="Card image cap"
+                      class="align-self-center list-thumbnail-letters rounded-circle small"
+                    >{{showAvatar(props.rowData.userCreate.name)}}</div>
+            </template>
+            <template slot="userCreate" slot-scope="props">
+                      <b>{{props.rowData.userCreate.name}}</b>
+                      <br>
+                      <i>{{props.rowData.userCreate.role.name}}</i>
+            </template>
+            <!-- <template slot="id" slot-scope="props">
+              <i  class="simple-icon-arrow-down" @click="cellClicked($event, props.rowData)"></i>
+            </template> -->
             <template slot="action">
                 <b-dropdown  text="actions" variant="outline-secondary">
                   <b-dropdown-item>Detail</b-dropdown-item>
@@ -170,6 +183,7 @@ export default {
       detailRow : MyDetailRow,
       dataClone : [],
       loadCek : true,
+      custid : null,
       fields: [
         {
           name: "version",
@@ -184,7 +198,7 @@ export default {
           sortField : "status.id",
           titleClass: "",
           dataClass: "text-muted",
-          width:"15%"
+          width:"10%"
         },
         {
           name: "__slot:project",
@@ -201,26 +215,26 @@ export default {
           title: "Total",
           titleClass: "",
           dataClass: "text-muted",
-          width:"20%"
+          width:"15%"
         },
+         ,
          {
-          name: "__slot:Dft",
-          title: "Dft(μ)",
+          name: "__slot:validuntil",
+          title: "Valid-Until",
           titleClass: "",
           dataClass: "text-muted",
-          width:"10%"
-        },
-         {
-          name: "__slot:loss",
-          title: "loss",
-          titleClass: "",
-          dataClass: "text-muted",
-          width:"10%"
+          width:"15%"
         },
         {
-          name: "__slot:id",
-          title :"",
+          name:"__slot:avatar",
           width: "5%",
+          tittle : ""
+        },
+        {
+          name: "__slot:userCreate",
+          title :"User-Create",
+          sortField:"userCreate.name",
+          width: "10%",
           titleClass: "center aligned",
           dataClass: "center aligned",
         },
@@ -250,6 +264,11 @@ export default {
     },
   },
   mounted() {
+    if(this.$route.query.id){
+      this.custid = `{customer_id : "${this.$route.query.id}"}`;
+    } else{
+       this.custid = `null`;
+    }
     fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
         method: 'POST',
         headers: {
@@ -258,7 +277,7 @@ export default {
         body: JSON.stringify({
           query: `
          query{
-                quotes{
+                quotes (filter : { ${this.custid}}){
                   count
                   quotes{
                     id
@@ -287,6 +306,10 @@ export default {
                     userCreate{
                       id
                       name
+                      role{
+                        id
+                        name
+                      }
                     }
 
                   }
@@ -329,6 +352,14 @@ export default {
     movePageDetail(val){
 			window.location ="/app/datatable/customerTable/cDetail?id="+val;
 		},
+    showAvatar(row){
+      const tmp = row.split(' ');
+      if(tmp.length  == 1){
+        return tmp[0].substring(0,2).toUpperCase();
+      }else{
+         return tmp[0].substring(0,1).toUpperCase()+tmp[1].substring(0,1).toUpperCase();
+      }
+     },
     shortNumber(n) {
         if (n < 1e3) return n;
         else if (n >= 1e3 && n < 1e6) return +(n / 1e3).toFixed(1) + " rb";

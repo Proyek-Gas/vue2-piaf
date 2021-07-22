@@ -57,7 +57,7 @@
                                     </tr>
                                     <tr>
                                         <td><span class="w-25px" style="font-style: italic;">-</span></td>
-                                        <td> 
+                                        <td>
                                             <span class="svg-icon svg-icon-3 svg-icon-danger">
                                                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
                                                 </svg>
@@ -104,8 +104,8 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td><span class="w-25px">{{angkaRec[2]}}</span></td>
-                                        <td> 
+                                        <td><span class="w-25px">{{shortNumber(angkaRec[2])}}</span></td>
+                                        <td>
                                             <span>
                                                 <span v-if="arrow[2] == 1" class="svg-icon svg-icon-3 svg-icon-danger">
                                                     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
@@ -138,16 +138,16 @@
                                 <tr>
                                     <td colspan="3" class="font-weight-bold" >
                                     <center>Value</center>
-                                    </td>      
-                                </tr>												
-                            </table> 
+                                    </td>
+                                </tr>
+                            </table>
                         </b-card>
-                        
+
                         </b-colxx>
 
                         <b-colxx xxs="6" sm="6" md="6" lg="6">
                         <b-card class="mb-0 text-center" style="height: 185px;">
-                            <table style="width: 100%;">    
+                            <table style="width: 100%;">
                                 <div v-if="performance.length == 0" class="mb-2">
                                     <center>
                                     <tr>
@@ -166,7 +166,7 @@
                                     </tr>
                                     <tr>
                                         <td><span class="w-25px" style="font-style: italic;">-</span></td>
-                                        <td> 
+                                        <td>
                                             <span class="svg-icon svg-icon-3 svg-icon-danger">
                                                 <svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                                                 </svg>
@@ -179,7 +179,7 @@
                                         </td>
                                     </tr>
                                     </center>
-                                </div>    
+                                </div>
                                 <div v-else class="mb-2">
                                     <center>
                                     <tr>
@@ -214,7 +214,7 @@
                                     </tr>
                                     <tr>
                                         <td><span class="w-25px">{{angkaRec[3]}}</span></td>
-                                        <td> 
+                                        <td>
                                             <span>
                                                 <span v-if="arrow[3] == 1" class="svg-icon svg-icon-3 svg-icon-danger">
                                                     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
@@ -243,11 +243,11 @@
                                         </td>
                                     </tr>
                                     </center>
-                                </div>                              
+                                </div>
                                 <tr>
                                     <td colspan="3" class="font-weight-bold">
                                     <center>Quotes</center>
-                                    </td>      
+                                    </td>
                                 </tr>
                             </table>
                         </b-card>
@@ -257,27 +257,21 @@
             </b-row>
             <b-card class="mb-4" no-body>
                 <b-tabs card no-fade>
-                    <b-tab :title="$t('pages.details-title')" active>
+                    <b-tab :title="$t('menu.projectTable')" active>
                         <b-row>
                             <b-colxx sm="12">
                                 <b-card-text>
+                                    <table-project></table-project>
                                 </b-card-text>
                             </b-colxx>
                         </b-row>
                     </b-tab>
-                    <b-tab :title="`${$t('pages.comments-title')} (19)`">
+                    <b-tab :title="$t('menu.quoteTable')">
 
                         <b-row>
                             <b-colxx sm="12">
-                                <b-card-text> 
-                                </b-card-text>
-                            </b-colxx>
-                        </b-row>
-                    </b-tab>
-                    <b-tab :title="`${$t('pages.questions-title')} (6)`">
-                        <b-row>
-                            <b-colxx sm="12">
                                 <b-card-text>
+                                    <table-quote></table-quote>
                                 </b-card-text>
                             </b-colxx>
                         </b-row>
@@ -317,10 +311,14 @@
 
 <script>
 import IconCard from '../../../../components/Cards/IconCard';
+import vTableProject from '../../project/datatable/projectTable'
+import vTableQuote from '../../quote/datatable/quoteTable'
 
 export default {
     components: {
-        'icon-card': IconCard
+        'icon-card': IconCard,
+        'table-project' : vTableProject,
+        'table-quote' : vTableQuote
     },
     data() {
         return {
@@ -401,7 +399,7 @@ export default {
 				}
 				console.log("Recent: "+this.recent.length);
 				console.log("Previous: "+this.previous.length);
-				
+
 				if(this.recent.length > 0){
 					console.log("masuk");
 					for (let i = 0; i < this.recent.length; i++) {
@@ -418,7 +416,7 @@ export default {
 								this.angkaRec.push(0);
 								this.angkaRec.push(this.recent[i].value);
 								this.angkaRec.push(this.recent[i].quote);
-							}	
+							}
 						}else{
 							if(this.recent[i].type == 3){
 								//Recent approve
@@ -428,10 +426,10 @@ export default {
 								//Recent So
 								this.angkaRec.push(this.recent[i].value);
 								this.angkaRec.push(this.recent[i].quote);
-							}	
+							}
 						}
 					}
-					
+
 					if(this.previous.length == 0){
 						let ctr = 0;
 						for (let i = 0; i < this.recent.length; i++) {
@@ -447,7 +445,7 @@ export default {
 						for (let i = 0; i < 4-ctr; i++) {
 							this.arrow.push(0);
 							this.angkaPre.push(0);
-						}	
+						}
 					}else{
 						for (let j = 0; j < this.previous.length; j++) {
 							if(this.previous[j].type == 3){
@@ -480,10 +478,17 @@ export default {
 					for (let i = 0; i < 4-ctr; i++) {
 						this.arrow.push(0);
 						this.angkaRec.push(0);
-					}	
+					}
 				}
 			})
 		},
+     shortNumber(n) {
+        if (n < 1e3) return n;
+        else if (n >= 1e3 && n < 1e6) return +(n / 1e3).toFixed(1) + " rb";
+        else if (n >= 1e6 && n < 1e9) return +(n / 1e6).toFixed(1) + " jt";
+        else if (n >= 1e9 && n < 1e12) return +(n / 1e9).toFixed(1) + " M";
+        else if (n >= 1e12) return +(n / 1e12).toFixed(1) + " T";
+    },
 		perbandingan(arr1, arr2){
 			for (let i = 0; i < 4; i++) {
 				if(arr1[i] > arr2[i]){

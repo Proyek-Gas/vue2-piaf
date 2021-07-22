@@ -355,17 +355,29 @@ export default {
 
            if(newAnswer.kategori != ""){
               cek = false;
-              this.data = this.data.filter(row=>{
-                return row.itemCategory == newAnswer.kategori
-              })
+              let newdata = []
+              for(let i=0; i< newAnswer.kategori.length ; i++){
+               for(let j=0; j<this.data.length; j++){
+                 if(newAnswer.kategori[i] == this.data[j].itemCategory.id){
+                   newdata.push(this.data[j])
+                 }
+               }
+              }
+            this.data = newdata
             this.tag.push("Kategori")
           }
 
            if(newAnswer.tipe   != ""){
               cek = false;
-              this.data = this.data.filter(row=>{
-                return row.type.id == newAnswer.tipe
-              })
+              let newdata = []
+              for(let i=0; i< newAnswer.tipe.length; i++){
+                for(let j=0; j< this.data.length; j++){
+                  if(newAnswer.tipe [i] == this.data[j].type.id){
+                    newdata.push(this.data[j])
+                  }
+                }
+              }
+             this.data = newdata
             this.tag.push("Tipe")
           }
         }
