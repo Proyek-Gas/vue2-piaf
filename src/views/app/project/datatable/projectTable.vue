@@ -94,7 +94,7 @@
         </template>
     </b-modal>
   </div>
-  
+
 </template>
 <script>
 import Vuetable from "vuetable-2/src/components/Vuetable";
@@ -180,7 +180,8 @@ export default {
       proName: "",
       data: [],
       selectedItems: [],
-      tag: []
+      tag: [],
+      custid : null
     };
   },
   watch: {
@@ -189,6 +190,11 @@ export default {
     },
   },
   mounted() {
+    if(this.$route.query.id){
+      this.custid = `{customer_id : "${this.$route.query.id}"}`;
+    } else{
+       this.custid = `null`;
+    }
     fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
         method: 'POST',
         headers: {
@@ -196,7 +202,7 @@ export default {
         },
         body: JSON.stringify({
           query: `
-            query {projects {
+            query {projects(filter : ${this.custid}) {
             count
   					projects{
               name
@@ -229,10 +235,12 @@ export default {
             }
                 }}
       `
+
       }),
     }).then(function(response) {
         return response.json()
     }).then(function(text) {
+      console.log(text)
         return text.data.projects.projects;
     })
     .then(resp => {
@@ -384,13 +392,21 @@ export default {
         if(newAnswer){
           let status = null
           let kategori = null
-          let dtAwal = null
-          let dtAkhir = null
+          let customerId = null
           let cekFetch = true;
           if(newAnswer.status != "-1"){
               status = parseInt(newAnswer.status)
               this.tag.push("Status");
               cek = false
+          }
+          if(newAnswer.customerId.length != 0){
+           customerId = `[`
+            for(let i=0; i<newAnswer.customerId.length;i++){
+              customerId = customerId+ `"${newAnswer.customerId[i]}",`
+            }
+            customerId = customerId +`]`
+            this.tag.push("Kustomer")
+            cek = false;
           }
           if(newAnswer.name != ""){
               this.search = newAnswer.name;
@@ -399,9 +415,8 @@ export default {
               this.tag.push("Nama")
           }
           if(newAnswer.kategori !=""){
-            console.log(newAnswer.kategori)
-             kategori = parseInt(newAnswer.kategori)
-             cek = false
+             kategori =`[${newAnswer.kategori}]`
+            cek = false
              this.tag.push("Kategori")
           }
 
@@ -435,73 +450,38 @@ export default {
             cekFetch = false
               this.tag.push("Total")
             }
-
-
-          // if( newAnswer.dateAkhir!= "" && newAnswer.dateAwal != ""){
-          //   cek = false;
-          //   const dt1 = new Date(newAnswer.dateAkhir);
-          //   const dt2 = new Date(newAnswer.dateAwal);
-          //   if(dt1.getTime()> dt2.getTime()){
-          //        this.data = this.data.filter(row =>{
-          //         return new Date(row.tgl_reminder).getTime()>= dt2.getTime() && new Date(row.tgl_reminder).getTime()<=dt1.getTime();
-          //       })
-          //     this.tag.push("Tanggal Reminder")
-          //     cekFetch = false
-          //   }
-          // }
-
-          // if( newAnswer.dateAkhir!= "" && newAnswer.dateAwal == ""){
-          //   cek = false;
-          //   const dt1 = new Date(newAnswer.dateAkhir);
-          //   this.data = this.data.filter(row =>{
-          //       return new Date(row.tgl_reminder).getTime()<=dt1.getTime();
-          //     })
-          //   this.tag.push("tanggal reminder")
-          //   cekFetch = false
-          // }
-
-          // if( newAnswer.dateAkhir== "" && newAnswer.dateAwal != ""){
-          //   cek = false;
-          //   const dt2 = new Date(newAnswer.dateAwal);
-          //     this.data = this.data.filter(row =>{
-          //       return new Date(row.tgl_reminder).getTime()>= dt2.getTime();
-          //     })
-          //   this.tag.push("tanggal reminder")
-          //   cekFetch = false
-
-          // }
-
+          let ckdt1 = true;
+          let ckdt2 = true;
+          let formDate = `date : {`;
           if(newAnswer.dateAwal != ""){
-            //Sat 02 Jul .....
-            // 2021-07-21
-            //""
-           // dtAwal =new Date( this.formatDate(newAnswer.dtAwal)).toISOString()
-            dtAwal =`date_min:"${ this.formatDate(newAnswer.dateAwal)}"`
+           formDate = formDate +`date_min:"${ this.formatDate(newAnswer.dateAwal)}"`
             cek = false;
             this.tag.push("Tanggal Reminder dateMin")
           }else{
-            dtAwal = `date_min:null`
+            formDate = formDate+ `date_min:null`
+            ckdt1 = false
           }
 
-          console.log(dtAwal)
 
            if(newAnswer.dateAkhir != ""){
-           // dtAkhir = new Date(this.formatDate(newAnswer.dtAkhir)).toISOString()
-           dtAkhir = `date_max:"${this.formatDate(newAnswer.dateAkhir)}"`
-            cek = false;
-            this.tag.push("Tanggal Reminder dateMax")
-          }else{
-            dtAkhir = `date_max:null`
-          }
-          console.log(dtAkhir)
+            formDate = formDate+ ` date_max:"${this.formatDate(newAnswer.dateAkhir)}"`+`}`
+              cek = false;
+              this.tag.push("Tanggal Reminder dateMax")
+            }else{
+              formDate =  formDate +` date_max:null`+`}`
+              ckdt2 = false
+            }
+
+            if(!ckdt1 && !ckdt2 ){
+              formDate = ""
+            }
           if(cekFetch){
-            console.log("woy")
-             this.fetchAgain(kategori,status,dtAwal,dtAkhir)
+             this.fetchAgain(kategori,status,formDate,customerId)
           }
+
+
         }
-        console.log("wy")
         if(cek){
-          console.log("dy")
           this.search = ""
           this.data = this.dataClone
         }
@@ -509,19 +489,9 @@ export default {
       },
 
 
-      fetchAgain(kategori, status,dtAwal, dtAkhir){
-
-              fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                query: `
-                  query {projects(filter : { date :{
-                     ${dtAwal}
-                     ${dtAkhir}
-                  }}) {
+      fetchAgain(kategori, status,date,customerId){
+              let querystring =  `
+                  query {projects(filter : {customer_id: ${customerId} category : ${kategori} status : ${status}  ${date}}) {
                   count
                   projects{
                     name
@@ -554,6 +524,14 @@ export default {
                   }
                       }}
             `
+            console.log(querystring)
+              fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                query: querystring
             }),
           }).then(function(response) {
             console.log(response)

@@ -53,10 +53,10 @@
                 ></datepicker>
             </b-form-group>
             <b-form-group label="Kategori harga" v-if="vueSelected == '10'">
-                <v-select v-model="dataReturn.priceCategory" :options="ListKategoriHarga" :reduce="ListKategoriHarga=> ListKategoriHarga.id" label="name" placeholder="Silahkan Pilih Kategori Harga"  />
+                <v-select v-model="dataReturn.priceCategory"  multiple :options="ListKategoriHarga" :reduce="ListKategoriHarga=> ListKategoriHarga.id" label="name" placeholder="Silahkan Pilih Kategori Harga"  />
             </b-form-group>
             <b-form-group label="Kategori Kustomer" v-if="vueSelected == '11'">
-                <v-select v-model="dataReturn.customerCategory" :options="ListKategoriKustomer" :reduce="ListKategoriKustomer=> ListKategoriKustomer.id" label="name" placeholder="Silahkan Pilih Kategori Kustomer"  />
+                <v-select v-model="dataReturn.customerCategory" multiple :options="ListKategoriKustomer" :reduce="ListKategoriKustomer=> ListKategoriKustomer.id" label="name" placeholder="Silahkan Pilih Kategori Kustomer"  />
             </b-form-group>
         </b-colxx>
      </b-row>

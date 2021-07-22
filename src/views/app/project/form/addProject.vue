@@ -17,7 +17,7 @@
                         :get-suggestion-value="getSuggestionValue"
                         :limit="6"
                         clearable
-                        v-model="custNama" 
+                        v-model="custNama"
                         @selected="onAutosuggestSelected"
                         @input="onAutoSuggestInputChange"
                     >
@@ -44,10 +44,10 @@
                 </b-form-group>
 
                 <b-form-group label-cols="3" horizontal label="Kategori">
-                    <v-select 
-                    v-model="katPro" 
-                    :options="katProOption" 
-                    label="name" 
+                    <v-select
+                    v-model="katPro"
+                    :options="katProOption"
+                    label="name"
                     @input="choose"
                     placeholder="Pilih kategori"/>
                     <b-form-input type="text" v-model="$v.katPro.$model" :state="!$v.katPro.$error" style="display:none;" placeholder="Masukkan judul proyek"/>
@@ -148,10 +148,10 @@ export default {
             custPhone: "",
             custId: "",
             custNama: "",
-			customer: "",
-			namaPro: "",
-			tglPro: "",
-			katPro: "",
+            customer: "",
+            namaPro: "",
+            tglPro: "",
+            katPro: "",
             katProId: 0,
             katProOption: [],
             katArea: [],
@@ -193,7 +193,7 @@ export default {
                             areaCategory(project_category:${val}) {
                                 id
                                 name
-                            }     
+                            }
                         }
                     `,
                 }),
@@ -298,15 +298,15 @@ export default {
             const filteredData = this.dataCust.customers.filter(option => {
                 return option.name.toLowerCase().indexOf(text.toLowerCase()) > -1;
             });
-            
-    
+
+
             // Store data in one property, and filtered in another
             this.filteredOptions = [
                 {
                 data: filteredData
                 }
             ];
-            
+
         }, 1000);
         },
 
@@ -327,31 +327,31 @@ export default {
     },
     async mounted(){
         fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
-			method: 'POST',
-			headers: {
-			'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				query: `
-					query{
-                        projectCategory{
-                            id
-                            name
-                        }
-                    }
-				`,
-			}),
-		})
-		.then(function(response) {
-			return response.json()
-		})
-		.then(function(text) {
-			return text.data.projectCategory;
-		})
-		.then(resp => {
-            this.katProOption = resp;
-		})
-        fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+        method: 'POST',
+        headers: {
+        'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: `
+            query{
+                          projectCategory{
+                              id
+                              name
+                          }
+                      }
+          `,
+        }),
+      })
+      .then(function(response) {
+        return response.json()
+      })
+      .then(function(text) {
+        return text.data.projectCategory;
+      })
+      .then(resp => {
+              this.katProOption = resp;
+      })
+      fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
 			method: 'POST',
 			headers: {
 			'Content-Type': 'application/json',
@@ -380,6 +380,6 @@ export default {
             this.dataCust = resp;
 		})
     }
-    
+
 };
 </script>

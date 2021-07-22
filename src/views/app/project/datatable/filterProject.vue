@@ -3,7 +3,7 @@
      <b-row>
         <b-colxx xxs="12" >
              <b-form-group label="Option">
-              <v-select v-model="vueSelected" :options="selectData" :reduce="selectData => selectData.value" label="label" placeholder="Silahkan Pilih Filter"  />
+              <v-select v-model="vueSelected" :options="!this.$route.query.id ? selectData : selectData2" :reduce="selectData => selectData.value" label="label" placeholder="Silahkan Pilih Filter"  />
             </b-form-group>
         </b-colxx>
      </b-row>
@@ -13,7 +13,7 @@
                 <b-form-input v-model="dataReturn.name"  placeholder="Masukkan Nama"/>
             </b-form-group>
             <b-form-group label="Kategori" v-if="vueSelected == '2'">
-                <v-select v-model="dataReturn.kategori" :options="ListKategoriProject" :reduce="ListKategoriProject => ListKategoriProject.id" label="name" placeholder="Silahkan Pilih Kategori"  />
+                <v-select multiple v-model="dataReturn.kategori" :options="ListKategoriProject" :reduce="ListKategoriProject => ListKategoriProject.id" label="name" placeholder="Silahkan Pilih Kategori"  />
             </b-form-group>
             <b-form-group label="Tanggal Reminder" v-if="vueSelected == '3'">
               Tanggal Awal :
@@ -66,8 +66,45 @@
                 <b-form-radio value="0">Non Active</b-form-radio>
                   <b-form-radio value="-1">All</b-form-radio>
             </b-form-radio-group>
-        </b-colxx>
 
+            <b-form-group label="Nama Customer" v-if="vueSelected == '6' && !this.$route.query.id">
+                  <b-form-group >
+                    <v-select
+                      label="name"
+                      :filterable="false"
+                      multiple
+                      v-model="dataReturn.customerId"
+                      :options="customerSelection"
+                      @search="fetchOptions"
+                      :reduce="customerSelection => customerSelection.id"
+                    >
+                      <template slot="no-options">Cari nama Kustomer...</template>
+                      <template slot="option" slot-scope="option">
+                        <div class="row" >
+                          <div class="col-3">  <div
+                  src="/assets/img/profiles/l-1.jpg"
+                  alt="Card image cap"
+                  class="align-self-center list-thumbnail-letters rounded-circle small"
+                >{{showAvatar(option.name)}}</div></div>
+                        <div class="col-9 pt-2 " style="overflow: hidden;
+  text-overflow: ellipsis;">
+                            {{ option.name }}
+                        </div>
+                        </div>
+                      </template>
+                      <template slot="selected-option" slot-scope="option">
+                        <div class="selected d-center">
+                          {{ option.name }}
+                        </div>
+                      </template>
+                      <template slot="spinner" slot-scope="spinner">
+                        <div class="spinner-border text-primary" v-show="spinner"></div>
+                      </template>
+                    </v-select>
+                  </b-form-group>
+
+            </b-form-group>
+        </b-colxx>
      </b-row>
      <template slot="modal-footer">
          <b-button variant="danger" @click="$emit('answers',null);hideModal('modalright');reset()">Reset</b-button>
@@ -82,12 +119,15 @@ import Datepicker from "vuejs-datepicker";
 import DateRangePicker from 'vue2-daterange-picker'
 //you need to import the CSS manually
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
+import { VueAutosuggest } from "vue-autosuggest";
+
 
 export default {
   components: {
     "v-select": vSelect,
      datepicker: Datepicker,
-    // "date-range-picker" : DateRangePicker
+    // "date-range-picker" : DateRangePicker,
+     "vue-autosuggest": VueAutosuggest,
   },
   data() {
     return {
@@ -113,17 +153,46 @@ export default {
           value : "5",
           label : "Status"
         },
+        {
+          value : "6",
+          label : "Nama Customer"
+        }
+      ],
+
+       selectData2: [
+        {
+          value : "1",
+          label : "Name"
+        },
+        {
+          value : "2",
+          label : "Kategori"
+        },
+        {
+          value : "3",
+          label : "Tanggal Reminder"
+        },
+        {
+          value : "4",
+          label : "Total"
+        },
+        {
+          value : "5",
+          label : "Status"
+        },
       ],
       ListKategoriProject : [],
+      customerSelection : [],
       dataReturn : {
          name:'',
          status : "-1",
-         kategori : "",
+         kategori : [],
          minimum :0,
          maximum :0,
          dateAwal : "",
          dateAkhir :"",
-         dateRange : []
+         dateRange : [],
+         customerId : [],
       }
     };
   },
@@ -139,17 +208,41 @@ export default {
 
     reset(){
       this.vueSelected = ""
+      this.customerSelection = []
       this.dataReturn = {
          name:'',
          status : "-1",
         minimum : 0,
         maximum : 0,
-         kategori : "",
+         kategori : [],
          dateAwal : "",
          dateAkhir :"",
-         dateRange : []
+         dateRange : [],
+         customerId : []
       }
     },
+
+    showAvatar(row){
+      const tmp = row.split(' ');
+      if(tmp.length  == 1){
+        return tmp[0].substring(0,2).toUpperCase();
+      }else{
+         return tmp[0].substring(0,1).toUpperCase()+tmp[1].substring(0,1).toUpperCase();
+      }
+    },
+
+     fetchOptions(search, loading) {
+      loading(true);
+      setTimeout(() => {
+        this.customerSelection = this.customerSelection.filter(row=>{
+           return row.name.toLowerCase().indexOf(search.toLowerCase()) != -1;
+        })
+        loading(false)
+      },2000);
+    }
+
+
+
   },
   mounted(){
       fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
@@ -177,7 +270,46 @@ export default {
       .then(resp => {
         this.ListKategoriProject = resp
       });
+
+ if(!this.$route.query.id){
+
+  fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+          method: 'POST',
+          headers: {
+          'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            query: `
+              query{ customers {
+                        count
+                        customers{
+                            id
+                            name
+                            workPhone
+                        }}
+                        }
+            `,
+          }),
+        })
+        .then(function(response) {
+          return response.json()
+        })
+        .then(function(text) {
+          console.log(text)
+          return text.data.customers.customers;
+        })
+        .then(resp => {
+            this.customerSelection = resp
+        })
+
+ }
+
   }
 };
 </script>
 
+<style scoped>
+.breakWord{
+  word-wrap: break-word;
+}
+</style>

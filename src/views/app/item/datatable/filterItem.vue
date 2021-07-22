@@ -33,10 +33,10 @@
                 </v-select>
             </b-form-group>
             <b-form-group label="Kategori" v-if="vueSelected == '4'">
-              <v-select v-model="dataReturn.kategori" :options="ListItemKategori" :reduce="ListItemKategori => ListItemKategori.id" label="name" placeholder="Silahkan Pilih Kategori"  />
+              <v-select v-model="dataReturn.kategori" multiple :options="ListItemKategori" :reduce="ListItemKategori => ListItemKategori.id" label="name" placeholder="Silahkan Pilih Kategori"  />
             </b-form-group>
-             <b-form-group label="Kategori" v-if="vueSelected == '5'">
-              <v-select v-model="dataReturn.tipe" :options="ListItemTipe" :reduce="ListItemTipe => ListItemTipe.id" label="name" placeholder="Silahkan Pilih Tipe"  />
+             <b-form-group label="Tipe" v-if="vueSelected == '5'">
+              <v-select v-model="dataReturn.tipe" multiple :options="ListItemTipe" :reduce="ListItemTipe => ListItemTipe.id" label="name" placeholder="Silahkan Pilih Tipe"  />
             </b-form-group>
         </b-colxx>
      </b-row>

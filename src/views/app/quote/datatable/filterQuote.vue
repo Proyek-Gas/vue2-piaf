@@ -9,31 +9,14 @@
      </b-row>
      <b-row>
         <b-colxx xxs="12">
-            <b-form-group label="Nama" v-if="vueSelected == '1'">
-                <b-form-input v-model="dataReturn.name"  placeholder="Masukkan Nama"/>
-            </b-form-group>
-            <b-form-group label="Warna" v-if="vueSelected == '2'">
+            <b-form-group label="Status">
                 <v-select
-                  v-model="dataReturn.warna"
-                  :options="ListWarna"
-                  label="ind_name"
-                  item-text="eng_name"
-                  placeholder ="Silahkan pilih warna"
-                >
-                  <template v-slot:option="option" style="width:auto">
-                     <div
-                        class="btn"
-                        style="width:100%; text-align :center"
-                        v-bind:style="returnColor(option.hex_code)"
-                      >{{ option.eng_name }} <br>{{option.ind_name}}</div>
-                  </template>
-                </v-select>
+                  v-model="vueSelectForm.multiple"
+                  multiple
+                  :options="selectData"
+                  :dir="direction"
+                />
             </b-form-group>
-             <b-form-radio-group stacked label="Status" v-model="dataReturn.status" v-if="vueSelected == '3'">
-                <b-form-radio value="1">Active</b-form-radio>
-                <b-form-radio value="0">Non Active</b-form-radio>
-                 <b-form-radio value="-1">All</b-form-radio>
-            </b-form-radio-group>
         </b-colxx>
      </b-row>
      <template slot="modal-footer">
@@ -58,11 +41,11 @@ export default {
       selectData: [
         {
           value : "1",
-          label : "Name"
+          label : "Status"
         },
         {
           value : "2",
-          label : "Warna"
+          label : "User Create"
         },
         {
           value : "3",
@@ -71,9 +54,7 @@ export default {
       ],
       ListWarna : [],
       dataReturn : {
-         name:'',
-         status :"-1",
-         warna : ""
+        status : []
       }
     };
   },
@@ -97,9 +78,7 @@ export default {
     reset(){
       this.vueSelected = ""
       this.dataReturn = {
-         name:'',
-         status :"-1",
-         warna : ""
+        status : []
       }
     }
 
