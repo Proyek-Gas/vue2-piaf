@@ -288,11 +288,11 @@ export default {
             this.$v.$reset();
         },
         onAutoSuggestInputChange(text, oldText) {
-        if (text === null) {
+        if (text === "") {
             /* Maybe the text is null but you wanna do
             *  something else, but don't filter by null.
             */
-            return;
+            this.custPhone = '';
         }
         setTimeout(() => {
             const filteredData = this.dataCust.customers.filter(option => {

@@ -245,7 +245,7 @@ export default {
                             <div src="/assets/img/profiles/l-1.jpg" 
                                 alt="Card image cap" 
                                 class="align-self-center list-thumbnail-letters rounded-circle small mr-2" 
-                                style={{ background: `#${character.color.hex_code}` }}>
+                                style={{ background: `#${character.color.hex_code}`, color: 'black'}}><center>{character.color.id_ral}</center>
                             </div>
                             <div class="d-flex flex-grow-1 min-width-zero">
                                 <div class="pl-0 align-self-right d-flex flex-column flex-lg-row justify-content-between min-width-zero">

@@ -46,13 +46,13 @@
                         class="autosuggest"
                         :input-props="{id:'autosuggest__input2', class:'form-control', placeholder:'Ketik nama agent'}"
                         :suggestions="filteredOptions2"
-                        :render-suggestion="renderSuggestion"
-                        :get-suggestion-value="getSuggestionValue"
+                        :render-suggestion="renderSuggestion2"
+                        :get-suggestion-value="getSuggestionValue2"
                         :limit="6"
                         clearable
                         v-model="agent" 
-                        @selected="onAutosuggestSelected"
-                        @input="onAutoSuggestInputChange"
+                        @selected="onAutosuggestSelected2"
+                        @input="onAutoSuggestInputChange2"
                     >
                     </vue-autosuggest>
                 </b-form-group>
@@ -68,13 +68,13 @@
                         class="autosuggest"
                         :input-props="{id:'autosuggest__input3', class:'form-control', placeholder:'Ketik nama thinner'}"
                         :suggestions="filteredOptions3"
-                        :render-suggestion="renderSuggestion"
-                        :get-suggestion-value="getSuggestionValue"
+                        :render-suggestion="renderSuggestion3"
+                        :get-suggestion-value="getSuggestionValue3"
                         :limit="6"
                         clearable
                         v-model="thin" 
-                        @selected="onAutosuggestSelected"
-                        @input="onAutoSuggestInputChange"
+                        @selected="onAutosuggestSelected3"
+                        @input="onAutoSuggestInputChange3"
                     >
                     </vue-autosuggest>
                 </b-form-group>
@@ -143,7 +143,7 @@
                 <b-row>
                     <b-colxx xxs="6" class="text-center">
                     <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip">
-                        <b-button type="submit" variant="primary" style="width: 100%">Add</b-button>
+                        <b-button type="submit" variant="primary" style="width: 100%">Edit</b-button>
                     </b-form>
                     </b-colxx>
                     <b-colxx xxs="6" class="text-center">
@@ -255,11 +255,13 @@ export default {
             this.$v.$touch();
             if(!this.$v.$invalid){
                 console.log("valid");
-                let floatLimit = 0;
-                if(this.vs != '' || this.liter != ''){
-                    floatLimit = parseFloat(this.limit);
-                }else{
-                    floatLimit = 0;
+                let floatvs = 0;let floatAg = 0;
+                let floatltr = 0;let floatThin = 0;
+                if(this.vs != '' || this.liter != '' || this.rAgent != '' || this.rThin != ''){
+                    floatvs = parseFloat(this.vs);
+                    floatltr = parseFloat(this.liter);
+                    floatAg = parseFloat(this.rAgent);
+                    floatThin = parseFloat(this.rThun);
                 }
                 console.log(parseFloat(this.vs));
                 console.log(this.kemas);
@@ -274,14 +276,14 @@ export default {
                             mutation{
                                 updateItem(item_id:${this.itemId}
                                     params:{
-                                    vs_volume_solid:0
-                                    color:"",
-                                    packaging:0
-                                    liter:0
+                                    vs_volume_solid:${floatvs}
+                                    color:"${this.warna}",
+                                    packaging:${this.kemas}
+                                    liter:${floatltr}
                                     agent_item_id:0
-                                    ratio_agent:0
+                                    ratio_agent:${floatAg}
                                     recommended_thinner_id:0
-                                    ratio_recommended_thinner_id:0
+                                    ratio_recommended_thinner_id:${floatThin}
                                     }
                                 ){
                                     status
@@ -292,14 +294,31 @@ export default {
                     }),
                 })
                 .then(function(response) {
-                    return response.json()
-                })
-                .then(function(text) {
-                    return text.data.ralColors;
-                })
-                .then(resp => {
-                    this.dataWarna = resp;
-                })
+					return response.json()
+				})
+				.then(function(text) {
+					console.log(text);
+					return text.data.updateItem;
+				})
+				.then(resp => {
+					console.log(resp.message);
+					if(resp.status.toLowerCase() == "success"){
+                        this.$toast(resp.message, {
+                            type: "success",
+                            hideProgressBar: true,
+                            timeout: 2000
+                        });
+                        setTimeout(() => {
+                            window.location = window.location.origin+"/app/datatable/itemTable";
+                        }, 1000);
+                    }else{
+                        this.$toast(resp.message, {
+                            type: "error",
+                            hideProgressBar: true,
+                            timeout: 2000
+                        });
+                    }
+				});
             }else{
                 console.log("error");
             }
@@ -310,43 +329,21 @@ export default {
             this.kota="";this.provinsi="";this.negara="";
             this.$v.$reset();
         },
+        //autoSuggest warna
         onAutoSuggestInputChange(text, oldText) {
         if (text === "") {
-            /* Maybe the text is null but you wanna do
-            *  something else, but don't filter by null.
-            */
             this.rAgent = "";
             this.select1  = 0;
             return;
         }
-        
-
         const filteredData = this.dataWarna.filter(option => {
             return option.ind_name.toLowerCase().indexOf(text.toLowerCase()) > -1 || option.eng_name.toLowerCase().indexOf(text.toLowerCase()) > -1 || option.id_ral.toLowerCase().indexOf(text.toLowerCase()) > -1;
         });
-        // const filteredData2 = this.dataWarna.filter(option => {
-        //     return option.ind_name.toLowerCase().indexOf(text.toLowerCase()) > -1 || option.eng_name.toLowerCase().indexOf(text.toLowerCase()) > -1 || option.id_ral.toLowerCase().indexOf(text.toLowerCase()) > -1;
-        // });
-        // const filteredData3 = this.dataWarna.filter(option => {
-        //     return option.ind_name.toLowerCase().indexOf(text.toLowerCase()) > -1 || option.eng_name.toLowerCase().indexOf(text.toLowerCase()) > -1 || option.id_ral.toLowerCase().indexOf(text.toLowerCase()) > -1;
-        // });
-
-        // Store data in one property, and filtered in another
         this.filteredOptions = [
             {
             data: filteredData
             }
         ];
-        // this.filteredOptions2 = [
-        //     {
-        //     data: filteredData2
-        //     }
-        // ];
-        // this.filteredOptions3 = [
-        //     {
-        //     data: filteredData3
-        //     }
-        // ];
         },
         onAutosuggestSelected(item) {
             this.selected = item;
@@ -373,7 +370,7 @@ export default {
                         </div>
                         <h6 class="ml-1 text-muted text-medium mt-3">
                             {character.id_ral}
-                        </h6>
+                        </h6>                      
                     </b-card>;
         },
         getSuggestionValue(suggestion) {
@@ -381,6 +378,123 @@ export default {
             this.hex = suggestion.item.hex_code;
             this.select1 = 1;
             return suggestion.item.ind_name;
+        },
+
+        //autoSuggest Agent
+        onAutoSuggestInputChange2(text, oldText) {
+        if (text === "") {
+            this.rAgent = "";
+            this.select1  = 0;
+            return;
+        }
+        const filteredData = this.dataAgent.filter(option => {
+            return option.name.toLowerCase().indexOf(text.toLowerCase()) > -1;
+        });
+        this.filteredOptions2 = [
+            {
+            data: filteredData
+            }
+        ];
+        
+        },
+        onAutosuggestSelected2(item) {
+            this.selected2 = item;
+        },
+        renderSuggestion2(suggestion) {
+            const character = suggestion.item;
+            console.log(character);
+            return <b-card class="mb-0 p-1 d-flex flex-row" no-body>
+                        <div src="/assets/img/profiles/l-1.jpg" 
+                            alt="Card image cap" 
+                            class="align-self-center list-thumbnail-letters rounded-circle small mr-2" 
+                            style={{ background: "white", color: 'black', border: "5px solid black" }}>Ag
+                        </div>
+                        <div class="d-flex flex-grow-1 min-width-zero">
+                            <div class="pl-0 align-self-right d-flex flex-column flex-lg-row justify-content-between min-width-zero">
+                                <div class="min-width-zero">
+                                        <h6 class="text-muted text-medium mt-2">
+                                            {character.name}
+                                        </h6>
+                                    <p class="text-muted text-small mb-2">
+                                        {character.no} - {character.itemCategory.name}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pl-0 align-self-right d-flex flex-column flex-lg-row justify-content-between min-width-zero">
+                            <div class="min-width-zero">
+                                    <h6 class="text-muted text-medium mt-2">
+                                        {character.color.ind_name}
+                                    </h6>
+                                <p class="text-muted text-small mb-2">
+                                    {character.color.eng_name}
+                                </p>
+                            </div>
+                        </div>
+                    </b-card>;
+        },
+        getSuggestionValue2(suggestion) {
+            this.agent = suggestion.item.name;
+            this.select1 = 1;
+            return suggestion.item.name;
+        },
+
+        //autoSuggest Thinner
+        onAutoSuggestInputChange3(text, oldText) {
+        if (text === "") {
+            this.rThin = "";
+            this.select2  = 0;
+            return;
+        }
+        const filteredData = this.dataThin.filter(option => {
+            return option.name.toLowerCase().indexOf(text.toLowerCase()) > -1;
+        });
+        this.filteredOptions3 = [
+            {
+            data: filteredData
+            }
+        ];
+        },
+        onAutosuggestSelected3(item) {
+            this.selected = item;
+        },
+        renderSuggestion3(suggestion) {
+            const character = suggestion.item;
+            console.log(character);
+            return <b-card class="mb-0 p-1 d-flex flex-row" no-body>
+                        <div src="/assets/img/profiles/l-1.jpg" 
+                            alt="Card image cap" 
+                            class="align-self-center list-thumbnail-letters rounded-circle small mr-2" 
+                            style={{ background: "white", color: 'black', border: "5px solid black" }}>Th
+                        </div>
+                        <div class="d-flex flex-grow-1 min-width-zero">
+                            <div class="pl-0 align-self-right d-flex flex-column flex-lg-row justify-content-between min-width-zero">
+                                <div class="min-width-zero">
+                                        <h6 class="text-muted text-medium mt-2">
+                                            {character.name}
+                                        </h6>
+                                    <p class="text-muted text-small mb-2">
+                                        {character.no} - {character.itemCategory.name}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="pl-0 align-self-right d-flex flex-column flex-lg-row justify-content-between min-width-zero">
+                            <div class="min-width-zero">
+                                    <h6 class="text-muted text-medium mt-2">
+                                        {character.color.ind_name}
+                                    </h6>
+                                <p class="text-muted text-small mb-2">
+                                    {character.color.eng_name}
+                                </p>
+                            </div>
+                        </div>
+                    </b-card>;
+        },
+        getSuggestionValue3(suggestion) {
+            this.thin = suggestion.item.name;
+            this.select2 = 1;
+            return suggestion.item.name;
         },
         returnColor(a){
             const style = {
@@ -481,7 +595,7 @@ export default {
                     console.log("masuk");
                     setTimeout(() => {
                         window.location = window.location.origin+"/app/datatable/itemTable/add?id="+this.itemId;
-                    }, 1000);
+                    }, 2000);
                 }
             }
         })
@@ -609,14 +723,12 @@ export default {
         .then(resp => {
             this.tmp = resp;
             for (let i = 0; i < this.tmp.length; i++) {
-                if(this.tmp[i].type.id == 1){
-                    this.dataAgent = this.tmp[i];
+                if(this.tmp[i].type.id == 2){
+                    this.dataAgent.push(this.tmp[i]);
                 }else if(this.tmp[i].type.id == 3){
                     this.dataThin = this.tmp[i];
                 }
-                
             }
-            
         })
     }
 };

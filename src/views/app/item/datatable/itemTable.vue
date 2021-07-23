@@ -48,7 +48,7 @@
             <template slot="id" slot-scope="props">
               <i  class="simple-icon-arrow-down" @click="cellClicked($event, props.rowData)"></i>
             </template>
-            <template slot="action">
+            <template slot="action" slot-scope="props">
                 <b-dropdown  text="actions" variant="outline-secondary">
                   <b-dropdown-item @click="movePageDetail(props.rowData.id)">Detail</b-dropdown-item>
                   <b-dropdown-item @click="movePageEdit(props.rowData.id)">Edit</b-dropdown-item>
@@ -240,6 +240,7 @@ export default {
   },
   methods: {
     movePageDetail(val){
+      console.log(val);
 			window.location = window.location.href+"/iDetail?id="+val;
 		},
     movePageEdit(val){
