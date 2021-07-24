@@ -60,10 +60,10 @@
             <template slot="id" slot-scope="props">
               <i  class="simple-icon-arrow-down" @click="cellClicked($event, props.rowData)"></i>
             </template>
-            <template slot="action">
+            <template slot="action" slot-scope="props">
                 <b-dropdown  text="actions" variant="outline-secondary">
-                  <b-dropdown-item>Detail</b-dropdown-item>
-                  <b-dropdown-item>Edit</b-dropdown-item>
+                  <b-dropdown-item @click="movePageDetail(props.rowData.id)">Detail</b-dropdown-item>
+                  <b-dropdown-item @click="movePageEdit(props.rowData.id)">Edit</b-dropdown-item>
                   <b-dropdown-item>Delete</b-dropdown-item>
               </b-dropdown>
             </template>
@@ -246,6 +246,13 @@ export default {
   methods: {
     movePageAdd(){
 			window.location = window.location.href+"/add";
+		},
+    movePageDetail(val){
+      console.log(val);
+			window.location = window.location.href+"/sDetail?id="+val;
+		},
+    movePageEdit(val){
+			window.location = window.location.origin+"/app/datatable/schemeTable/sDetail/edit?id="+val;
 		},
     onPaginationData(paginationData) {
       this.from = paginationData.from;

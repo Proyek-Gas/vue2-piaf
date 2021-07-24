@@ -2,7 +2,7 @@
 <div v-if="isLoad">
 <b-row>
     <b-colxx xxs="12">
-        <h1>Add Scheme</h1>
+        <h1>Edit Scheme</h1>
         <div class="separator mb-5"></div>
     </b-colxx>
     <b-colxx xxs="12" xl="8">
@@ -26,8 +26,6 @@
                         @selected="onAutosuggestSelected"
                         @input="onAutoSuggestInputChange"
                     >
-                    <template slot="before-section-default"> section header content for specific section goes here </template>
-            
                     </vue-autosuggest>
                 </b-form-group>
             </b-card>
@@ -165,8 +163,10 @@ export default {
         return {
             isLoad: false,
             namaSch: "",
+            hex: "",
             item: "",
             dataItem:[],
+            dataTmp: [],
             bigData:[],
             dataSelected1: [],
             dataSelected2: [],
@@ -354,7 +354,7 @@ export default {
         },
         getSuggestionValue(suggestion) {
             this.item = suggestion.item.name;
-            console.log(suggestion.item.type.id);
+            console.log(suggestion.item);
             let ada = this.check(suggestion.item.no);
             if(!ada){
                 let data = {
@@ -366,11 +366,8 @@ export default {
 
                 }
                 this.bigData.push(data);
-                if(suggestion.item.type.id == 1)this.dataSelected1.push(data);
-                else if(suggestion.item.type.id == 1)this.dataSelected2.push(data);
-                else this.dataSelected3.push(data);
+                suggestion.item.type.id == 1 ? suggestion.item.type.id == 2 ? this.dataSelected1.push(data) : this.dataSelected2.push(data) : this.dataSelected3.push(data)
             }
-                console.log(this.bigData);
             return suggestion.item.name;
         },
         returnColor(a){
@@ -382,8 +379,6 @@ export default {
         check(a){
             let kembar = false;
             this.bigData.forEach(element => {
-                console.log(element.no);
-                console.log(a);
                 if(element.no == a){
                     kembar = true;
                 }
@@ -392,6 +387,85 @@ export default {
         }
     },
     async mounted(){
+        this.schId = this.$route.query.id;
+        if(this.schId){
+            fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                query: `
+                    query{
+                        schemeDetail(scheme_id:${this.schId}){
+                            id
+                            name
+                            notes
+                            status
+                            color{
+                                id_ral
+                                eng_name
+                                hex_code
+                                ind_name
+                            }
+                            items{
+                                item_id
+                                color{
+                                    id_ral
+                                    hex_code
+                                    ind_name
+                                    eng_name
+                                }
+                                coat
+                                dry_film_thickness
+                                loss
+                                vs_volume_solid
+                            }
+                        }
+                    }
+                
+                `,
+            })
+            })
+            .then(function(response) {
+                return response.json()
+            })
+            .then(function(text) {
+                console.log(text.data);
+                return text.data.schemeDetail;
+            })
+            .then(resp => {
+                this.detail = resp
+                if(this.detail == null){
+                    console.log("masuk");
+                    setTimeout(() => {
+                        window.location = window.location.origin +"/error?id=404&name=scheme";
+                    }, 50)
+                }else{
+                    console.log("aman");
+                    this.isLoad = true;
+                    this.namaSch = this.detail.name;
+                    this.hex = this.detail.color.hex_code;
+                    this.dataTmp = this.detail.items;
+                    for (let i = 0; i < this.dataTmp.length; i++) {
+                        let data = {
+                            no: this.dataTmp[i].item_id,
+                            name: this.dataTmp[i].item_id,
+                            warna: this.dataTmp[i].color,
+                            vs: this.dataTmp[i].vs,
+                            balance: this.dataTmp[i].balance
+
+                        }
+                        this.bigData.push(data);
+                    }
+                    if(!this.detail.notes){
+                        this.detail.notes = '';
+                    }
+                }
+            })
+        }else{
+            window.location = window.location.origin +"/error?id=404&name=scheme";
+        }
         fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
             method: 'POST',
             headers: {
@@ -437,14 +511,10 @@ export default {
             return response.json()
         })
         .then(function(text) {
-            console.log(text.data.items);
             return text.data.items;
         })
         .then(resp => {
-            this.isLoad = true;
-            this.dataItem = resp;
-            console.log(this.dataItem);
-            
+            this.dataItem = resp;       
         })
     }
 };
