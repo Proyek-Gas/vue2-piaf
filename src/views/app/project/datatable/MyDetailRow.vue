@@ -1,14 +1,42 @@
 <template>
   <div @click="onClick" >
-    <div class="row">
-      <div class="col-6" style="text-align:right" ><b>Tanggal Reminder: </b></div>
-      <div class="col-6">{{timeLayout(rowData.tgl_reminder)}}</div>
-    </div>
-     <div class="row">
-      <div class="col-6" style="text-align:right" ><b>Status: </b></div>
-      <div class="col-6">{{rowData.lastQuote.status.name}}</div>
-    </div>
+ <table class="table table-bordered">
+  <thead>
+    <tr>
+      <th scope="col">User</th>
+      <th scope="col">Tanggal Reminder</th>
 
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <div class="mb-4 d-flex flex-sm-row" style="height:35px" v-if="rowData.lastQuote.userCreate.id">
+
+              <img
+                :src="returnUrl(rowData.lastQuote.userCreate.id, rowData.lastQuote.userCreate.photo)"
+                alt="Image"
+                class="img-thumbnail list-thumbnail rounded-circle align-self-center m-4 small mt-2"
+              />
+
+            <div class="d-flex flex-grow-1 min-width-zero">
+              <div
+                class="pl-0 align-self-center d-flex flex-column flex-sm-row justify-content-between min-width-zero"
+              >
+                <div class="min-width-zero">
+                  <a href=""><h5>{{rowData.lastQuote.userCreate.name}}</h5></a>
+                 <b-badge v-if="rowData.lastQuote.userCreate.role" variant="primary">{{rowData.userCreate.role.name}}</b-badge>
+                </div>
+              </div>
+            </div>
+          </div>
+
+      </td>
+      <td>{{timeLayout(rowData.tgl_reminder)}}</td>
+    </tr>
+
+  </tbody>
+</table>
 
   </div>
 </template>
@@ -27,7 +55,13 @@ export default {
       type: Object,
     }
   },
+  data(){
+
+  },
   methods: {
+    returnUrl(id,photo){
+        return `https://dev.quotation.node.zoomit.co.id/assets/img/profile-picture/${id}/${photo}`
+    },
     onClick (event) {
       console.log('my-detail-row: on-click', event.target)
     },

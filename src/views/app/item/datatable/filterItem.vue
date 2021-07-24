@@ -1,5 +1,5 @@
 <template>
-  <b-modal id="modalright" ref="modalright" title="Filter Customer" modal-class="modal-right">
+  <b-modal id="modalright" ref="modalright" title="Filter Item" modal-class="modal-right">
      <b-row>
         <b-colxx xxs="12" >
              <b-form-group label="Option">

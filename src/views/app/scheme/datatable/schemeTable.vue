@@ -23,58 +23,63 @@
     </b-row>
 
     <b-row>
-      <b-colxx xxs="12">
-        <b-card>
-          <div class="loader" >LOADING</div><!--Your Loading Message -->
-          <vuetable
-            ref="vuetable"
-            style="display:block; overflow-x:auto;width:auto"
-            :api-mode="false"
-            :fields="fields"
-            :per-page="perPage"
-            :data-manager="dataManager"
-            :detail-row-component="detailRow"
-            detail-row-transition="expand"
-            pagination-path="pagination"
-            @vuetable:pagination-data="onPaginationData"
-             @vuetable:cell-clicked="onCellClicked"
-          >
-            <template slot="name" slot-scope="props">
-                <a href=""><h5>{{props.rowData.name}}</h5></a>
-            </template>
-            <template slot="color" slot-scope="props">
-                <div class="btn btn-sm" v-bind:style="returnColor(props.rowData.color.hex_code)">{{props.rowData.color.eng_name}}</div>
-            </template>
-            <template slot="coat" slot-scope="props">
-                <i>Min : {{props.rowData.min_coat}} </i><br>
-                <i>Max : {{props.rowData.max_coat}}</i>
-            </template>
-            <template slot="Dft" slot-scope="props">
-                <i>Min : {{props.rowData.min_dft}} </i><br>
-                <i>Max : {{props.rowData.max_dft}}</i>
-            </template>
-               <template slot="loss" slot-scope="props">
-                <i>Min : {{props.rowData.min_loss}} </i><br>
-                <i>Max : {{props.rowData.max_loss}}</i>
-            </template>
-            <template slot="id" slot-scope="props">
-              <i  class="simple-icon-arrow-down" @click="cellClicked($event, props.rowData)"></i>
-            </template>
-            <template slot="action">
-                <b-dropdown  text="actions" variant="outline-secondary">
-                  <b-dropdown-item>Detail</b-dropdown-item>
-                  <b-dropdown-item>Edit</b-dropdown-item>
-                  <b-dropdown-item>Delete</b-dropdown-item>
-              </b-dropdown>
-            </template>
-          </vuetable>
-        </b-card>
-        <vuetable-pagination-bootstrap
-          class="mt-4"
-          ref="pagination"
-          @vuetable-pagination:change-page="onChangePage"
-        />
-      </b-colxx>
+      <template v-if="isLoad">
+        <b-colxx xxs="12">
+          <b-card>
+            <vuetable
+              ref="vuetable"
+              style="display:block; overflow-x:auto;width:auto"
+              :api-mode="false"
+              :fields="fields"
+              :per-page="perPage"
+              :data-manager="dataManager"
+              :detail-row-component="detailRow"
+              class="order-with-arrow"
+              detail-row-transition="expand"
+              pagination-path="pagination"
+              @vuetable:pagination-data="onPaginationData"
+              @vuetable:cell-clicked="onCellClicked"
+            >
+              <template slot="name" slot-scope="props">
+                  <a href=""><h5>{{props.rowData.name}}</h5></a>
+              </template>
+              <template slot="color" slot-scope="props">
+                  <div class="btn btn-sm" v-bind:style="returnColor(props.rowData.color.hex_code)">{{props.rowData.color.eng_name}}</div>
+              </template>
+              <template slot="coat" slot-scope="props">
+                  <i>Min : {{props.rowData.min_coat}} </i><br>
+                  <i>Max : {{props.rowData.max_coat}}</i>
+              </template>
+              <template slot="Dft" slot-scope="props">
+                  <i>Min : {{props.rowData.min_dft}} </i><br>
+                  <i>Max : {{props.rowData.max_dft}}</i>
+              </template>
+                <template slot="loss" slot-scope="props">
+                  <i>Min : {{props.rowData.min_loss}} </i><br>
+                  <i>Max : {{props.rowData.max_loss}}</i>
+              </template>
+              <template slot="id" slot-scope="props">
+                <i  class="simple-icon-arrow-down" @click="cellClicked($event, props.rowData)"></i>
+              </template>
+              <template slot="action">
+                  <b-dropdown  text="actions" variant="outline-secondary">
+                    <b-dropdown-item>Detail</b-dropdown-item>
+                    <b-dropdown-item>Edit</b-dropdown-item>
+                    <b-dropdown-item>Delete</b-dropdown-item>
+                </b-dropdown>
+              </template>
+            </vuetable>
+          </b-card>
+          <vuetable-pagination-bootstrap
+            class="mt-4"
+            ref="pagination"
+            @vuetable-pagination:change-page="onChangePage"
+          />
+        </b-colxx>
+      </template>
+      <template v-else>
+        <div class="loading"></div>
+      </template>
     </b-row>
 
     <v-contextmenu ref="contextmenu">
@@ -239,7 +244,7 @@ export default {
     .then(resp => {
         this.data = resp;
         this.dataClone = resp;
-        this.loadCek = false
+        this.isLoad = true
       });
 
   },
@@ -427,55 +432,6 @@ export default {
       );
     }
   },
-   events: {
-    	/** Start the loader ----------------------------------
-    	 * Dispatched up the parent chain before vuetable
-    	 * starts to request the data from the server
-    	 */
-        'vuetable:loading': function() {
-            // display your loading notification
-            // console.log ("load started");
-        },
 
-       	/** Disable the loader ---------------------------------
-    	 * dispatched when vuetable receives response from server.
-    	 * Response from server passed as the event argument
-    	 */
-        'vuetable:load-success': function(response) {
-            // hide loading notification
-            // console.log ("load completed");
-        },
-    },
 };
 </script>
-<style>
-.vuetable-wrapper {
-    position: relative;
-    opacity: 1;
-}
-.loader {
-    visibility: hidden;
-    opacity: 0;
-    transition: opacity 0.3s linear;
-    background: url('../../../../../src/assets/logos/gif_loading.gif') no-repeat bottom center;
-    width: 200px;
-    height: 30px;
-    font-size: 1em;
-    text-align: center;
-    margin-left: -100px;
-    letter-spacing: 4px;
-    color: #3E97F6;
-    position: absolute;
-    top: 160px;
-    left: 50%;
-}
-.loading .loader {
-    visibility: visible;
-    opacity: 1;
-    z-index: 100;
-}
-.loading .vuetable{
-    opacity:0.3;
-    filter: alpha(opacity=30); /* IE8 and earlier */
-}
-</style>

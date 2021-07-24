@@ -1,5 +1,5 @@
 <template>
-  <b-modal id="modalright" ref="modalright" title="Filter Customer" modal-class="modal-right">
+  <b-modal id="modalright" ref="modalright" title="Filter Quote" modal-class="modal-right">
      <b-row>
         <b-colxx xxs="12" >
              <b-form-group label="Option">
@@ -8,14 +8,91 @@
         </b-colxx>
      </b-row>
      <b-row>
-        <b-colxx xxs="12">
-            <b-form-group label="Status">
+        <b-colxx xxs="12" >
+            <b-form-group label="Status" v-if="vueSelected == '1'">
                 <v-select
-                  v-model="vueSelectForm.multiple"
+                  v-model="dataReturn.status"
                   multiple
-                  :options="selectData"
-                  :dir="direction"
+                  :options="listQuoteStatus"
+                  :reduce="listQuoteStatus => listQuoteStatus.id" label="name" placeholder="Silahkan Pilih Status"
                 />
+            </b-form-group>
+
+              <b-form-group label="Nama Customer" v-if="vueSelected == '2' && !this.$route.query.id">
+                    <v-select
+                      label="name"
+                      :filterable="false"
+                      multiple
+                      v-model="dataReturn.customerId"
+                      :options="listUser"
+                      @search="fetchOptions"
+                      :reduce="listUser => listUser.id"
+                    >
+                      <template slot="no-options">Cari nama Kustomer...</template>
+                      <template slot="option" slot-scope="option">
+                        <div class="row" >
+                          <div class="col-3">  <div
+                  src="/assets/img/profiles/l-1.jpg"
+                  alt="Card image cap"
+                  class="align-self-center list-thumbnail-letters rounded-circle small"
+                >{{showAvatar(option.name)}}</div></div>
+                        <div class="col-9 pt-2 " style="overflow: hidden;
+                         text-overflow: ellipsis;">
+                            {{ option.name }}
+                        </div>
+                        </div>
+                      </template>
+                      <template slot="selected-option" slot-scope="option">
+                        <div class="selected d-center">
+                          {{ option.name }}
+                        </div>
+                      </template>
+                      <template slot="spinner" slot-scope="spinner">
+                        <div class="spinner-border text-primary" v-show="spinner"></div>
+                      </template>
+                    </v-select>
+            </b-form-group>
+
+            <b-form-group label="Total" v-if="vueSelected == '3'">
+               Minimum :
+                <b-form-input type="number" v-model="dataReturn.minimum"  placeholder="Minimum"/>
+                <br>
+                Maximum :
+                <b-form-input type="number" v-model="dataReturn.maximum"  placeholder="MAximum" />
+            </b-form-group>
+            <b-form-group label="Updated At" v-if="vueSelected == '4'">
+              Tanggal Awal :
+                <datepicker
+                  :bootstrap-styling="true"
+                  placeholder="Tanggal Awal"
+                  v-model="dataReturn.dateUpdateAwal"
+                  format ="yyyy-MM-dd"
+                ></datepicker>
+                  <br>
+                  Tanggal Akhir
+                  <datepicker
+                  :bootstrap-styling="true"
+                  placeholder="Tanggal Akhir"
+                  v-model="dataReturn.dateUpdateAkhir"
+                   format ="yyyy-MM-dd"
+                ></datepicker>
+            </b-form-group>
+              <b-form-group label="Created At" v-if="vueSelected == '5'">
+              Tanggal Awal :
+                <datepicker
+                  :bootstrap-styling="true"
+                  placeholder="Tanggal Awal"
+                  v-model="dataReturn.dateCreateAwal"
+                  format ="yyyy-MM-dd"
+                ></datepicker>
+                  <br>
+                  Tanggal Akhir
+                  <datepicker
+                  :bootstrap-styling="true"
+                  placeholder="Tanggal Akhir"
+                  v-model="dataReturn.dateCreateAkhir"
+                   format ="yyyy-MM-dd"
+                ></datepicker>
             </b-form-group>
         </b-colxx>
      </b-row>
@@ -38,6 +115,7 @@ export default {
   data() {
     return {
      vueSelected : "",
+     listQuoteStatus : [],
       selectData: [
         {
           value : "1",
@@ -49,12 +127,32 @@ export default {
         },
         {
           value : "3",
-          label : "Status"
+          label : "Total"
         },
+        {
+          value : "4",
+          label : "Updated-At"
+        },
+        {
+          value : "5",
+          label : "Created-At"
+        },
+        {
+          value : "6",
+          label : "Customer"
+        }
+
       ],
-      ListWarna : [],
+      listUser : [],
       dataReturn : {
-        status : []
+        status : [],
+        customerId : [],
+        minimum : 0,
+        maximum : 0,
+        dateCreateAwal : "",
+        dateCreateAkhir  : "",
+        dateUpdateAwal : "",
+        dateUpdateAkhir : "",
       }
     };
   },
@@ -78,7 +176,14 @@ export default {
     reset(){
       this.vueSelected = ""
       this.dataReturn = {
-        status : []
+        status : [],
+        customerId : [],
+        minimum : 0,
+        maximum : 0,
+        dateCreateAwal : "",
+        dateCreateAkhir  : "",
+        dateUpdateAwal : "",
+        dateUpdateAkhir : "",
       }
     }
 
@@ -91,13 +196,12 @@ export default {
       },
       body: JSON.stringify({
         query: `
-          query{ralColors{
-            id_ral
-            ind_name
-            eng_name
-            hex_code
-          }
-          }
+         query{
+              quoteStatuses{
+                id
+                name
+              }
+            }
         `,
           variables: {
           },
@@ -106,11 +210,42 @@ export default {
           return response.json()
       }).then(function(text) {
         console.log(text.data)
-          return text.data.ralColors;
+          return text.data.quoteStatuses;
       })
       .then(resp => {
-        this.ListWarna = resp
+        this.listQuoteStatus = resp
       });
+
+
+
+       fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+          method: 'POST',
+          headers: {
+          'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            query: `
+              query{ customers {
+                        count
+                        customers{
+                            id
+                            name
+                            workPhone
+                        }}
+                        }
+            `,
+          }),
+        })
+        .then(function(response) {
+          return response.json()
+        })
+        .then(function(text) {
+          console.log(text)
+          return text.data.customers.customers;
+        })
+        .then(resp => {
+            this.listUser = resp
+        })
   }
 };
 </script>

@@ -23,58 +23,66 @@
     </b-row>
 
     <b-row>
-      <b-colxx xxs="12">
-        <b-card>
-          <div class="loader" >LOADING</div><!--Your Loading Message -->
-          <vuetable
-            ref="vuetable"
-            style="display:block; overflow-x:auto;width:auto"
-            :api-mode="false"
-            :fields="fields"
-            :per-page="perPage"
-            :data-manager="dataManager"
-           :detail-row-component="detailRow"
-            detail-row-transition="expand"
-            pagination-path="pagination"
-            @vuetable:pagination-data="onPaginationData"
-             @vuetable:cell-clicked="onCellClicked"
-          >
-            <template slot="avatar" slot-scope="props">
-                <div
-                  src="/assets/img/profiles/l-1.jpg"
-                  alt="Card image cap"
-                  class="align-self-center list-thumbnail-letters rounded-circle small"
-                >{{showAvatar(props.rowData.name)}}</div>
-            </template>
-            <template slot="name" slot-scope="props">
-                <h4>{{props.rowData.name}}</h4>
-                <i>{{props.rowData.email}}</i>
-            </template>
-            <template slot="mobilePhone" slot-scope="props">
-               <i>{{props.rowData.mobilePhone}}</i>
-               <br>
-                <i>{{props.rowData.workPhone}}</i>
-            </template>
-            <template slot="category.name" slot-scope="props">
-               <b-badge :variant="props.rowData.category.name === 'CUSTOMER' ?  'primary' : 'success'" >{{props.rowData.category.name}}</b-badge>
-            </template>
-            <template slot="id" slot-scope="props">
-              <i  class="simple-icon-arrow-down" @click="cellClicked($event, props.rowData)"></i>
-            </template>
-            <template slot="action" slot-scope="props">
-                <b-dropdown text="Actions" variant="outline-secondary">
-                  <b-dropdown-item @click="movePageDetail(props.rowData.id)">Detail</b-dropdown-item>
-                  <b-dropdown-item @click="movePageEdit(props.rowData.id)">Edit</b-dropdown-item>
-              </b-dropdown>
-            </template>
-          </vuetable>
-        </b-card>
-        <vuetable-pagination-bootstrap
-          class="mt-4"
-          ref="pagination"
-          @vuetable-pagination:change-page="onChangePage"
-        />
-      </b-colxx>
+      <template v-if="isLoad">
+        <b-colxx xxs="12">
+          <b-card>
+            <vuetable
+              ref="vuetable"
+              style="display:block; overflow-x:auto;width:auto"
+              :api-mode="false"
+              :fields="fields"
+              :per-page="perPage"
+              class="order-with-arrow"
+              :data-manager="dataManager"
+            :detail-row-component="detailRow"
+              detail-row-transition="expand"
+              pagination-path="pagination"
+              @vuetable:pagination-data="onPaginationData"
+              @vuetable:cell-clicked="onCellClicked"
+            >
+              <template slot="avatar" slot-scope="props">
+                  <div
+                    src="/assets/img/profiles/l-1.jpg"
+                    alt="Card image cap"
+                    class="align-self-center list-thumbnail-letters rounded-circle small"
+                  >
+                  {{showAvatar(props.rowData.name)}}
+
+                  </div>
+              </template>
+              <template slot="name" slot-scope="props">
+                  <h4>{{props.rowData.name}}</h4>
+                  <i>{{props.rowData.email}}</i>
+              </template>
+              <template slot="mobilePhone" slot-scope="props">
+                <i>{{props.rowData.mobilePhone}}</i>
+                <br>
+                  <i>{{props.rowData.workPhone}}</i>
+              </template>
+              <template slot="categoryName" slot-scope="props">
+                <b-badge  v-if="props.rowData.category" :variant="props.rowData.category.name === 'CUSTOMER' ?  'primary' : 'success'" >{{props.rowData.category.name}}</b-badge>
+              </template>
+              <template slot="id" slot-scope="props">
+                <i  class="simple-icon-arrow-down" @click="cellClicked($event, props.rowData)"></i>
+              </template>
+              <template slot="action" slot-scope="props">
+                  <b-dropdown text="Actions" variant="outline-secondary">
+                    <b-dropdown-item @click="movePageDetail(props.rowData.id)">Detail</b-dropdown-item>
+                    <b-dropdown-item @click="movePageEdit(props.rowData.id)">Edit</b-dropdown-item>
+                </b-dropdown>
+              </template>
+            </vuetable>
+          </b-card>
+          <vuetable-pagination-bootstrap
+            class="mt-4"
+            ref="pagination"
+            @vuetable-pagination:change-page="onChangePage"
+          />
+        </b-colxx>
+      </template>
+      <template v-else>
+        <div class="loading"></div>
+      </template>
     </b-row>
 
     <v-contextmenu ref="contextmenu">
@@ -159,7 +167,7 @@ export default {
          width:"10%"
         },
         {
-          name: "__slot:category.name",
+          name: "__slot:categoryName",
           sortField: "category.name",
           title: "Kategori",
           titleClass: "",
@@ -179,8 +187,7 @@ export default {
           width: "15%",
           titleClass: "center aligned",
           dataClass: "center aligned",
-        },
-
+        }
       ],
       sort: "",
       perPage: 4,
@@ -243,7 +250,7 @@ export default {
     .then(resp => {
         this.data = resp;
         this.dataClone = resp;
-        this.loadCek = false
+       this.isLoad = true
       });
 
   },
@@ -486,55 +493,5 @@ export default {
       );
     }
   },
-   events: {
-    	/** Start the loader ----------------------------------
-    	 * Dispatched up the parent chain before vuetable
-    	 * starts to request the data from the server
-    	 */
-        'vuetable:loading': function() {
-            // display your loading notification
-            // console.log ("load started");
-        },
-
-       	/** Disable the loader ---------------------------------
-    	 * dispatched when vuetable receives response from server.
-    	 * Response from server passed as the event argument
-    	 */
-        'vuetable:load-success': function(response) {
-            // hide loading notification
-            // console.log ("load completed");
-        },
-    },
 };
 </script>
-<style>
-.vuetable-wrapper {
-    position: relative;
-    opacity: 1;
-}
-.loader {
-    visibility: hidden;
-    opacity: 0;
-    transition: opacity 0.3s linear;
-    background: url('../../../../../src/assets/logos/gif_loading.gif') no-repeat bottom center;
-    width: 200px;
-    height: 30px;
-    font-size: 1em;
-    text-align: center;
-    margin-left: -100px;
-    letter-spacing: 4px;
-    color: #3E97F6;
-    position: absolute;
-    top: 160px;
-    left: 50%;
-}
-.loading .loader {
-    visibility: visible;
-    opacity: 1;
-    z-index: 100;
-}
-.loading .vuetable{
-    opacity:0.3;
-    filter: alpha(opacity=30); /* IE8 and earlier */
-}
-</style>

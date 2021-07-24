@@ -1,5 +1,5 @@
 <template>
-  <b-modal id="modalright" ref="modalright" title="Filter Customer" modal-class="modal-right">
+  <b-modal id="modalright" ref="modalright" title="Filter Project" modal-class="modal-right">
      <b-row>
         <b-colxx xxs="12" >
              <b-form-group label="Option">
@@ -68,7 +68,6 @@
             </b-form-radio-group>
 
             <b-form-group label="Nama Customer" v-if="vueSelected == '6' && !this.$route.query.id">
-                  <b-form-group >
                     <v-select
                       label="name"
                       :filterable="false"
@@ -101,8 +100,6 @@
                         <div class="spinner-border text-primary" v-show="spinner"></div>
                       </template>
                     </v-select>
-                  </b-form-group>
-
             </b-form-group>
         </b-colxx>
      </b-row>
@@ -273,7 +270,7 @@ export default {
 
  if(!this.$route.query.id){
 
-  fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+    fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
           method: 'POST',
           headers: {
           'Content-Type': 'application/json',

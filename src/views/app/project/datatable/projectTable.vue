@@ -23,53 +23,59 @@
     </b-row>
 
     <b-row>
-      <b-colxx xxs="12">
-        <b-card>
-          <div class="loader" >LOADING</div><!--Your Loading Message -->
-          <vuetable
-            ref="vuetable"
-            style="display:block; overflow-x:auto;width:auto"
-            :api-mode="false"
-            :fields="fields"
-            :per-page="perPage"
-            :data-manager="dataManager"
-            :detail-row-component="detailRow"
-            detail-row-transition="expand"
-            pagination-path="pagination"
-            @vuetable:pagination-data="onPaginationData"
-             @vuetable:cell-clicked="onCellClicked"
-          >
-            <template slot="name" slot-scope="props">
-                <a href=""><h5>{{props.rowData.name}}</h5></a>
-            </template>
-            <template slot="category" slot-scope="props">
-               <b-badge :variant="props.rowData.status=== 1 ?  'primary' : 'danger'" >{{props.rowData.category.name}}</b-badge>
-            </template>
-            <template slot="lastQuote" slot-scope="props">
-                  <a href=""><h5>{{props.rowData.lastQuote.userCreate.name}}</h5></a>
-                  <b-badge v-if="props.rowData.lastQuote.userCreate.role" variant="primary">{{props.rowData.userCreate.role.name}}</b-badge>
-            </template>
-            <template slot="lastQuote.total" slot-scope="props">
-                  <a href="">{{shortNumber(props.rowData.lastQuote.total)}}</a>
-            </template>
-            <template slot="id" slot-scope="props">
-              <i  class="simple-icon-arrow-down" @click="cellClicked($event, props.rowData)"></i>
-            </template>
-            <template slot="action" slot-scope="props">
-                <b-dropdown text="Actions" variant="outline-secondary">
-                  <b-dropdown-item @click="movePageDetail(props.rowData.id)">Detail</b-dropdown-item>
-                  <b-dropdown-item @click="movePageEdit(props.rowData.id)">Edit</b-dropdown-item>
-                  <b-dropdown-item @click="showModal(props.rowData.name,'modalbasic')">Delete</b-dropdown-item>
-              </b-dropdown>
-            </template>
-          </vuetable>
-        </b-card>
-        <vuetable-pagination-bootstrap
-          class="mt-4"
-          ref="pagination"
-          @vuetable-pagination:change-page="onChangePage"
-        />
-      </b-colxx>
+      <template v-if="isLoad">
+        <b-colxx xxs="12">
+          <b-card>
+            <vuetable
+              ref="vuetable"
+              style="display:block; overflow-x:auto;width:auto"
+              :api-mode="false"
+              :fields="fields"
+              :per-page="perPage"
+              :data-manager="dataManager"
+              :detail-row-component="detailRow"
+              class="order-with-arrow"
+              detail-row-transition="expand"
+              pagination-path="pagination"
+              @vuetable:pagination-data="onPaginationData"
+              @vuetable:cell-clicked="onCellClicked"
+            >
+              <template slot="name" slot-scope="props">
+                  <a href=""><h5>{{props.rowData.name}}</h5></a>
+              </template>
+              <template slot="category" slot-scope="props">
+                <b-badge :variant="props.rowData.status=== 1 ?  'primary' : 'danger'" >{{props.rowData.category.name}}</b-badge>
+              </template>
+              <template slot="lastQuote" slot-scope="props">
+                  <b-button class="btn btn-sm" style="width:100%">{{timeLayout(props.rowData.lastQuote.created_at)}}/{{timeLayout(props.rowData.lastQuote.updated_at)}} <br>
+                          Status : {{props.rowData.lastQuote.status.name}}
+                  </b-button>
+              </template>
+              <template slot="lastQuote.total" slot-scope="props">
+                    <a href="">{{shortNumber(props.rowData.lastQuote.total)}}</a>
+              </template>
+              <template slot="id" slot-scope="props">
+                <i  class="simple-icon-arrow-down" @click="cellClicked($event, props.rowData)"></i>
+              </template>
+              <template slot="action" slot-scope="props">
+                  <b-dropdown text="Actions" variant="outline-secondary">
+                    <b-dropdown-item @click="movePageDetail(props.rowData.id)">Detail</b-dropdown-item>
+                    <b-dropdown-item @click="movePageEdit(props.rowData.id)">Edit</b-dropdown-item>
+                    <b-dropdown-item @click="showModal(props.rowData.name,'modalbasic')">Delete</b-dropdown-item>
+                </b-dropdown>
+              </template>
+            </vuetable>
+          </b-card>
+          <vuetable-pagination-bootstrap
+            class="mt-4"
+            ref="pagination"
+            @vuetable-pagination:change-page="onChangePage"
+          />
+        </b-colxx>
+      </template>
+      <template v-else>
+        <div class="loading"></div>
+      </template>
     </b-row>
 
     <v-contextmenu ref="contextmenu">
@@ -216,9 +222,12 @@ export default {
                 lastQuote{
                     total
                     id
+
+                    updated_at
+                    created_at
                     status{
-                      id
                       name
+                      id
                     }
                     userCreate{
                     id
@@ -246,7 +255,7 @@ export default {
     .then(resp => {
         this.data = resp;
         this.dataClone = resp;
-        this.loadCek = false
+        this.isLoad = true
       });
 
   },
@@ -335,6 +344,11 @@ export default {
         else if (n >= 1e6 && n < 1e9) return +(n / 1e6).toFixed(1) + " jt";
         else if (n >= 1e9 && n < 1e12) return +(n / 1e9).toFixed(1) + " M";
         else if (n >= 1e12) return +(n / 1e12).toFixed(1) + " T";
+    },
+    timeLayout(n){
+      if(n!= null){
+       return n.split("T")[0];
+      }
     },
     dataManager(sortOrder, pagination) {
     //  if (this.data.length < 1) return;
@@ -577,55 +591,5 @@ export default {
       );
     }
   },
-   events: {
-    	/** Start the loader ----------------------------------
-    	 * Dispatched up the parent chain before vuetable
-    	 * starts to request the data from the server
-    	 */
-        'vuetable:loading': function() {
-            // display your loading notification
-            // console.log ("load started");
-        },
-
-       	/** Disable the loader ---------------------------------
-    	 * dispatched when vuetable receives response from server.
-    	 * Response from server passed as the event argument
-    	 */
-        'vuetable:load-success': function(response) {
-            // hide loading notification
-            // console.log ("load completed");
-        },
-    },
 };
 </script>
-<style>
-.vuetable-wrapper {
-    position: relative;
-    opacity: 1;
-}
-.loader {
-    visibility: hidden;
-    opacity: 0;
-    transition: opacity 0.3s linear;
-    background: url('../../../../../src/assets/logos/gif_loading.gif') no-repeat bottom center;
-    width: 200px;
-    height: 30px;
-    font-size: 1em;
-    text-align: center;
-    margin-left: -100px;
-    letter-spacing: 4px;
-    color: #3E97F6;
-    position: absolute;
-    top: 160px;
-    left: 50%;
-}
-.loading .loader {
-    visibility: visible;
-    opacity: 1;
-    z-index: 100;
-}
-.loading .vuetable{
-    opacity:0.3;
-    filter: alpha(opacity=30); /* IE8 and earlier */
-}
-</style>

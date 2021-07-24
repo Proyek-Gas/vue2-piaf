@@ -23,124 +23,128 @@
     </b-row>
 
     <b-row>
-      <b-colxx xxs="12">
-        <b-card>
-          <div class="loader" >LOADING</div><!--Your Loading Message -->
-          <vuetable
-            ref="vuetable"
-            style="display:block; overflow-x:auto;width:auto"
-            :api-mode="false"
-            :fields="fields"
-            :per-page="perPage"
-            :data-manager="dataManager"
-            pagination-path="pagination"
-            @vuetable:pagination-data="onPaginationData"
-             @vuetable:cell-clicked="onCellClicked"
-          >
-            <template slot="status" slot-scope="props">
-               <b-badge v-if="props.rowData.status.id == 1" variant="primary" :id="'tool-nt'+props.rowData.id"> {{props.rowData.updated_at}}</b-badge>
-               <b-badge v-if="props.rowData.status.id == 2" variant="warning" :id="'tool-nt'+props.rowData.id"> {{props.rowData.updated_at}}</b-badge>
-               <b-badge v-if="props.rowData.status.id == 3" variant="succes" :id="'tool-nt'+props.rowData.id"> {{props.rowData.updated_at}}</b-badge>
-               <b-badge v-if="props.rowData.status.id == 4" variant="danger" :id="'tool-nt'+props.rowData.id"> {{props.rowData.updated_at}}</b-badge>
-               <b-badge v-if="props.rowData.status.id == 5" variant="danger" :id="'tool-nt'+props.rowData.id"> {{props.rowData.updated_at}}</b-badge>
-                  <b-badge v-if="props.rowData.status.id == 6" variant="dark" :id="'tool-nt'+props.rowData.id"> {{props.rowData.closed_at}}</b-badge>
-                  <b-badge v-if="props.rowData.status.id == 7" variant="info" :id="'tool-nt'+props.rowData.id"> {{props.rowData.closed_at}}</b-badge>
-                          <b-tooltip :target="'tool-nt'+props.rowData.id"
-                               placement="right"
-                                >
-                                      <b>Notes: </b>{{props.rowData.notes}}
-                              </b-tooltip>
-            </template>
+      <template v-if="isLoad">
+        <b-colxx xxs="12">
+          <b-card class="vuetable-wrapper">
+            <vuetable
+              ref="vuetable"
+              style="display:block; overflow-x:auto;width:auto"
+              :api-mode="false"
+              :fields="fields"
+              :per-page="perPage"
+              class="order-with-arrow"
+              :data-manager="dataManager"
+              wrapper-class="vuetable-wrapper"
+              pagination-path="pagination"
+              @vuetable:pagination-data="onPaginationData"
+              @vuetable:cell-clicked="onCellClicked"
+            >
+              <template slot="status" slot-scope="props">
+                <b-badge v-if="props.rowData.status.id == 1" variant="primary" :id="'tool-nt'+props.rowData.id"> {{props.rowData.updated_at}}</b-badge>
+                <b-badge v-if="props.rowData.status.id == 2" variant="warning" :id="'tool-nt'+props.rowData.id"> {{props.rowData.updated_at}}</b-badge>
+                <b-badge v-if="props.rowData.status.id == 3" variant="succes" :id="'tool-nt'+props.rowData.id"> {{props.rowData.updated_at}}</b-badge>
+                <b-badge v-if="props.rowData.status.id == 4" variant="danger" :id="'tool-nt'+props.rowData.id"> {{props.rowData.updated_at}}</b-badge>
+                <b-badge v-if="props.rowData.status.id == 5" variant="danger" :id="'tool-nt'+props.rowData.id"> {{props.rowData.updated_at}}</b-badge>
+                    <b-badge v-if="props.rowData.status.id == 6" variant="dark" :id="'tool-nt'+props.rowData.id"> {{props.rowData.closed_at}}</b-badge>
+                    <b-badge v-if="props.rowData.status.id == 7" variant="info" :id="'tool-nt'+props.rowData.id"> {{props.rowData.closed_at}}</b-badge>
+                            <b-tooltip :target="'tool-nt'+props.rowData.id"
+                                placement="right"
+                                  >
+                                        <b>Notes: </b>{{props.rowData.notes}}
+                                </b-tooltip>
+              </template>
 
-            <template slot="project" slot-scope="props">
+              <template slot="project" slot-scope="props">
 
-                <!-- <b-button :id="'tool-'+props.rowData.id" variant="secondary" class="mr-1 mb-1">{{ props.rowData.project.name }}</b-button>
-                <b-tooltip :target="'tool-'+props.rowData.id"
-                        placement="top"
-                        :title="props.rowData.project.name">
-                       <b>Tgl Reminder: </b> {{timeLayout(props.rowData.project.tgl_reminder)}} <br>
-                       <b>Status :</b> {{props.rowData.project.status.name}}
-                </b-tooltip> -->
+                  <!-- <b-button :id="'tool-'+props.rowData.id" variant="secondary" class="mr-1 mb-1">{{ props.rowData.project.name }}</b-button>
+                  <b-tooltip :target="'tool-'+props.rowData.id"
+                          placement="top"
+                          :title="props.rowData.project.name">
+                        <b>Tgl Reminder: </b> {{timeLayout(props.rowData.project.tgl_reminder)}} <br>
+                        <b>Status :</b> {{props.rowData.project.status.name}}
+                  </b-tooltip> -->
 
-                <b-row>
-                  <b-colxx xxs="12">
-                      <b-button class="mb-1" variant="primary default" style="width:100%">{{ props.rowData.project.name }}</b-button>
-                  </b-colxx>
-                </b-row>
-                <b-row>
+                  <b-row>
                     <b-colxx xxs="12">
-                      <b-row>
-                          <b-colxx xxs="12" xl="6"> Tanggal: </b-colxx>
-                           <b-colxx xxs="12" xl="6">{{timeLayout(props.rowData.project.tgl_reminder)}}</b-colxx>
-                      </b-row>
-                      <b-row>
-                          <b-colxx xxs="12" xl="6"> Status: </b-colxx>
-                           <b-colxx xxs="12" xl="6">{{props.rowData.project.status.name}}</b-colxx>
-                      </b-row>
-                       <b-row>
-                          <b-colxx xxs="12" xl="6"> Kategori: </b-colxx>
-                           <b-colxx xxs="12" xl="6">{{props.rowData.project.category.name}}</b-colxx>
-                      </b-row>
-                      <b-row>
-                          <b-colxx xxs="12" xl="6"> customer_id: </b-colxx>
-                           <b-colxx xxs="12" xl="6">
-                             <b-button :id="'tool-cd'+props.rowData.id" variant="secondary" class="mr-1 mb-1"  @click="movePageDetail(props.rowData.project.customer_id)">{{props.rowData.project.customer_id}}</b-button>
-                              <b-tooltip :target="'tool-cd'+props.rowData.id"
-                               placement="right"
-                               v-if="fetchDetailCustomer(props.rowData.project.customer_id).length != 0"
-                                >
-                                      <b>{{fetchDetailCustomer(props.rowData.project.customer_id)["name"]}}</b>
-                              </b-tooltip>
-                           </b-colxx>
-
-
-                      </b-row>
+                        <b-button class="mb-1" variant="primary default" style="width:100%">{{ props.rowData.project.name }}</b-button>
                     </b-colxx>
-                </b-row>
-            </template>
-            <template slot="total" slot-scope="props">
+                  </b-row>
+                  <b-row>
+                      <b-colxx xxs="12">
+                        <b-row>
+                            <b-colxx xxs="12" xl="6"> Tanggal: </b-colxx>
+                            <b-colxx xxs="12" xl="6">{{timeLayout(props.rowData.project.tgl_reminder)}}</b-colxx>
+                        </b-row>
+                        <b-row>
+                            <b-colxx xxs="12" xl="6"> Status: </b-colxx>
+                            <b-colxx xxs="12" xl="6">{{props.rowData.project.status.name}}</b-colxx>
+                        </b-row>
+                        <b-row>
+                            <b-colxx xxs="12" xl="6"> Kategori: </b-colxx>
+                            <b-colxx xxs="12" xl="6">{{props.rowData.project.category.name}}</b-colxx>
+                        </b-row>
+                        <b-row>
+                            <b-colxx xxs="12" xl="6"> customer_id: </b-colxx>
+                            <b-colxx xxs="12" xl="6">
+                              <b-button :id="'tool-cd'+props.rowData.id" variant="secondary" class="mr-1 mb-1 small"  @click="movePageDetail(props.rowData.project.customer_id)">{{props.rowData.project.customer_id}}</b-button>
+                                <!-- <b-tooltip :target="'tool-cd'+props.rowData.id"
+                                placement="right"
+                                v-if="fetchDetailCustomer(props.rowData.project.customer_id).length != 0"
+                                  >
+                                        <b>{{fetchDetailCustomer(props.rowData.project.customer_id)["name"]}}</b>
+                                </b-tooltip> -->
+                            </b-colxx>
+                        </b-row>
+                      </b-colxx>
+                  </b-row>
+              </template>
+              <template slot="total" slot-scope="props">
 
 
-                 <p class="mb-2">
-                   HPP
-                  <span class="float-right text-muted">  {{shortNumber(props.rowData.subtotal_hpp)}}/  {{shortNumber(props.rowData.total)}}</span>
-                </p>
-                <b-progress :value="(props.rowData.subtotal_hpp / props.rowData.total) * 100"></b-progress>
-            </template>
-             <template slot="validuntil" slot-scope="props">
-                <p>{{timeLayout(props.rowData.valid_until)}}</p> <br>
-                <i>{{timeLayout(props.rowData.created_at)}}</i>
-            </template>
-            <template slot="avatar" slot-scope="props">
-                   <div
-                      src="/assets/img/profiles/l-1.jpg"
-                      alt="Card image cap"
-                      class="align-self-center list-thumbnail-letters rounded-circle small"
-                    >{{showAvatar(props.rowData.userCreate.name)}}</div>
-            </template>
-            <template slot="userCreate" slot-scope="props">
-                      <b>{{props.rowData.userCreate.name}}</b>
-                      <br>
-                      <i>{{props.rowData.userCreate.role.name}}</i>
-            </template>
-            <!-- <template slot="id" slot-scope="props">
-              <i  class="simple-icon-arrow-down" @click="cellClicked($event, props.rowData)"></i>
-            </template> -->
-            <template slot="action">
-                <b-dropdown  text="actions" variant="outline-secondary">
-                  <b-dropdown-item>Detail</b-dropdown-item>
-                  <b-dropdown-item>Edit</b-dropdown-item>
-                  <b-dropdown-item>Delete</b-dropdown-item>
-              </b-dropdown>
-            </template>
-          </vuetable>
-        </b-card>
-        <vuetable-pagination-bootstrap
-          class="mt-4"
-          ref="pagination"
-          @vuetable-pagination:change-page="onChangePage"
-        />
-      </b-colxx>
+                  <p class="mb-2">
+                    HPP
+                    <span class="float-right text-muted">  {{shortNumber(props.rowData.subtotal_hpp)}}/  {{shortNumber(props.rowData.total)}}</span>
+                  </p>
+                  <b-progress :value="(props.rowData.subtotal_hpp / props.rowData.total) * 100"></b-progress>
+              </template>
+              <template slot="validuntil" slot-scope="props">
+                  <p>{{timeLayout(props.rowData.valid_until)}}</p> <br>
+                  <i>{{timeLayout(props.rowData.created_at)}}</i>
+              </template>
+              <template slot="avatar" slot-scope="props">
+                    <div
+                        src="/assets/img/profiles/l-1.jpg"
+                        alt="Card image cap"
+                        class="align-self-center list-thumbnail-letters rounded-circle small"
+                      >{{showAvatar(props.rowData.userCreate.name)}}</div>
+              </template>
+              <template slot="userCreate" slot-scope="props">
+                        <b>{{props.rowData.userCreate.name}}</b>
+                        <br>
+                        <i>{{props.rowData.userCreate.role.name}}</i>
+              </template>
+              <!-- <template slot="id" slot-scope="props">
+                <i  class="simple-icon-arrow-down" @click="cellClicked($event, props.rowData)"></i>
+              </template> -->
+              <template slot="action">
+                  <b-dropdown  text="actions" variant="outline-secondary">
+                    <b-dropdown-item>Detail</b-dropdown-item>
+                    <b-dropdown-item>Edit</b-dropdown-item>
+                    <b-dropdown-item>Delete</b-dropdown-item>
+                </b-dropdown>
+              </template>
+            </vuetable>
+          </b-card>
+          <vuetable-pagination-bootstrap
+            class="mt-4"
+            ref="pagination"
+            @vuetable-pagination:change-page="onChangePage"
+          />
+        </b-colxx>
+      </template>
+      <template v-else>
+        <div class="loading"></div>
+      </template>
     </b-row>
 
     <v-contextmenu ref="contextmenu">
@@ -215,7 +219,7 @@ export default {
           title: "Total",
           titleClass: "",
           dataClass: "text-muted",
-          width:"15%"
+          width:"20%"
         },
          ,
          {
@@ -265,6 +269,7 @@ export default {
   },
   mounted() {
     if(this.$route.query.id){
+      console.log("shano")
       this.custid = `{customer_id : "${this.$route.query.id}"}`;
     } else{
        this.custid = `null`;
@@ -275,9 +280,9 @@ export default {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          query: `
+          query:  `
          query{
-                quotes (filter : { ${this.custid}}){
+                quotes (filter :  ${this.custid}){
                   count
                   quotes{
                     id
@@ -320,12 +325,14 @@ export default {
     }).then(function(response) {
         return response.json()
     }).then(function(text) {
+      console.log(text)
         return text.data.quotes.quotes
     })
     .then(resp => {
         this.data = resp;
         this.dataClone = resp;
         this.loadCek = false
+        this.isLoad = true
       });
 
   },
@@ -515,55 +522,6 @@ export default {
       );
     }
   },
-   events: {
-    	/** Start the loader ----------------------------------
-    	 * Dispatched up the parent chain before vuetable
-    	 * starts to request the data from the server
-    	 */
-        'vuetable:loading': function() {
-            // display your loading notification
-            // console.log ("load started");
-        },
 
-       	/** Disable the loader ---------------------------------
-    	 * dispatched when vuetable receives response from server.
-    	 * Response from server passed as the event argument
-    	 */
-        'vuetable:load-success': function(response) {
-            // hide loading notification
-            // console.log ("load completed");
-        },
-    },
 };
 </script>
-<style>
-.vuetable-wrapper {
-    position: relative;
-    opacity: 1;
-}
-.loader {
-    visibility: hidden;
-    opacity: 0;
-    transition: opacity 0.3s linear;
-    background: url('../../../../../src/assets/logos/gif_loading.gif') no-repeat bottom center;
-    width: 200px;
-    height: 30px;
-    font-size: 1em;
-    text-align: center;
-    margin-left: -100px;
-    letter-spacing: 4px;
-    color: #3E97F6;
-    position: absolute;
-    top: 160px;
-    left: 50%;
-}
-.loading .loader {
-    visibility: visible;
-    opacity: 1;
-    z-index: 100;
-}
-.loading .vuetable{
-    opacity:0.3;
-    filter: alpha(opacity=30); /* IE8 and earlier */
-}
-</style>
