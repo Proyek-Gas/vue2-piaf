@@ -23,63 +23,58 @@
     </b-row>
 
     <b-row>
-      <template v-if="isLoad">
-        <b-colxx xxs="12">
-          <b-card>
-            <vuetable
-              ref="vuetable"
-              style="display:block; overflow-x:auto;width:auto"
-              :api-mode="false"
-              :fields="fields"
-              :per-page="perPage"
-              :data-manager="dataManager"
-              :detail-row-component="detailRow"
-              class="order-with-arrow"
-              detail-row-transition="expand"
-              pagination-path="pagination"
-              @vuetable:pagination-data="onPaginationData"
-              @vuetable:cell-clicked="onCellClicked"
-            >
-              <template slot="name" slot-scope="props">
-                  <a href=""><h5>{{props.rowData.name}}</h5></a>
-              </template>
-              <template slot="color" slot-scope="props">
-                  <div class="btn btn-sm" v-bind:style="returnColor(props.rowData.color.hex_code)">{{props.rowData.color.eng_name}}</div>
-              </template>
-              <template slot="coat" slot-scope="props">
-                  <i>Min : {{props.rowData.min_coat}} </i><br>
-                  <i>Max : {{props.rowData.max_coat}}</i>
-              </template>
-              <template slot="Dft" slot-scope="props">
-                  <i>Min : {{props.rowData.min_dft}} </i><br>
-                  <i>Max : {{props.rowData.max_dft}}</i>
-              </template>
-                <template slot="loss" slot-scope="props">
-                  <i>Min : {{props.rowData.min_loss}} </i><br>
-                  <i>Max : {{props.rowData.max_loss}}</i>
-              </template>
-              <template slot="id" slot-scope="props">
-                <i  class="simple-icon-arrow-down" @click="cellClicked($event, props.rowData)"></i>
-              </template>
-              <template slot="action">
-                  <b-dropdown  text="actions" variant="outline-secondary">
-                    <b-dropdown-item>Detail</b-dropdown-item>
-                    <b-dropdown-item>Edit</b-dropdown-item>
-                    <b-dropdown-item>Delete</b-dropdown-item>
-                </b-dropdown>
-              </template>
-            </vuetable>
-          </b-card>
-          <vuetable-pagination-bootstrap
-            class="mt-4"
-            ref="pagination"
-            @vuetable-pagination:change-page="onChangePage"
-          />
-        </b-colxx>
-      </template>
-      <template v-else>
-        <div class="loading"></div>
-      </template>
+      <b-colxx xxs="12">
+        <b-card>
+          <div class="loader" >LOADING</div><!--Your Loading Message -->
+          <vuetable
+            ref="vuetable"
+            style="display:block; overflow-x:auto;width:auto"
+            :api-mode="false"
+            :fields="fields"
+            :per-page="perPage"
+            :data-manager="dataManager"
+            :detail-row-component="detailRow"
+            detail-row-transition="expand"
+            pagination-path="pagination"
+            @vuetable:pagination-data="onPaginationData"
+             @vuetable:cell-clicked="onCellClicked"
+          >
+            <template slot="name" slot-scope="props">
+                <a href=""><h5>{{props.rowData.name}}</h5></a>
+            </template>
+            <template slot="color" slot-scope="props">
+                <div class="btn btn-sm" v-bind:style="returnColor(props.rowData.color.hex_code)">{{props.rowData.color.eng_name}}</div>
+            </template>
+            <template slot="coat" slot-scope="props">
+                <i>Min : {{props.rowData.min_coat}} </i><br>
+                <i>Max : {{props.rowData.max_coat}}</i>
+            </template>
+            <template slot="Dft" slot-scope="props">
+                <i>Min : {{props.rowData.min_dft}} </i><br>
+                <i>Max : {{props.rowData.max_dft}}</i>
+            </template>
+               <template slot="loss" slot-scope="props">
+                <i>Min : {{props.rowData.min_loss}} </i><br>
+                <i>Max : {{props.rowData.max_loss}}</i>
+            </template>
+            <template slot="id" slot-scope="props">
+              <i  class="simple-icon-arrow-down" @click="cellClicked($event, props.rowData)"></i>
+            </template>
+            <template slot="action" slot-scope="props">
+                <b-dropdown  text="actions" variant="outline-secondary">
+                  <b-dropdown-item @click="movePageDetail(props.rowData.id)">Detail</b-dropdown-item>
+                  <b-dropdown-item @click="movePageEdit(props.rowData.id)">Edit</b-dropdown-item>
+                  <b-dropdown-item>Delete</b-dropdown-item>
+              </b-dropdown>
+            </template>
+          </vuetable>
+        </b-card>
+        <vuetable-pagination-bootstrap
+          class="mt-4"
+          ref="pagination"
+          @vuetable-pagination:change-page="onChangePage"
+        />
+      </b-colxx>
     </b-row>
 
     <v-contextmenu ref="contextmenu">
@@ -251,6 +246,13 @@ export default {
   methods: {
     movePageAdd(){
 			window.location = window.location.href+"/add";
+		},
+    movePageDetail(val){
+      console.log(val);
+			window.location = window.location.href+"/sDetail?id="+val;
+		},
+    movePageEdit(val){
+			window.location = window.location.origin+"/app/datatable/schemeTable/sDetail/edit?id="+val;
 		},
     onPaginationData(paginationData) {
       this.from = paginationData.from;

@@ -290,9 +290,7 @@ export default {
             }
         },
         onFormReset(){
-            this.kode="";this.name="";this.kategori="";this.katHarga="";this.limit="";
-            this.email="";this.hp="";this.tlp="";this.npwp="";this.alamat="";
-            this.kota="";this.provinsi="";this.negara="";
+            this.fetching();
             this.$v.$reset();
         },
         onAutoSuggestInputChange(text, oldText) {
@@ -323,7 +321,7 @@ export default {
         },
         getSuggestionValue(suggestion) {
             this.kota = suggestion.item.name;
-            if(this.kota != null){
+            if(this.kota != ''){
                 const tmpIdprov = suggestion.item.province_id;
                 const tmpIdneg = suggestion.item.country_id;
                 const nameProv = this.arrProv.find(element => element.id == tmpIdprov);
@@ -332,6 +330,74 @@ export default {
                 this.negara = nameNeg.name;				
 			}
             return suggestion.item.name;
+        },
+        fetching(){
+            fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+            },
+                body: JSON.stringify({
+                    query: `
+                        query{ customerDetail(customer_id:"${this.custId}") {
+                            customerNo
+                            name
+                            mobilePhone
+                            workPhone
+                            npwpNo
+                            customerLimitAmountValue
+                            email
+                            billStreet
+                            billCity
+                            billProvince
+                            billCountry
+                            category{
+                                name
+                            }
+                            priceCategory{
+                                name
+                            }
+                        }
+                    }
+                    `,
+                })
+            })
+            .then(function(response) {
+                return response.json()
+            })
+            .then(function(text) {
+                console.log(text.data);
+                return text.data.customerDetail;
+            })
+            .then(resp => {
+                this.detail = resp
+                if(this.detail == null){
+                    console.log("masuk");
+                    // setTimeout(() => {
+                    //     window.location = window.location.origin +"/error?id=404&name=customer";
+                    // }, 50)
+                }else{
+                    console.log(this.detail.name);
+                    this.kode = this.detail.customerNo;
+                    this.name = this.detail.name;
+                    this.kategori = this.detail.category.name;
+                    this.katHarga = this.detail.priceCategory.name;
+                    this.limit = this.detail.customerLimitAmountValue;
+                    this.kota = this.detail.billCity;
+                    this.provinsi = this.detail.billProvince;
+                    this.negara = this.detail.billCountry;
+                    if(this.detail.customerLimitAmountValue == 0 || !this.detail.email || !this.detail.workPhone || !this.detail.mobilePhone){
+                        this.email = "";
+                        this.workPhone = "";
+                        this.mobilePhone = "";
+                        this.limit = "";
+                    }else{
+                        this.email = this.detail.email;
+                        this.workPhone = this.detail.workPhone;
+                        this.mobilePhone = this.detail.mobilePhone;
+                    }
+                }
+            })
         }
     },
     async mounted(){
@@ -340,69 +406,7 @@ export default {
         this.arrNegara = jsonCountry;
         this.custId = this.$route.query.id;
 		this.period = 'M';
-		fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
-		method: 'POST',
-		headers: {
-		'Content-Type': 'application/json',
-		},
-		body: JSON.stringify({
-			query: `
-				query{ customerDetail(customer_id:"${this.custId}") {
-                    customerNo
-                    name
-                    mobilePhone
-                    workPhone
-                    npwpNo
-                    customerLimitAmountValue
-                    email
-                    billStreet
-                    billCity
-                    billProvince
-                    billCountry
-                    category{
-                        name
-                    }
-                    priceCategory{
-                        name
-                    }
-                }
-            }
-			`,
-		})
-		})
-		.then(function(response) {
-			return response.json()
-		})
-		.then(function(text) {
-            console.log(text.data);
-			return text.data.customerDetail;
-		})
-		.then(resp => {
-			this.detail = resp
-			if(this.detail == null){
-                console.log("masuk");
-                // setTimeout(() => {
-                //     window.location = window.location.origin +"/error?id=404&name=customer";
-                // }, 50)
-			}else{
-				console.log(this.detail.name);
-                this.kode = this.detail.customerNo;
-				this.name = this.detail.name;
-				this.kategori = this.detail.category.name;
-				this.katHarga = this.detail.priceCategory.name;
-                this.limit = this.detail.customerLimitAmountValue;
-                if(this.detail.customerLimitAmountValue == 0 || !this.detail.email || !this.detail.workPhone || !this.detail.mobilePhone){
-                    this.email = "";
-                    this.workPhone = "";
-                    this.mobilePhone = "";
-                    this.limit = "";
-                }else{
-                    this.email = this.detail.email;
-                    this.workPhone = this.detail.workPhone;
-                    this.mobilePhone = this.detail.mobilePhone;
-                }
-			}
-		})
+        this.fetching();
         fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
 			method: 'POST',
 			headers: {

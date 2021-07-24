@@ -14,7 +14,6 @@
       <b-colxx xxs="6">
         <b-button class="mb-1"  v-b-modal.modalright variant="success " >Filter</b-button>
             <filter-item v-on:answers="onUpdateAnswer"></filter-item>
-         <b-button class="mb-1" variant="primary" @click="movePageAdd()">Add Item</b-button>
       </b-colxx>
       <b-colxx xxs="6" style="text-align:left">
           <h5 v-if="tag.length >0">Filter By</h5>
@@ -47,28 +46,24 @@
                   <div class="btn btn-sm" v-bind:style="returnColor(props.rowData.color.hex_code)">{{props.rowData.color.eng_name}}</div>
               </template>
 
-              <template slot="id" slot-scope="props">
-                <i  class="simple-icon-arrow-down" @click="cellClicked($event, props.rowData)"></i>
-              </template>
-              <template slot="action">
-                  <b-dropdown  text="actions" variant="outline-secondary">
-                    <b-dropdown-item>Detail</b-dropdown-item>
-                    <b-dropdown-item>Edit</b-dropdown-item>
-                    <b-dropdown-item>Delete</b-dropdown-item>
-                </b-dropdown>
-              </template>
-            </vuetable>
-          </b-card>
-          <vuetable-pagination-bootstrap
-            class="mt-4"
-            ref="pagination"
-            @vuetable-pagination:change-page="onChangePage"
-          />
-        </b-colxx>
-      </template>
-      <template v-else>
-           <div class="loading"></div>
-      </template>
+            <template slot="id" slot-scope="props">
+              <i  class="simple-icon-arrow-down" @click="cellClicked($event, props.rowData)"></i>
+            </template>
+            <template slot="action" slot-scope="props">
+                <b-dropdown  text="actions" variant="outline-secondary">
+                  <b-dropdown-item @click="movePageDetail(props.rowData.id)">Detail</b-dropdown-item>
+                  <b-dropdown-item @click="movePageEdit(props.rowData.id)">Edit</b-dropdown-item>
+                  <b-dropdown-item>Delete</b-dropdown-item>
+              </b-dropdown>
+            </template>
+          </vuetable>
+        </b-card>
+        <vuetable-pagination-bootstrap
+          class="mt-4"
+          ref="pagination"
+          @vuetable-pagination:change-page="onChangePage"
+        />
+      </b-colxx>
     </b-row>
 
     <v-contextmenu ref="contextmenu">
@@ -245,8 +240,12 @@ export default {
 
   },
   methods: {
-    movePageAdd(){
-			window.location = window.location.href+"/add";
+    movePageDetail(val){
+      console.log(val);
+			window.location = window.location.href+"/iDetail?id="+val;
+		},
+    movePageEdit(val){
+			window.location = window.location.origin+"/app/datatable/itemTable/iDetail/edit?id="+val;
 		},
     onPaginationData(paginationData) {
       this.from = paginationData.from;

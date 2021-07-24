@@ -11,7 +11,7 @@
                 <b-form-group label-cols="3" horizontal label="Customer">
                     <vue-autosuggest
                         class="autosuggest"
-                        :input-props="{id:'autosuggest__input', class:'form-control', placeholder:$t('form-components.type-a-cake')}"
+                        :input-props="{id:'autosuggest__input', class:'form-control', placeholder:'Ketik nama customer'}"
                         :suggestions="filteredOptions"
                         :render-suggestion="renderSuggestion"
                         :get-suggestion-value="getSuggestionValue"
@@ -234,26 +234,26 @@ export default {
                 }
                 console.log(str);
                 fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
-                method: 'POST',
-                headers: {
-                'Content-Type': 'application/json',
+                    method: 'POST',
+                    headers: {
+                    'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    query: `
-                        mutation{
-                            updateProject(
-                                project_id:${this.proId}
-                                params:{
-                                name:"${this.namaPro}"
-                                project_category:${this.katProId}
-                                ${str}
-                            }){
-                                status
-                                message
+                    body: JSON.stringify({
+                        query: `
+                            mutation{
+                                updateProject(
+                                    project_id:${this.proId}
+                                    params:{
+                                    name:"${this.namaPro}"
+                                    project_category:${this.katProId}
+                                    ${str}
+                                }){
+                                    status
+                                    message
+                                }
                             }
-                        }
-                    `,
-                }),
+                        `,
+                    }),
 				})
 				.then(function(response) {
 					return response.json()
@@ -286,30 +286,24 @@ export default {
             }
         },
         onFormReset(){
-            this.custNama=""; this.custPhone="";this.namaPro = "";this.tglPro = "";this.katPro = "";
+            this.fetching();
             this.$v.$reset();
         },
         onAutoSuggestInputChange(text, oldText) {
-        if (text === null) {
-            /* Maybe the text is null but you wanna do
-            *  something else, but don't filter by null.
-            */
-            return;
+        if (text === '') {
+            this.custPhone = '';
         }
-        setTimeout(() => {
-            const filteredData = this.dataCust.customers.filter(option => {
-                return option.name.toLowerCase().indexOf(text.toLowerCase()) > -1;
-            });
-            
-    
-            // Store data in one property, and filtered in another
-            this.filteredOptions = [
-                {
-                data: filteredData
-                }
-            ];
-            
-        }, 1000);
+        const filteredData = this.dataCust.customers.filter(option => {
+            return option.name.toLowerCase().indexOf(text.toLowerCase()) > -1;
+        });
+        
+
+        // Store data in one property, and filtered in another
+        this.filteredOptions = [
+            {
+            data: filteredData
+            }
+        ];
         },
 
         onAutosuggestSelected(item) {
@@ -324,64 +318,67 @@ export default {
             this.custPhone = suggestion.item.workPhone;
             console.log(this.custPhone);
             return suggestion.item.name;
+        },
+        fetching(){
+            fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    query: `
+                        query{
+                            projectDetail(project_id:${this.proId}){
+                                name
+                                customer{
+                                    id
+                                    name
+                                    workPhone
+                                }
+                                category{
+                                    id
+                                    name
+                                }
+                                areaCategories{
+                                    name
+                                }
+                                tgl_reminder
+                            }
+                        }
+                    `,
+                })
+            })
+            .then(function(response) {
+                return response.json()
+            })
+            .then(function(text) {
+                console.log(text.data.projectDetail);
+                return text.data.projectDetail;
+            })
+            .then(resp => {
+                this.detail = resp;
+                console.log(resp);
+                if(this.detail == null){
+                    window.location = window.location.origin +"/error?id=404&name=project";
+                }else{
+                    this.isLoad = true;
+                    this.custId = this.detail.customer.id;
+                    this.custNama = this.detail.customer.name;
+                    this.custPhone = this.detail.customer.workPhone;
+                    this.namaPro = this.detail.name;
+                    this.katPro = this.detail.category.name;
+                    this.katProId = this.detail.category.id;
+                    this.katArea = this.detail.areaCategories;
+                    if(!this.detail.tgl_reminder){
+                        this.tglPro = '';
+                    }
+                }
+            })
         }
     },
     async mounted(){
         this.proId = this.$route.query.id;
-		fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
-		method: 'POST',
-		headers: {
-		'Content-Type': 'application/json',
-		},
-		body: JSON.stringify({
-			query: `
-				query{
-					projectDetail(project_id:${this.proId}){
-						name
-						customer{
-                            id
-                            name
-                            workPhone
-						}
-						category{
-                            id
-                            name
-						}
-						areaCategories{
-						    name
-						}
-						tgl_reminder
-					}
-				}
-			`,
-		})
-		})
-		.then(function(response) {
-			return response.json()
-		})
-		.then(function(text) {
-            console.log(text.data.projectDetail);
-			return text.data.projectDetail;
-		})
-		.then(resp => {
-            this.detail = resp;
-            console.log(resp);
-			if(this.detail == null){
-				window.location = window.location.origin +"/error?id=404&name=project";
-			}else{
-                this.isLoad = true;
-				this.custId = this.detail.customer.id;
-				this.custNama = this.detail.customer.name;
-                this.custPhone = this.detail.customer.workPhone;
-                this.namaPro = this.detail.name;
-                this.katPro = this.detail.category.name;
-                this.katProId = this.detail.category.id;
-                this.katArea = this.detail.areaCategories;
-                if(!this.detail.tgl_reminder){
-                    this.tglPro = '';
-                }
-			}
-		})
+		this.fetching();
         fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
 			method: 'POST',
 			headers: {

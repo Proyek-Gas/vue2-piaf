@@ -74,6 +74,16 @@ const routes = [
             // meta: { roles: [UserRole.Admin, UserRole.Editor] },
           },
           {
+            path: 'schemeTable/sDetail',
+            component: () => import(/* webpackChunkName: "piaf" */ './views/app/scheme/page/schemeDetail'),
+            // meta: { roles: [UserRole.Admin, UserRole.Editor] },
+          },
+          {
+            path: 'schemeTable/sDetail/edit',
+            component: () => import(/* webpackChunkName: "piaf" */ './views/app/scheme/form/editScheme'),
+            // meta: { roles: [UserRole.Admin, UserRole.Editor] },
+          },
+          {
             path: 'schemeTable/add',
             component: () => import(/* webpackChunkName: "piaf" */ './views/app/scheme/form/addScheme'),
             // meta: { roles: [UserRole.Admin, UserRole.Editor] },
