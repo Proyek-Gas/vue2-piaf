@@ -14,7 +14,7 @@
       <b-colxx xxs="6">
         <b-button class="mb-1"  v-b-modal.modalright variant="success " >Filter</b-button>
             <filter-pro v-on:answers="onUpdateAnswer"></filter-pro>
-         <b-button class="mb-1" variant="primary" @click="movePageAdd()">Add Project</b-button>
+         <b-button class="mb-1" variant="primary" :to="movePageAdd()">Add Project</b-button>
       </b-colxx>
       <b-colxx xxs="6" style="text-align:left">
           <h5 v-if="tag.length >0">Filter By</h5>
@@ -59,8 +59,8 @@
               </template>
               <template slot="action" slot-scope="props">
                   <b-dropdown text="Actions" variant="outline-secondary">
-                    <b-dropdown-item @click="movePageDetail(props.rowData.id)">Detail</b-dropdown-item>
-                    <b-dropdown-item @click="movePageEdit(props.rowData.id)">Edit</b-dropdown-item>
+                    <b-dropdown-item :to="movePageDetail(props.rowData.id)">Detail</b-dropdown-item>
+                    <b-dropdown-item :to="movePageEdit(props.rowData.id)">Edit</b-dropdown-item>
                     <b-dropdown-item @click="showModal(props.rowData.name,'modalbasic')">Delete</b-dropdown-item>
                 </b-dropdown>
               </template>
@@ -261,13 +261,17 @@ export default {
   },
   methods: {
     movePageAdd(){
-			window.location = window.location.href+"/add";
+
+			//window.location = window.location.href+"/add";
+      return "projectTable/add";
 		},
     movePageDetail(val){
-			window.location = window.location.href+"/pDetail?id="+val;
+			//window.location = window.location.href+"/pDetail?id="+val;
+      return "projectTable/pDetail?id="+val
 		},
     movePageEdit(val){
-			window.location = window.location.origin+"/app/datatable/projectTable/pDetail/edit?id="+val;
+			//window.location = window.location.origin+"/app/datatable/projectTable/pDetail/edit?id="+val;
+      return "projectTable/pDetail/edit?id="+val
 		},
     deletePro(val, refname){
         fetch('https://dev.quotation.node.zoomit.co.id/graphql', {

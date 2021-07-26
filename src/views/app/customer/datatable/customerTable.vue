@@ -14,7 +14,7 @@
       <b-colxx xxs="6">
         <b-button class="mb-1"  v-b-modal.modalright variant="success " >Filter</b-button>
               <filter-cust v-on:answers="onUpdateAnswer"></filter-cust>
-         <b-button class="mb-1" variant="primary " @click="movePageAdd()">Add Customer</b-button>
+         <b-button class="mb-1" variant="primary " :to="movePageAdd()">Add Customer</b-button>
       </b-colxx>
       <b-colxx xxs="6" style="text-align:left">
           <h5 v-if="tag.length >0">Filter By</h5>
@@ -67,8 +67,8 @@
               </template>
               <template slot="action" slot-scope="props">
                   <b-dropdown text="Actions" variant="outline-secondary">
-                    <b-dropdown-item @click="movePageDetail(props.rowData.id)">Detail</b-dropdown-item>
-                    <b-dropdown-item @click="movePageEdit(props.rowData.id)">Edit</b-dropdown-item>
+                    <b-dropdown-item :to="movePageDetail(props.rowData.id)">Detail</b-dropdown-item>
+                   <b-dropdown-item :to="movePageEdit(props.rowData.id)">Edit</b-dropdown-item>
                 </b-dropdown>
               </template>
             </vuetable>
@@ -256,13 +256,13 @@ export default {
   },
   methods: {
     movePageAdd(){
-			window.location = window.location.href+"/add";
+       return "customerTable/add"
 		},
     movePageDetail(val){
-			window.location = window.location.href+"/cDetail?id="+val;
+       return "customerTable/cDetail?id="+val
 		},
     movePageEdit(val){
-			window.location = window.location.origin+"/app/datatable/customerTable/cDetail/edit?id="+val;
+      return "customerTable/cDetail/edit?id="+val
 		},
     onPaginationData(paginationData) {
       this.from = paginationData.from;

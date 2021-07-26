@@ -51,9 +51,8 @@
             </template>
             <template slot="action" slot-scope="props">
                 <b-dropdown  text="actions" variant="outline-secondary">
-                  <b-dropdown-item @click="movePageDetail(props.rowData.id)">Detail</b-dropdown-item>
-                  <b-dropdown-item @click="movePageEdit(props.rowData.id)">Edit</b-dropdown-item>
-                  <b-dropdown-item>Delete</b-dropdown-item>
+                  <b-dropdown-item :to="movePageDetail(props.rowData.id)">Detail</b-dropdown-item>
+                  <b-dropdown-item :to="movePageEdit(props.rowData.id)">Edit</b-dropdown-item>
               </b-dropdown>
             </template>
           </vuetable>
@@ -64,6 +63,10 @@
           @vuetable-pagination:change-page="onChangePage"
         />
       </b-colxx>
+      </template>
+      <template v-else>
+        <div class="loading"></div>
+      </template>
     </b-row>
 
     <v-contextmenu ref="contextmenu">
@@ -241,11 +244,12 @@ export default {
   },
   methods: {
     movePageDetail(val){
-      console.log(val);
-			window.location = window.location.href+"/iDetail?id="+val;
+      // console.log(val);
+			// window.location = window.location.href+"/iDetail?id="+val;
+      return "itemTable/iDetail?id=" + val;
 		},
     movePageEdit(val){
-			window.location = window.location.origin+"/app/datatable/itemTable/iDetail/edit?id="+val;
+			return "itemTable/iDetail/edit?id="+val;
 		},
     onPaginationData(paginationData) {
       this.from = paginationData.from;

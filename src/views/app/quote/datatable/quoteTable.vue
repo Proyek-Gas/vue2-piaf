@@ -14,7 +14,7 @@
       <b-colxx xxs="6">
         <b-button class="mb-1"  v-b-modal.modalright variant="success " >Filter</b-button>
             <filter-quote v-on:answers="onUpdateAnswer"></filter-quote>
-         <b-button class="mb-1" variant="primary ">Add Quote</b-button>
+         <b-button class="mb-1" variant="primary " :to="movePageAdd()">Add Quote</b-button>
       </b-colxx>
       <b-colxx xxs="6" style="text-align:left">
           <h5 v-if="tag.length >0">Filter By</h5>
@@ -418,7 +418,11 @@ export default {
          return tmp[0].substring(0,1).toUpperCase()+tmp[1].substring(0,1).toUpperCase();
       }
     },
+    movePageAdd(){
 
+			//window.location = window.location.href+"/add";
+      return "quoteTable/add";
+		},
     fetchDetailCustomer(id){
           let datas = []
            fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
