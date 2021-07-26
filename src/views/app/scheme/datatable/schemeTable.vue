@@ -14,7 +14,7 @@
       <b-colxx xxs="6">
         <b-button class="mb-1"  v-b-modal.modalright variant="success " >Filter</b-button>
             <filter-scheme v-on:answers="onUpdateAnswer"></filter-scheme>
-         <b-button class="mb-1" variant="primary " @click="movePageAdd()">Add scheme</b-button>
+         <b-button class="mb-1" variant="primary " :to="movePageAdd()">Add scheme</b-button>
       </b-colxx>
       <b-colxx xxs="6" style="text-align:left">
           <h5 v-if="tag.length >0">Filter By</h5>
@@ -62,8 +62,8 @@
             </template>
             <template slot="action" slot-scope="props">
                 <b-dropdown  text="actions" variant="outline-secondary">
-                  <b-dropdown-item @click="movePageDetail(props.rowData.id)">Detail</b-dropdown-item>
-                  <b-dropdown-item @click="movePageEdit(props.rowData.id)">Edit</b-dropdown-item>
+                  <b-dropdown-item :to="movePageDetail(props.rowData.id)">Detail</b-dropdown-item>
+                  <b-dropdown-item :to="movePageEdit(props.rowData.id)">Edit</b-dropdown-item>
                   <b-dropdown-item>Delete</b-dropdown-item>
               </b-dropdown>
             </template>
@@ -245,14 +245,17 @@ export default {
   },
   methods: {
     movePageAdd(){
-			window.location = window.location.href+"/add";
+			//window.location = window.location.href+"/add";
+      return "schemeTable/add";
 		},
     movePageDetail(val){
-      console.log(val);
-			window.location = window.location.href+"/sDetail?id="+val;
+      // console.log(val);
+			// window.location = window.location.href+"/sDetail?id="+val;
+      return "schemeTable/sDetail?id="+val;
 		},
     movePageEdit(val){
-			window.location = window.location.origin+"/app/datatable/schemeTable/sDetail/edit?id="+val;
+			//window.location = window.location.origin+"/app/datatable/schemeTable/sDetail/edit?id="+val;
+      return "schemeTable/sDetail/edit?id="+val;
 		},
     onPaginationData(paginationData) {
       this.from = paginationData.from;
