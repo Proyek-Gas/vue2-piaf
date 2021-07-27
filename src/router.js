@@ -112,6 +112,16 @@ const routes = [
             path: 'quoteTable',
             component: () => import(/* webpackChunkName: "piaf" */ './views/app/quote/datatable/quoteTable'),
             // meta: { roles: [UserRole.Admin, UserRole.Editor] },
+          },
+          {
+            path: 'quoteTable/add',
+            component: () => import(/* webpackChunkName: "piaf" */ './views/app/quote/form/addQuote'),
+            // meta: { roles: [UserRole.Admin, UserRole.Editor] },
+          },
+          {
+            path: 'quoteTable/qDetail',
+            component: () => import(/* webpackChunkName: "piaf" */ './views/app/quote/page/quoteDetail'),
+            // meta: { roles: [UserRole.Admin, UserRole.Editor] },
           }
         ],
       },

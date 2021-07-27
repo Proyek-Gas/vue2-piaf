@@ -1,0 +1,765 @@
+<template>
+<div v-if="isLoad">
+<b-row>
+    <b-colxx xxs="12">
+        <h1>Add Quote</h1>
+        <div class="separator mb-5"></div>
+    </b-colxx>
+    <b-colxx xxs="12" xl="8">
+        <b-row>
+            <b-colxx xxs="6" xl="6">
+                <h1>Logo dan <br> profil perusahaan</h1>
+            </b-colxx>
+            <b-colxx xxs="6" xl="6">
+                <b-form-group label-cols="5" horizontal label="Quote" >
+                    <b-form-input type="text" v-model="quote" disabled/>
+                </b-form-group>
+                <b-form-group label-cols="5" horizontal label="Tanggal">
+                    <datepicker
+                        :bootstrap-styling="true"
+                        :placeholder="$t('form-components.date')"
+                        @cleared="clear"
+                        disabled
+                        v-model="tglQuote"
+                    ></datepicker>
+                </b-form-group>
+                <b-form-group label-cols="5" horizontal label="Berlaku sampai">
+                    <datepicker
+                        :bootstrap-styling="true"
+                        :placeholder="$t('form-components.date')"
+                        @cleared="clear"
+                        v-model="tglUntil"
+                        @selected="dateSelected()"
+                    ></datepicker>
+                    <!-- <b-form-input type="text" v-model="$v.tglUntil.$model" :state="!$v.tglUntil.$error" style="display:none;"/>
+                    <b-form-invalid-feedback v-if="!$v.tglUntil.required">Harap pilih tanggal</b-form-invalid-feedback> -->
+                </b-form-group>
+            </b-colxx>
+        </b-row>
+        <div class="separator mb-5"></div>
+        <b-row>
+            <b-colxx xxs="12" xl="6">
+            <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip tooltip-label-right">
+                <b-card class="mb-4" title="Untuk Customer">
+                    <b-form-group label-cols="3" horizontal label="Customer" :disabled="proNama !== ''">
+                        <vue-autosuggest
+                            class="autosuggest"
+                            :input-props="{id:'autosuggest__input', class:'form-control', placeholder:'Ketik nama customer'}"
+                            :suggestions="filteredOptions"
+                            :render-suggestion="renderSuggestion"
+                            :get-suggestion-value="getSuggestionValue"
+                            :limit="6"
+                            v-model="custNama"
+                            @selected="onAutosuggestSelected"
+                            @input="onAutoSuggestInputChange"
+                        >
+                        <template slot="before-section-default"> 
+                            <div class="p-1">
+                                <b-button
+                                    class="glyph-icon simple-icon-plus"
+                                    variant="success"
+                                    v-b-modal.modalright
+                                    size="sm"
+                                    style="width: 100%;"
+                                    @click="showModal('modalright')">
+                                </b-button>
+                                <b-modal id="modalright" ref="modalright" title="Add Customer" modal-class="modal-right">
+                                    <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip tooltip-label-right">
+                                            <b-card class="mb-4" title="Profil Customer">
+                                                <b-form-group label-cols="3" horizontal label="Kode">
+                                                    
+                                                </b-form-group>
+
+                                                <b-form-group label-cols="3" horizontal label="Nama">
+                                                    
+                                                </b-form-group>
+
+                                                <b-form-group label-cols="3" horizontal label="Kategori">
+                                                    
+                                                </b-form-group>
+
+                                                <b-form-group label-cols="3" horizontal label="Kategori Harga">
+                                                    
+                                                </b-form-group>
+
+                                                <b-form-group label-cols="3" horizontal label="Limit Piutang" >
+                                                    
+                                                </b-form-group>
+                                            </b-card>
+                                    </b-form>
+                                </b-modal>
+                            </div>
+                        </template>
+                        </vue-autosuggest>
+                        <b-form-input type="text" v-model="$v.custNama.$model" :state="!$v.custNama.$error" style="display:none;" placeholder="Masukkan judul proyek"/>
+                        <b-form-invalid-feedback v-if="!$v.custNama.required">Harap pilih customer</b-form-invalid-feedback>
+                    </b-form-group>
+                    <b-card class="mb-0" title="Data Customer">
+                        <h6 class="text-muted text-medium mb-1">
+                            {{ custNama }}
+                        </h6>
+                        <p class="text-muted text-small mb-2">
+                            {{ custEmail }}
+                        </p>
+                        <p class="text-muted text-small mb-2">
+                            {{ custCate }}
+                        </p>
+                        <div class="text-right" v-if="custId != ''">
+                            <b-button class="mb-1" variant="primary " :to="movePageDetail(custId)">Detail</b-button>
+                        </div>
+                    </b-card>
+                </b-card>
+            </b-form>
+            </b-colxx>
+            <b-colxx xxs="12" xl="6">
+                <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip tooltip-label-right">
+                <b-card class="mb-4" title="Untuk Project">
+                    <b-form-group label-cols="3" horizontal label="Project" :disabled="custNama !== ''">
+                        <vue-autosuggest
+                            class="autosuggest"
+                            :input-props="{id:'autosuggest__input2', class:'form-control', placeholder:'Ketik nama project'}"
+                            :suggestions="filteredOptions2"
+                            :render-suggestion="renderSuggestion2"
+                            :get-suggestion-value="getSuggestionValue2"
+                            :limit="6"
+                            v-model="proNama"
+                            @selected="onAutosuggestSelected2"
+                            @input="onAutoSuggestInputChange2"
+                        >
+                        <template slot="before-section-default"> 
+                            <div class="p-1">
+                                <b-button
+                                    class="glyph-icon simple-icon-plus"
+                                    variant="success"
+                                    v-b-modal.modalright
+                                    size="sm"
+                                    style="width: 100%;"
+                                    @click="showModal('modalright')">
+                                </b-button>
+                                <b-modal id="modalright" ref="modalright" title="Add Customer" modal-class="modal-right">
+                                    <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip tooltip-label-right">
+                                            <b-card class="mb-4" title="Profil Customer">
+                                                <b-form-group label-cols="3" horizontal label="Kode">
+                                                    
+                                                </b-form-group>
+
+                                                <b-form-group label-cols="3" horizontal label="Nama">
+                                                    
+                                                </b-form-group>
+
+                                                <b-form-group label-cols="3" horizontal label="Kategori">
+                                                    
+                                                </b-form-group>
+
+                                                <b-form-group label-cols="3" horizontal label="Kategori Harga">
+                                                    
+                                                </b-form-group>
+
+                                                <b-form-group label-cols="3" horizontal label="Limit Piutang" >
+                                                    
+                                                </b-form-group>
+                                            </b-card>
+                                    </b-form>
+                                </b-modal>
+                            </div>
+                        </template>
+                        </vue-autosuggest>
+                        <b-form-input type="text" v-model="$v.custNama.$model" :state="!$v.custNama.$error" style="display:none;" placeholder="Masukkan judul proyek"/>
+                        <b-form-invalid-feedback v-if="!$v.custNama.required">Harap pilih customer</b-form-invalid-feedback>
+                    </b-form-group>
+                    <b-card class="mb-0" title="Data Project">
+                        <h6 class="text-muted text-medium mb-1">
+                            {{ proNama }}
+                        </h6>
+                        <p class="text-muted text-small mb-2">
+                            {{ proKat.name }}
+                        </p>
+                    </b-card>
+                </b-card>
+            </b-form>
+            </b-colxx>
+        </b-row>
+        <b-form-group label-cols="3" horizontal label="Pilih Area">
+            <v-select
+            v-model="area"
+            :options="areaOptions"
+            label="name"
+            :disabled="proKat === ''"
+            placeholder="Harap pilih project"/>
+        </b-form-group>
+        <b-row>
+            <b-colxx xxs="12" xl="6">
+                <b-form-group label-cols="3" horizontal label="Section Area">
+                <v-select
+                    label="name"
+                    v-model="surface"
+                    multiple
+                    :options="surfaceOptions"
+                    :disabled="proKat === ''"
+                    placeholder="Harap pilih project"
+                />
+                </b-form-group>
+            </b-colxx>
+            <b-colxx xxs="12" xl="6">
+                <b-form-group label-cols="3" horizontal label="Luas Area">
+                    <b-form-input type="number" step="0.01" />
+                </b-form-group>  
+            </b-colxx>
+        </b-row>
+        <b-form-group label-cols="3" horizontal label="Pilih Item" :disabled="proKat === ''">
+            <vue-autosuggest
+                class="autosuggest"
+                :input-props="{id:'autosuggest__input3', class:'form-control', placeholder:'Ketik nama item'}"
+                :suggestions="filteredOptions3"
+                :render-suggestion="renderSuggestion3"
+                :get-suggestion-value="getSuggestionValue3"
+                :limit="6"
+                v-model="schItem"
+                @selected="onAutosuggestSelected3"
+                @input="onAutoSuggestInputChange3"
+            >
+            <template slot="before-section-default"> 
+                <div class="p-1">
+                    <b-button
+                        class="glyph-icon simple-icon-plus"
+                        variant="success"
+                        v-b-modal.modalright
+                        size="sm"
+                        style="width: 100%;"
+                        @click="showModal('modalright')">
+                    </b-button>
+                    <b-modal id="modalright" ref="modalright" title="Add Customer" modal-class="modal-right">
+                        <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip tooltip-label-right">
+                                <b-card class="mb-4" title="Profil Customer">
+                                    <b-form-group label-cols="3" horizontal label="Kode">
+                                        
+                                    </b-form-group>
+
+                                    <b-form-group label-cols="3" horizontal label="Nama">
+                                        
+                                    </b-form-group>
+
+                                    <b-form-group label-cols="3" horizontal label="Kategori">
+                                        
+                                    </b-form-group>
+
+                                    <b-form-group label-cols="3" horizontal label="Kategori Harga">
+                                        
+                                    </b-form-group>
+
+                                    <b-form-group label-cols="3" horizontal label="Limit Piutang" >
+                                        
+                                    </b-form-group>
+                                </b-card>
+                        </b-form>
+                    </b-modal>
+                </div>
+            </template>
+            </vue-autosuggest>
+        </b-form-group>
+    </b-colxx>
+    <b-colxx xxs="12" xl="4" class="col-right">
+            <b-card class="mb-4" style="position: sticky; top: 20vh">
+                <b-card-title>Project Summary</b-card-title>
+                <b-card v-if="custNama != ''" class="mb-3 d-flex flex-row" no-body>
+                    <img src="/assets/img/profiles/l-1.jpg" alt="Card image cap" class="img-thumbnail list-thumbnail rounded-circle align-self-center m-2 small"/>
+                    <div class="d-flex flex-grow-1 min-width-zero">
+                        <div class="pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero">
+                            <div class="min-width-zero">
+                                <h6 class="text-muted text-medium mb-1">
+                                    {{ custNama }}
+                                </h6>
+                                <p class="text-muted text-small mb-2">
+                                    {{ custEmail }}
+                                </p>
+                                 <p class="text-muted text-small mb-2">
+                                    {{ custCate }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </b-card>
+                <b-row>
+                    <b-colxx xxs="6" class="text-center">
+                    <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip">
+                        <b-button type="submit" variant="primary" style="width: 100%">Add</b-button>
+                    </b-form>
+                    </b-colxx>
+                    <b-colxx xxs="6" class="text-center">
+                    <b-button @click="onFormReset" type="submit" variant="danger" style="width: 100%">Reset</b-button>
+                    </b-colxx>
+                </b-row>
+            </b-card>
+
+        </b-colxx>
+</b-row>
+</div>
+</template>
+
+<script>
+import { VueAutosuggest } from "vue-autosuggest";
+import vSelect from "vue-select";
+import "vue-select/dist/vue-select.css";
+import { getDirection, setThemeRadius } from "../../../../utils";
+import selectCategory from "../../../../components/selectCategory.vue";
+import Datepicker from "vuejs-datepicker";
+
+import {
+    validationMixin
+} from "vuelidate";
+const {
+    required,
+    maxLength,
+    minLength,
+    alpha,
+    email,
+    numeric,
+    maxValue,
+    minValue,
+    helpers
+} = require("vuelidate/lib/validators");
+
+const upperCase = helpers.regex('upperCase', /^[A-Z]*$/)
+const phone = helpers.regex('numeric', /^(09)[0-9]{9}/);
+
+export default {
+    components: {
+        "v-select": vSelect,
+        "vue-autosuggest": VueAutosuggest,
+        "selectCategory": selectCategory,
+        datepicker: Datepicker
+    },
+    data() {
+        return {
+            isLoad: false,
+            quote: "# 5037",
+            custEmail: "",
+            custId: "",
+            custNama: "",
+            custCate: "",
+            proNama: "",
+            proKat: "",
+            tglQuote: "",
+            tglUntil: "",
+            area: "",
+            surface: [],
+            surfaceOptions: [],
+            schItem: "",
+
+            areaOptions: [],
+            filteredOptions: [],
+            selected: {},
+            dataCust: [],
+            filteredOptions2: [],
+            selected2: {},
+            dataPro: [],
+            filteredOptions3: [],
+            selected3: {},
+            dataItem: []
+        };
+    },
+    mixins: [validationMixin],
+    validations: {
+        custNama:{
+            required
+        },
+        tglUntil:{
+            required
+        }
+    },
+    methods: {
+        movePageDetail(val){
+            return "/app/datatable/customerTable/cDetail?id="+val
+		},
+        dateSelected(e) {
+            
+        },
+        dateFormat(date){
+            let d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+            let ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(d);
+            let mo = new Intl.DateTimeFormat('en', { month: '2-digit' }).format(d);
+            let da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(d);
+            return da + " "+ mo + " " +ye;
+        },
+        clear(){
+            this.tglQuote = "";
+        },
+        fetchArea(val) {
+            fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    query: `
+                        query{
+                            areaCategory(project_category:${val}) {
+                                id
+                                name
+                            }
+                        }
+                    `,
+                }),
+            })
+            .then(function(response) {
+                return response.json()
+            })
+            .then(function(text) {
+                return text.data.areaCategory;
+            })
+            .then(resp => {
+                this.areaOptions = resp;
+            })
+        },
+        fetchSurface(){
+            fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    query: `
+                        query{
+                            surfacePreparations{
+                                name
+                            }
+                        }
+                    `,
+                }),
+            })
+            .then(function(response) {
+                return response.json()
+            })
+            .then(function(text) {
+                return text.data.surfacePreparations;
+            })
+            .then(resp => {
+                this.surfaceOptions = resp;
+                console.log(this.surfaceOptions);
+            })
+        },
+        onValitadeFormSubmit() {
+            this.$v.$touch();
+            if(!this.$v.$invalid){
+                console.log("valid");
+                // let date;
+                // let str;
+                // if(this.tglQuote != ''){
+                //     date = new Date(this.tglQuote).toISOString();
+                //     str = `tgl_reminder:"${date}"`;
+                // }else{
+                //     date = null;
+                //     str = `tgl_reminder:${date}`;
+                // }
+                // console.log(str);
+                // fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+                // method: 'POST',
+                // headers: {
+                // 'Content-Type': 'application/json',
+                // },
+                // body: JSON.stringify({
+                //     query: `
+                //         mutation{
+                //             addProject(params:{
+                //                 customer_id:"${this.custId}"
+                //                 name:"${this.namaPro}"
+                //                 project_category:${this.katProId}
+                //                 ${str}
+                //             }){
+                //                 status
+                //                 message
+                //             }
+                //         }
+                //     `,
+                // }),
+				// })
+				// .then(function(response) {
+				// 	return response.json()
+				// })
+				// .then(function(text) {
+				// 	console.log(text);
+				// 	return text.data.addProject;
+				// })
+				// .then(resp => {
+				// 	console.log(resp.message);
+				// 	if(resp.status.toLowerCase() == "success"){
+                //         this.$toast(resp.message, {
+                //             type: "success",
+                //             hideProgressBar: true,
+                //             timeout: 2000
+                //         });
+                //         setTimeout(() => {
+                //             window.location = window.location.origin+"/app/datatable/projectTable";
+                //         }, 1000);
+                //     }else{
+                //         this.$toast(resp.message, {
+                //             type: "error",
+                //             hideProgressBar: true,
+                //             timeout: 2000
+                //         });
+                //     }
+				// });
+            }else{
+                console.log("error");
+            }
+        },
+        onFormReset(){
+            this.custNama=""; this.custEmail="";this.namaPro = "";this.tglQuote = "";this.katPro = "";
+            this.$v.$reset();
+        },
+        //autoSuggest customer
+        onAutoSuggestInputChange(text, oldText) {
+        if (text === "") {
+            /* Maybe the text is null but you wanna do
+            *  something else, but don't filter by null.
+            */
+            this.custEmail = '';
+        }
+        const filteredData = this.dataCust.customers.filter(option => {
+            return option.name.toLowerCase().indexOf(text.toLowerCase()) > -1;
+        });
+
+        // Store data in one property, and filtered in another
+        this.filteredOptions = [
+            {
+            data: filteredData
+            }
+        ];
+        },
+
+        onAutosuggestSelected(item) {
+            this.selected = item;
+        },
+        renderSuggestion(suggestion) {
+            const character = suggestion.item;
+            return <b-card class="mb-0 d-flex flex-row" no-body><img src="/assets/img/profiles/l-1.jpg" alt="Card image cap" class="img-thumbnail list-thumbnail rounded-circle align-self-center m-2 small"/><div class="d-flex flex-grow-1 min-width-zero"><div class="pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero"><div class="min-width-zero"><h6 class="text-muted text-medium mb-1">{character.name}</h6><p class="text-muted text-small mb-2">{character.workPhone}</p></div></div></div></b-card>
+        },
+        getSuggestionValue(suggestion) {
+            this.custId = suggestion.item.id;
+            this.custNama = suggestion.item.name;
+            this.custEmail = suggestion.item.email;
+            console.log(suggestion.item);
+            this.custCate = suggestion.item.category.name +" - "+ suggestion.item.priceCategory.name;
+            this.fetchProject(this.custId,"");
+            console.log(this.custEmail);
+            return suggestion.item.name;
+        },
+
+        //autoSuggest project
+        onAutoSuggestInputChange2(text, oldText) {
+        if (text === "") {
+            /* Maybe the text is null but you wanna do
+            *  something else, but don't filter by null.
+            */
+            this.proKat = '';
+        }
+        if(this.custId == ""){
+            if(text && text.length >= 2){
+                this.fetchProject("",text);
+                setTimeout(() => {
+                    
+                    const filteredData = this.dataPro.projects.filter(option => {
+                        return option.name.toLowerCase().indexOf(text.toLowerCase()) > -1;
+                });
+                this.filteredOptions2 = [
+                    {
+                        data: filteredData
+                    }
+                ];
+                }, 500);
+            }
+        // Store data in one property, and filtered in another
+        }else{
+            this.fetchProject(this.custId,"");
+        }
+        },
+
+        onAutosuggestSelected2(item) {
+            this.selected2 = item;
+        },
+        renderSuggestion2(suggestion) {
+            const character = suggestion.item;
+            return <b-card class="mb-0 d-flex flex-row" no-body><img src="/assets/img/profiles/l-1.jpg" alt="Card image cap" class="img-thumbnail list-thumbnail rounded-circle align-self-center m-2 small"/><div class="d-flex flex-grow-1 min-width-zero"><div class="pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero"><div class="min-width-zero"><h6 class="text-muted text-medium mb-1">{character.name}</h6><p class="text-muted text-small mb-2">{character.name}</p></div></div></div></b-card>
+        },
+        getSuggestionValue2(suggestion) {
+            this.proNama = suggestion.item.name;
+            this.proKat = suggestion.item.category;
+            this.fetchArea(this.proKat.id);
+            this.fetchSurface();
+            
+            return suggestion.item.name;
+        },
+
+        //autoSuggest item
+        onAutoSuggestInputChange3(text, oldText) {
+        if (text === "") {
+            /* Maybe the text is null but you wanna do
+            *  something else, but don't filter by null.
+            */
+            //this.item = '';
+        }
+        this.fetchSchItem(text);
+            if(text && text.length >= 2){
+                setTimeout(() => {
+                    const filteredData = this.dataItem.filter(option => {
+                        return option.name.toLowerCase().indexOf(text.toLowerCase()) > -1;
+                    });
+            
+                    // Store data in one property, and filtered in another
+                    this.filteredOptions3 = [
+                        {
+                        data: filteredData
+                        }
+                    ];
+                }, 500);
+            }
+        },
+
+        onAutosuggestSelected3(item) {
+            this.selected3 = item;
+        },
+        renderSuggestion3(suggestion) {
+            const character = suggestion.item;
+            return <b-card class="mb-0 d-flex flex-row" no-body><img src="/assets/img/profiles/l-1.jpg" alt="Card image cap" class="img-thumbnail list-thumbnail rounded-circle align-self-center m-2 small"/><div class="d-flex flex-grow-1 min-width-zero"><div class="pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero"><div class="min-width-zero"><h6 class="text-muted text-medium mb-1">{character.name}</h6><p class="text-muted text-small mb-2">{character.workPhone}</p></div></div></div></b-card>
+        },
+        getSuggestionValue3(suggestion) {
+            this.custId = suggestion.item.id;
+            this.custNama = suggestion.item.name;
+            this.custEmail = suggestion.item.email;
+            console.log(suggestion.item);
+            this.custCate = suggestion.item.category.name +" - "+ suggestion.item.priceCategory.name;
+            this.fetchProject(this.custId,"");
+            console.log(this.custEmail);
+            return suggestion.item.name;
+        },
+        fetchProject(custId,proName){
+            let str = "";
+            let filter = "";
+            let search = "";
+            if(custId != "" || proName != ""){
+                if(custId != ""){
+                    filter = `{customer_id: "${custId}"}`;
+                }
+                if(proName != ""){
+                    search = `{search:"${proName}"}`;
+                }
+                str = "(filter: "+filter+" "+search+")";
+                console.log(str);
+            }
+            fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    query: `
+                        query {projects ${str}{
+                        count
+                        projects{
+                            name
+                            id
+                            status
+                            category {
+                                id
+                                name
+                            }
+                        }
+                        }
+                        }
+                    `,
+                }),
+            })
+            .then(function(response) {
+                return response.json()
+            })
+            .then(function(text) {
+                console.log(text.data.projects);
+                return text.data.projects;
+            })
+            .then(resp => {
+                this.dataPro = resp;
+                console.log(this.dataPro);
+            })
+        },
+        fetchSchItem(val){
+            fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    query: `
+                        query{
+                            schemeAndItemSearch(search:"${val}"){
+                                id
+                                name
+                                color{
+                                    id_ral
+                                    hex_code
+                                    ind_name
+                                    eng_name
+                                }
+                                isItem
+                                item_code
+                                itemCategory{
+                                    name
+                                }
+                            }
+                        }
+                    `,
+                }),
+            })
+            .then(function(response) {
+                return response.json()
+            })
+            .then(function(text) {
+                return text.data.schemeAndItemSearch;
+            })
+            .then(resp => {
+                this.dataItem = resp;
+                console.log(this.dataItem);
+            })
+        }
+    },
+    async mounted(){
+        fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+			method: 'POST',
+			headers: {
+			'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				query: `
+					query{ customers {
+                    count
+                    customers{
+                        id
+                        name
+                        email
+                        category{
+                            name
+                        }
+                        priceCategory{
+                            name
+                        }
+                    }}
+                    }
+				`,
+			}),
+		})
+		.then(function(response) {
+			return response.json()
+		})
+		.then(function(text) {
+			return text.data.customers;
+		})
+		.then(resp => {
+            this.isLoad = true;
+            this.tglQuote = Date.now();
+            this.tglUntil = new Date(new Date().getTime()+(30*24*60*60*1000));
+            console.log(new Date(this.tglUntil) - new Date(this.tglQuote));
+            this.dataCust = resp;
+            console.log(this.dataCust);
+		})
+    }
+};
+</script>
