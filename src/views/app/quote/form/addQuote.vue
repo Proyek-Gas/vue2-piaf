@@ -41,7 +41,7 @@
             <b-colxx xxs="12" xl="6">
             <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip tooltip-label-right">
                 <b-card class="mb-4" title="Untuk Customer">
-                    <b-form-group label-cols="3" horizontal label="Customer" :disabled="proNama !== ''">
+                    <b-form-group label-cols="3" horizontal label="Customer">
                         <vue-autosuggest
                             class="autosuggest"
                             :input-props="{id:'autosuggest__input', class:'form-control', placeholder:'Ketik nama customer'}"
@@ -114,7 +114,7 @@
             <b-colxx xxs="12" xl="6">
                 <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip tooltip-label-right">
                 <b-card class="mb-4" title="Untuk Project">
-                    <b-form-group label-cols="3" horizontal label="Project" :disabled="custNama !== ''">
+                    <b-form-group label-cols="3" horizontal label="Project">
                         <vue-autosuggest
                             class="autosuggest"
                             :input-props="{id:'autosuggest__input2', class:'form-control', placeholder:'Ketik nama project'}"
@@ -260,7 +260,25 @@
     </b-colxx>
     <b-colxx xxs="12" xl="4" class="col-right">
             <b-card class="mb-4" style="position: sticky; top: 20vh">
-                <b-card-title>Project Summary</b-card-title>
+                <b-card-title>Quote Summary</b-card-title>
+                <b-row class="mb-2">
+                    <b-colxx xl="3">
+                    <p class="text text-small mb-2">
+                        {{ dateFormat(tglQuote) }}
+                    </p>
+                    </b-colxx>
+                    <b-colxx xl="3">
+                        <b-badge pill variant="warning">Baru</b-badge>
+                    </b-colxx>
+                    <b-colxx xl="3">
+                        <b-badge pill variant="primary">{{ quote }}</b-badge>
+                    </b-colxx>
+                    <b-colxx xl="3">
+                    <p class="text text-small mb-2">
+                        {{ dateFormat(tglUntil) }}
+                    </p>
+                    </b-colxx>
+                    </b-row>
                 <b-card v-if="custNama != ''" class="mb-3 d-flex flex-row" no-body>
                     <img src="/assets/img/profiles/l-1.jpg" alt="Card image cap" class="img-thumbnail list-thumbnail rounded-circle align-self-center m-2 small"/>
                     <div class="d-flex flex-grow-1 min-width-zero">
@@ -272,8 +290,11 @@
                                 <p class="text-muted text-small mb-2">
                                     {{ custEmail }}
                                 </p>
-                                 <p class="text-muted text-small mb-2">
+                                <p class="text-muted text-small mb-2">
                                     {{ custCate }}
+                                </p>
+                                <p class="text-muted text-small mb-2">
+                                    {{ proNama }}
                                 </p>
                             </div>
                         </div>
@@ -377,7 +398,7 @@ export default {
         dateFormat(date){
             let d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
             let ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(d);
-            let mo = new Intl.DateTimeFormat('en', { month: '2-digit' }).format(d);
+            let mo = new Intl.DateTimeFormat('en', { month: 'short' }).format(d);
             let da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(d);
             return da + " "+ mo + " " +ye;
         },
@@ -514,6 +535,8 @@ export default {
             *  something else, but don't filter by null.
             */
             this.custEmail = '';
+            this.custCate = '';this.custId = '';
+            this.proNama = '';this.proKat = '';
         }
         const filteredData = this.dataCust.customers.filter(option => {
             return option.name.toLowerCase().indexOf(text.toLowerCase()) > -1;
@@ -540,8 +563,6 @@ export default {
             this.custEmail = suggestion.item.email;
             console.log(suggestion.item);
             this.custCate = suggestion.item.category.name +" - "+ suggestion.item.priceCategory.name;
-            this.fetchProject(this.custId,"");
-            console.log(this.custEmail);
             return suggestion.item.name;
         },
 
@@ -551,13 +572,16 @@ export default {
             /* Maybe the text is null but you wanna do
             *  something else, but don't filter by null.
             */
+            console.log("masuk");
             this.proKat = '';
+            this.dataPro = [];
+            this.filteredOptions2 = [];
         }
+        console.log("data:"+this.filteredOptions2);
         if(this.custId == ""){
-            if(text && text.length >= 2){
+            if(text !== "" && text.length >= 2){
                 this.fetchProject("",text);
                 setTimeout(() => {
-                    
                     const filteredData = this.dataPro.projects.filter(option => {
                         return option.name.toLowerCase().indexOf(text.toLowerCase()) > -1;
                 });
@@ -570,7 +594,19 @@ export default {
             }
         // Store data in one property, and filtered in another
         }else{
-            this.fetchProject(this.custId,"");
+            if(text !== "" && text.length >= 2){
+                this.fetchProject(this.custId,text);
+                setTimeout(() => {
+                    const filteredData = this.dataPro.projects.filter(option => {
+                        return option.name.toLowerCase().indexOf(text.toLowerCase()) > -1;
+                });
+                this.filteredOptions2 = [
+                    {
+                        data: filteredData
+                    }
+                ];
+                }, 500);
+            }
         }
         },
 
@@ -586,7 +622,6 @@ export default {
             this.proKat = suggestion.item.category;
             this.fetchArea(this.proKat.id);
             this.fetchSurface();
-            
             return suggestion.item.name;
         },
 
@@ -623,13 +658,6 @@ export default {
             return <b-card class="mb-0 d-flex flex-row" no-body><img src="/assets/img/profiles/l-1.jpg" alt="Card image cap" class="img-thumbnail list-thumbnail rounded-circle align-self-center m-2 small"/><div class="d-flex flex-grow-1 min-width-zero"><div class="pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero"><div class="min-width-zero"><h6 class="text-muted text-medium mb-1">{character.name}</h6><p class="text-muted text-small mb-2">{character.workPhone}</p></div></div></div></b-card>
         },
         getSuggestionValue3(suggestion) {
-            this.custId = suggestion.item.id;
-            this.custNama = suggestion.item.name;
-            this.custEmail = suggestion.item.email;
-            console.log(suggestion.item);
-            this.custCate = suggestion.item.category.name +" - "+ suggestion.item.priceCategory.name;
-            this.fetchProject(this.custId,"");
-            console.log(this.custEmail);
             return suggestion.item.name;
         },
         fetchProject(custId,proName){
@@ -638,12 +666,12 @@ export default {
             let search = "";
             if(custId != "" || proName != ""){
                 if(custId != ""){
-                    filter = `{customer_id: "${custId}"}`;
+                    filter = `customer_id: "${custId}"`;
                 }
                 if(proName != ""){
-                    search = `{search:"${proName}"}`;
+                    search = `search:"${proName}"`;
                 }
-                str = "(filter: "+filter+" "+search+")";
+                str = "(filter: {"+filter+" "+search+"})";
                 console.log(str);
             }
             fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
@@ -754,11 +782,9 @@ export default {
 		})
 		.then(resp => {
             this.isLoad = true;
-            this.tglQuote = Date.now();
-            this.tglUntil = new Date(new Date().getTime()+(30*24*60*60*1000));
-            console.log(new Date(this.tglUntil) - new Date(this.tglQuote));
+            this.tglQuote = new Date(Date.now());
+            this.tglUntil = new Date(new Date().getTime()+(30*24*60*60*1000));  
             this.dataCust = resp;
-            console.log(this.dataCust);
 		})
     }
 };
