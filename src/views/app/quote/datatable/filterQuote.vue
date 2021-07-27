@@ -101,6 +101,7 @@
                       :filterable="false"
                       multiple
                       v-model="dataReturn.userId"
+                       @search="fetchOptionsUser"
                       :options="listUser"
                       :reduce="listUser => listUser.id"
                     >
@@ -133,6 +134,7 @@
             </b-form-group>
         </b-colxx>
      </b-row>
+     {{makeArray(dataReturn.customerId)}}
      <template slot="modal-footer">
          <b-button variant="danger" @click="$emit('answers',null);hideModal('modalright');reset()">Reset</b-button>
          <b-button variant="primary" @click="$emit('answers', dataReturn);hideModal('modalright')" class="mr-1">Apply</b-button>
@@ -155,6 +157,7 @@ export default {
      listQuoteStatus : [],
      listProjectClone : [],
      listProjects : [],
+     listUserClone : [],
       selectData: [
         {
           value : "1",
@@ -187,6 +190,7 @@ export default {
 
       ],
       listCust : [],
+      listCustClone : [],
       listUser : [],
       dataReturn : {
         status : [],
@@ -221,7 +225,9 @@ export default {
   },
     reset(){
       this.vueSelected = ""
+      this.listCust = this.listCustClone
       this.listProjects = this.listProjectClone
+      this.listUser = this.listUserClone
       this.dataReturn = {
         status : [],
         customerId : [],
@@ -236,9 +242,10 @@ export default {
       }
     },
     onChangeCustomer($event){
-        if(this.dataReturn.customerId.length != null){
+        if(this.dataReturn.customerId.length != 0){
             this.fetchAgain(this.makeArray(this.dataReturn.customerId))
         }else{
+          console.log(this.listProjectClone.length)
           this.listProjects = this.listProjectClone
         }
     },
@@ -259,6 +266,7 @@ export default {
       }
     },
      fetchOptions(search, loading) {
+       this.listCust = this.listCustClone
       loading(true);
       setTimeout(() => {
         this.listCust = this.listCust.filter(row=>{
@@ -267,7 +275,19 @@ export default {
         loading(false)
       },2000);
     },
+
+    fetchOptionsUser(search, loading) {
+      this.listUser = this.listUserClone
+      loading(true);
+      setTimeout(() => {
+        this.listUser = this.listUser.filter(row=>{
+           return row.name.toLowerCase().indexOf(search.toLowerCase()) != -1;
+        })
+        loading(false)
+      },2000);
+    },
     fetchAgain(customerId){
+
             let querystring = `
                 query{ projects (filter: {customer_id : ${customerId}}){
                           count
@@ -356,6 +376,7 @@ export default {
         })
         .then(resp => {
             this.listCust = resp
+            this.listCustClone = resp
         })
 
 
@@ -419,6 +440,7 @@ export default {
         })
         .then(resp => {
             this.listUser = resp
+            this.listUserClone = resp
         })
 
   }
