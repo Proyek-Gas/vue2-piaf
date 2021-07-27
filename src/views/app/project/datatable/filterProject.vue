@@ -86,7 +86,7 @@
                   class="align-self-center list-thumbnail-letters rounded-circle small"
                 >{{showAvatar(option.name)}}</div></div>
                         <div class="col-9 pt-2 " style="overflow: hidden;
-  text-overflow: ellipsis;">
+    text-overflow: ellipsis;">
                             {{ option.name }}
                         </div>
                         </div>

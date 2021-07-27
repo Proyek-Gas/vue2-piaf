@@ -28,33 +28,34 @@
                                 variant="success"
                                 v-b-modal.modalright
                                 size="sm"
-                                style="width: 100%;">
+                                style="width: 100%;"
+                                @click="showModal('modalright')">
                             </b-button>
                             <b-modal id="modalright" ref="modalright" title="Add Customer" modal-class="modal-right">
-    <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip tooltip-label-right">
-            <b-card class="mb-4" title="Profil Customer">
-                <b-form-group label-cols="3" horizontal label="Kode">
-                    
-                </b-form-group>
+                                <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip tooltip-label-right">
+                                        <b-card class="mb-4" title="Profil Customer">
+                                            <b-form-group label-cols="3" horizontal label="Kode">
+                                                
+                                            </b-form-group>
 
-                <b-form-group label-cols="3" horizontal label="Nama">
-                    
-                </b-form-group>
+                                            <b-form-group label-cols="3" horizontal label="Nama">
+                                                
+                                            </b-form-group>
 
-                <b-form-group label-cols="3" horizontal label="Kategori">
-                    
-                </b-form-group>
+                                            <b-form-group label-cols="3" horizontal label="Kategori">
+                                                
+                                            </b-form-group>
 
-                <b-form-group label-cols="3" horizontal label="Kategori Harga">
-                    
-                </b-form-group>
+                                            <b-form-group label-cols="3" horizontal label="Kategori Harga">
+                                                
+                                            </b-form-group>
 
-                <b-form-group label-cols="3" horizontal label="Limit Piutang" >
-                    
-                </b-form-group>
-            </b-card>
-    </b-form>
-</b-modal>
+                                            <b-form-group label-cols="3" horizontal label="Limit Piutang" >
+                                                
+                                            </b-form-group>
+                                        </b-card>
+                                </b-form>
+                            </b-modal>
                         </div>
                     </template>
                     </vue-autosuggest>
@@ -210,6 +211,9 @@ export default {
         }
     },
     methods: {
+        showModal(refname){
+            this.$refs[refname].show()
+        },
         choose(value) {
             this.katPro = value.name;
             this.katProId = value.id;
