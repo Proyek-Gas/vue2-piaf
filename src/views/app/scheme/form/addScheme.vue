@@ -22,49 +22,49 @@
                         :get-suggestion-value="getSuggestionValue"
                         :limit="6"
                         clearable
-                        v-model="item" 
+                        v-model="item"
                         @selected="onAutosuggestSelected"
                         @input="onAutoSuggestInputChange"
                     >
                     <template slot="before-section-default"> section header content for specific section goes here </template>
-            
+
                     </vue-autosuggest>
                 </b-form-group>
             </b-card>
-            <b-card class="mb-4" title="Item">
-                <div v-if="dataSelected1.length > 0">
-                    <vuetable
-                        ref="vuetable"
-                        style="display:block; overflow-x:auto;width:auto"
-                        :api-mode="false"
-                        :fields="fields"
-                        :data="dataSelected1"
-                    >
-                    </vuetable>
+            <b-card class="mb-4" >
+              <div class="row">
+                <div class="col-6">
+                  <h3>Item</h3>
+                </div>
+                  <div class="col-6" style="text-align:right">
+                     <b-button
+                        variant="danger"
+                        size="sm"
+                        @click="deleteItemGroup"> delete
+                       <!-- ({{itemDelCount}}) -->
+                    </b-button>
+                  </div>
+              </div>
+                <div v-if="dataSelected1.length > 0" class="row">
+                      <table-item :dataComponent="dataSelected1" :counter="itemDelCount" v-on:btnDel="removeBigData"></table-item>
                 </div>
             </b-card>
-            <b-card class="mb-4" title="Agent">
-                <div v-if="dataSelected2.length > 0">
-                    <vuetable
-                        ref="vuetable"
-                        style="display:block; overflow-x:auto;width:auto"
-                        :api-mode="false"
-                        :fields="fields"
-                        :data="dataSelected2"
-                    >
-                    </vuetable>
+            <b-card class="mb-4" >
+               <div class="row">
+                  <div class="col-6"><h3>Agent Item</h3></div>
+                  <div class="col-6"></div>
+               </div>
+                <div v-if="dataSelected1.length > 0" class="row">
+                    <table-agent :dataComponent="dataSelected1"></table-agent>
                 </div>
             </b-card>
-            <b-card class="mb-4" title="Thinner">
-                <div v-if="dataSelected3.length > 0">
-                    <vuetable
-                        ref="vuetable"
-                        style="display:block; overflow-x:auto;width:auto"
-                        :api-mode="false"
-                        :fields="fields"
-                        :data="dataSelected3"
-                    >
-                    </vuetable>
+            <b-card class="mb-4" >
+                <div class="row">
+                  <div class="col-6"><h3>Thinner Item</h3></div>
+                  <div class="col-6"></div>
+               </div>
+                <div v-if="dataSelected1.length > 0" class="row">
+                    <table-agent :dataComponent="dataSelected1"></table-agent>
                 </div>
             </b-card>
         </b-form>
@@ -73,9 +73,9 @@
             <b-card class="mb-4" style="position: sticky; top: 20vh">
                 <b-card-title>Summary</b-card-title>
                 <b-card v-if="namaSch != ''" class="mb-3 d-flex flex-row p-2" no-body>
-                    <div src="/assets/img/profiles/l-1.jpg" 
-                        alt="Card image cap" 
-                        class="align-self-center list-thumbnail-letters small" 
+                    <div src="/assets/img/profiles/l-1.jpg"
+                        alt="Card image cap"
+                        class="align-self-center list-thumbnail-letters small"
                         :style="returnColor(hex)">
                     </div>
                     <div class="d-flex flex-grow-1 min-width-zero ml-2">
@@ -95,9 +95,9 @@
                 <p class="text text-medium mb-2">Daftar Item</p>
                     <div v-for="item in bigData" :key="item.no">
                         <b-card class="mb-3 d-flex flex-row p-2" no-body>
-                            <div src="/assets/img/profiles/l-1.jpg" 
-                                alt="Card image cap" 
-                                class="align-self-center list-thumbnail-letters rounded-circle small" 
+                            <div src="/assets/img/profiles/l-1.jpg"
+                                alt="Card image cap"
+                                class="align-self-center list-thumbnail-letters rounded-circle small"
                                 :style="returnColor(item.warna.hex_code)">
                             </div>
                             <div class="d-flex flex-grow-1 min-width-zero ml-2">
@@ -129,6 +129,8 @@
 
 <script>
 import Vuetable from "vuetable-2/src/components/Vuetable";
+import tableItem from "./tableAddItemScheme.vue";
+import tableAgent from "./tableAddItemAgentScheme.vue";
 import { VueAutosuggest } from "vue-autosuggest";
 import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
@@ -159,7 +161,9 @@ export default {
         vuetable: Vuetable,
         "v-select": vSelect,
         "vue-autosuggest": VueAutosuggest,
-        "selectCategory": selectCategory
+        "selectCategory": selectCategory,
+        "table-item" : tableItem,
+        "table-agent" : tableAgent
     },
     data() {
         return {
@@ -174,38 +178,9 @@ export default {
 
             filteredOptions: [],
             selected: {},
-            dataWarna: [],  
-            
-            fields: [
-            {
-                name: "name",
-                title: "No",
-                titleClass: "",
-                dataClass: "text-muted",
-                width:"25%"
-                },
-                {
-                name: "warna",
-                title: "Warna",
-                titleClass: "",
-                dataClass: "text-muted",
-                width:"25%"
-                },
-                {
-                name: "vs",
-                title: "VS",
-                titleClass: "",
-                dataClass: "text-muted",
-                width:"25%"
-                },
-                {
-                name: "balance",
-                title: "Balance",
-                titleClass: "",
-                dataClass: "text-muted",
-                width:"25%"
-                }
-            ],
+            dataWarna: [],
+
+            itemDelCount : 0,
         };
     },
     mixins: [validationMixin],
@@ -217,6 +192,23 @@ export default {
         },
     },
     methods: {
+      deleteItemGroup(){
+          let newArrSelected = [];
+          let newArrBigData = [];
+          for(let j=0; j<this.dataSelected1.length; j++ ){
+            if(!this.dataSelected1[j].action){
+                newArrSelected.push(this.dataSelected1[j])
+            }
+          }
+
+           for(let j=0; j<this.bigData.length; j++ ){
+            if(!this.bigData[j].action){
+                newArrBigData.push(this.bigData[j])
+            }
+          }
+          this.bigData = newArrBigData
+          this.dataSelected1 = newArrSelected
+      },
         onValitadeFormSubmit() {
             this.$v.$touch();
             if(!this.$v.$invalid){
@@ -271,7 +263,7 @@ export default {
                         });
                     }
 				});
-                
+
             }else{
                 console.log("error");
             }
@@ -289,7 +281,7 @@ export default {
             */
             return;
         }
-        
+
         const filteredData = this.dataItem.items.filter(option => {
             return option.name.toLowerCase().indexOf(text.toLowerCase()) > -1;
         });
@@ -303,13 +295,27 @@ export default {
         onAutosuggestSelected(item) {
             this.selected = item;
         },
+        removeBigData : function (item){
+          let newArr = this.bigData
+          let index = -1;
+            for(let i=0; i< newArr.length; i++){
+             if(newArr[i].no == item.no){
+               index = i
+             }
+            }
+
+            if(index != -1){
+              newArr.splice(index,1)
+            }
+            this.bigData = newArr
+        },
         renderSuggestion(suggestion) {
             const character = suggestion.item;
             if(character.type.id == 1){
                 return <b-card class="mb-0 p-1 d-flex flex-row" no-body>
-                            <div src="/assets/img/profiles/l-1.jpg" 
-                                alt="Card image cap" 
-                                class="align-self-center list-thumbnail-letters rounded-circle small mr-2" 
+                            <div src="/assets/img/profiles/l-1.jpg"
+                                alt="Card image cap"
+                                class="align-self-center list-thumbnail-letters rounded-circle small mr-2"
                                 style={{ background: `#${character.color.hex_code}`, color: 'black'}}><center>{character.color.id_ral}</center>
                             </div>
                             <div class="d-flex flex-grow-1 min-width-zero">
@@ -327,14 +333,14 @@ export default {
                         </b-card>;
             }else{
                 return <b-card class="mb-0 p-1 d-flex flex-row" no-body>
-                            <div v-if={character.type.id == 2} src="/assets/img/profiles/l-1.jpg" 
-                                alt="Card image cap" 
-                                class="align-self-center list-thumbnail-letters rounded-circle small mr-2" 
+                            <div v-if={character.type.id == 2} src="/assets/img/profiles/l-1.jpg"
+                                alt="Card image cap"
+                                class="align-self-center list-thumbnail-letters rounded-circle small mr-2"
                                 style={{ background: "white", color: 'black', border: "5px solid black" }}>Ag
                             </div>
-                            <div v-if={character.type.id == 3} src="/assets/img/profiles/l-1.jpg" 
-                                alt="Card image cap" 
-                                class="align-self-center list-thumbnail-letters rounded-circle small mr-2" 
+                            <div v-if={character.type.id == 3} src="/assets/img/profiles/l-1.jpg"
+                                alt="Card image cap"
+                                class="align-self-center list-thumbnail-letters rounded-circle small mr-2"
                                 style={{ background: "white", color: 'black', border: "5px solid black" }}>Th
                             </div>
                             <div class="d-flex flex-grow-1 min-width-zero">
@@ -349,7 +355,7 @@ export default {
                                     </div>
                                 </div>
                             </div>
-                        </b-card>;  
+                        </b-card>;
             }
         },
         getSuggestionValue(suggestion) {
@@ -444,7 +450,7 @@ export default {
             this.isLoad = true;
             this.dataItem = resp;
             console.log(this.dataItem);
-            
+
         })
     }
 };

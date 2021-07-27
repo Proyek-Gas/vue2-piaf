@@ -24,9 +24,10 @@
                       :filterable="false"
                       multiple
                       v-model="dataReturn.customerId"
-                      :options="listUser"
+                      :options="listCust"
                       @search="fetchOptions"
-                      :reduce="listUser => listUser.id"
+                      :reduce="listCust => listCust.id"
+                      @input="onChangeCustomer($event)"
                     >
                       <template slot="no-options">Cari nama Kustomer...</template>
                       <template slot="option" slot-scope="option">
@@ -94,6 +95,42 @@
                    format ="yyyy-MM-dd"
                 ></datepicker>
             </b-form-group>
+            <b-form-group label="User" v-if="vueSelected == '6'">
+               <v-select
+                      label="name"
+                      :filterable="false"
+                      multiple
+                      v-model="dataReturn.userId"
+                      :options="listUser"
+                      :reduce="listUser => listUser.id"
+                    >
+                      <template slot="no-options">Cari nama Kustomer...</template>
+                      <template slot="option" slot-scope="option">
+                        <div class="row" >
+                          <div class="col-3">  <div
+                  src="/assets/img/profiles/l-1.jpg"
+                  alt="Card image cap"
+                  class="align-self-center list-thumbnail-letters rounded-circle small"
+                >{{showAvatar(option.name)}}</div></div>
+                        <div class="col-9 pt-2 " style="overflow: hidden;
+                         text-overflow: ellipsis;">
+                            {{ option.name }}
+                        </div>
+                        </div>
+                      </template>
+                      <template slot="selected-option" slot-scope="option">
+                        <div class="selected d-center">
+                          {{ option.name }}
+                        </div>
+                      </template>
+                      <template slot="spinner" slot-scope="spinner">
+                        <div class="spinner-border text-primary" v-show="spinner"></div>
+                      </template>
+                    </v-select>
+            </b-form-group>
+            <b-form-group label ="Project" v-if="vueSelected =='7'">
+                <v-select multiple v-model="dataReturn.projectId" :options="listProjects" :reduce="listProjects => listProjects.id" label="name" placeholder="Silahkan Pilih Projects"  />
+            </b-form-group>
         </b-colxx>
      </b-row>
      <template slot="modal-footer">
@@ -116,6 +153,8 @@ export default {
     return {
      vueSelected : "",
      listQuoteStatus : [],
+     listProjectClone : [],
+     listProjects : [],
       selectData: [
         {
           value : "1",
@@ -123,7 +162,7 @@ export default {
         },
         {
           value : "2",
-          label : "User Create"
+          label : "Customer"
         },
         {
           value : "3",
@@ -139,14 +178,21 @@ export default {
         },
         {
           value : "6",
-          label : "Customer"
+          label : "User Create"
+        },
+        {
+          value : "7",
+          label : "Project"
         }
 
       ],
+      listCust : [],
       listUser : [],
       dataReturn : {
         status : [],
+        userId : [],
         customerId : [],
+        projectId : [],
         minimum : 0,
         maximum : 0,
         dateCreateAwal : "",
@@ -175,9 +221,12 @@ export default {
   },
     reset(){
       this.vueSelected = ""
+      this.listProjects = this.listProjectClone
       this.dataReturn = {
         status : [],
         customerId : [],
+        projectId : [],
+        userId  : [],
         minimum : 0,
         maximum : 0,
         dateCreateAwal : "",
@@ -185,8 +234,70 @@ export default {
         dateUpdateAwal : "",
         dateUpdateAkhir : "",
       }
+    },
+    onChangeCustomer($event){
+        if(this.dataReturn.customerId.length != null){
+            this.fetchAgain(this.makeArray(this.dataReturn.customerId))
+        }else{
+          this.listProjects = this.listProjectClone
+        }
+    },
+    makeArray(customerId){
+         let newStyle = `[`
+            for(let i=0; i<customerId.length;i++){
+              newStyle = newStyle+ `"${customerId[i]}",`
+            }
+           newStyle = newStyle +`]`
+           return newStyle
+    },
+    showAvatar(row){
+      const tmp = row.split(' ');
+      if(tmp.length  == 1){
+        return tmp[0].substring(0,2).toUpperCase();
+      }else{
+         return tmp[0].substring(0,1).toUpperCase()+tmp[1].substring(0,1).toUpperCase();
+      }
+    },
+     fetchOptions(search, loading) {
+      loading(true);
+      setTimeout(() => {
+        this.listCust = this.listCust.filter(row=>{
+           return row.name.toLowerCase().indexOf(search.toLowerCase()) != -1;
+        })
+        loading(false)
+      },2000);
+    },
+    fetchAgain(customerId){
+            let querystring = `
+                query{ projects (filter: {customer_id : ${customerId}}){
+                          count
+                          projects{
+                              id
+                              name
+                          }}
+                          }
+              `
+              console.log(querystring)
+           fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              query: querystring,
+            }),
+          })
+          .then(function(response) {
+            return response.json()
+          })
+          .then(function(text) {
+            console.log(text)
+            return text.data.projects.projects;
+          })
+          .then(resp => {
+              this.listProjects = resp
+          })
     }
-
   },
   mounted(){
       fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
@@ -244,8 +355,72 @@ export default {
           return text.data.customers.customers;
         })
         .then(resp => {
+            this.listCust = resp
+        })
+
+
+        fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+          method: 'POST',
+          headers: {
+          'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            query: `
+              query{ projects {
+                        count
+                        projects{
+                            id
+                            name
+                        }}
+                        }
+            `,
+          }),
+        })
+        .then(function(response) {
+          return response.json()
+        })
+        .then(function(text) {
+          console.log(text)
+          return text.data.projects.projects;
+        })
+        .then(resp => {
+            this.listProjects = resp
+            this.listProjectClone = resp
+        })
+
+          fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+          method: 'POST',
+          headers: {
+          'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            query: `
+              query{ users {
+                        count
+                        users{
+                               id
+                              name
+                                photo
+                                role{
+                                  id
+                                  name
+                                }
+                        }}
+                        }
+            `,
+          }),
+        })
+        .then(function(response) {
+          return response.json()
+        })
+        .then(function(text) {
+          console.log(text)
+          return text.data.users.users;
+        })
+        .then(resp => {
             this.listUser = resp
         })
+
   }
 };
 </script>

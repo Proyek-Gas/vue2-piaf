@@ -190,11 +190,11 @@ export default {
       custid : null
     };
   },
-  watch: {
-    data(newVal, oldVal) {
-      this.$refs.vuetable.refresh();
-    },
-  },
+  // watch: {
+  //   data(newVal, oldVal) {
+  //     this.$refs.vuetable.refresh();
+  //   },
+  // },
   mounted() {
     if(this.$route.query.id){
       this.custid = `{customer_id : "${this.$route.query.id}"}`;
@@ -508,6 +508,9 @@ export default {
 
 
       fetchAgain(kategori, status,date,customerId){
+         if(this.$route.query.id){
+           customerId = `["${this.$route.query.id}"]`
+         }
               let querystring =  `
                   query {projects(filter : {customer_id: ${customerId} category : ${kategori} status : ${status}  ${date}}) {
                   count

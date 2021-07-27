@@ -200,11 +200,11 @@ export default {
 
     };
   },
-  watch: {
-    data(newVal, oldVal) {
-      this.$refs.vuetable.refresh();
-    },
-  },
+  // watch: {
+  //   data(newVal, oldVal) {
+  //     this.$refs.vuetable.refresh();
+  //   },
+  // },
   mounted() {
     fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
         method: 'POST',

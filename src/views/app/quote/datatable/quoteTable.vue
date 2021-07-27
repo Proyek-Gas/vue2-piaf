@@ -103,9 +103,9 @@
 
                   <p class="mb-2">
                     HPP
-                    <span class="float-right text-muted">  {{shortNumber(props.rowData.subtotal_hpp)}}/  {{shortNumber(props.rowData.total)}}</span>
+                    <span class="float-right text-muted">  {{shortNumber(props.rowData.total_hpp)}}/  {{shortNumber(props.rowData.total)}}</span>
                   </p>
-                  <b-progress :value="(props.rowData.subtotal_hpp / props.rowData.total) * 100"></b-progress>
+                  <b-progress :value="(props.rowData.total_hpp / props.rowData.total) * 100"></b-progress>
               </template>
               <template slot="validuntil" slot-scope="props">
                   <p>{{timeLayout(props.rowData.valid_until)}}</p> <br>
@@ -262,11 +262,11 @@ export default {
       tag: []
     };
   },
-  watch: {
-    data(newVal, oldVal) {
-      this.$refs.vuetable.refresh();
-    },
-  },
+  // watch: {
+  //   data(newVal, oldVal) {
+  //     this.$refs.vuetable.refresh();
+  //   },
+  // },
   mounted() {
     if(this.$route.query.id){
       console.log("shano")
@@ -306,7 +306,7 @@ export default {
                      customer_id
                     }
                     total
-                    subtotal_hpp
+                    total_hpp
                     valid_until
                     userCreate{
                       id
@@ -379,9 +379,9 @@ export default {
 
       let local = this.data;
       console.log(this.search);
-      // local = local.filter(row => {
-      //   return row.name.toLowerCase().indexOf(this.search.toLowerCase()) !== -1 ;
-      // });
+      local = local.filter(row => {
+        return row.project.name.toLowerCase().indexOf(this.search.toLowerCase()) !== -1 ;
+      });
       // sortOrder can be empty, so we have to check for that as well
       if (sortOrder.length > 0) {
         console.log("orderBy:", sortOrder[0].sortField, sortOrder[0].direction);
@@ -477,30 +477,105 @@ export default {
         let cek = true;
         this.tag =[]
         if(newAnswer){
-          if(newAnswer.name != ""){
-            this.data = this.data.filter(row => {
-                return row.name.toLowerCase().indexOf(newAnswer.name.toLowerCase())  !== -1 ;
-            });
+          let status = null
+          let customerId = null
+          let projectId = null
+          let total = null
+          let userCreate = null
+          if(newAnswer.status.length != 0){
+              status = `[${newAnswer.status}]`
+              this.tag.push("status")
               cek = false;
-              this.tag.push("Nama")
-          }
-          if(newAnswer.status != "-1"){
-            this.data = this.data.filter(row=>{
-              return parseInt(row.status) == parseInt(newAnswer.status);
-            })
-            cek = false;
-            console.log(parseInt(newAnswer.status))
-            this.tag.push("Status")
           }
 
-          if(newAnswer.warna != ""){
-              cek = false;
-              this.data = this.data.filter(row=>{
-                return row.color.id_ral == newAnswer.warna.id_ral
-              })
-            this.tag.push("Warna")
+          if(newAnswer.customerId.length != 0){
+              customerId = `[`
+              for(let i=0; i<newAnswer.customerId.length;i++){
+                customerId = customerId+ `"${newAnswer.customerId[i]}",`
+              }
+              customerId = customerId +`]`
+              this.tag.push("Kustomer")
+              cek = false
           }
-          // this.fetchAgain(kategori,status)
+
+          if(newAnswer.projectId.length !=0){
+            projectId = `[${newAnswer.projectId}]`
+            this.tag.push("Project")
+            cek = false
+          }
+
+          if(newAnswer.userId.length != 0){
+            userCreate = `[${newAnswer.userId}]`
+            this.tag.push("UserCreate")
+            cek = false
+          }
+
+          if(newAnswer.minimum != 0 && newAnswer.maximum != 0 ){
+            total = `{
+              min : ${newAnswer.minimum}
+              max : ${newAnswer.maximum}
+            }`
+            this.tag.push("Total")
+            cek = false
+          }
+          /// created At
+          let ckdt1 = true;
+          let ckdt2 = true;
+          let formDate = `created_at : {`;
+          if(newAnswer.dateCreateAwal != ""){
+           formDate = formDate +`date_min:"${ this.formatDate(newAnswer.dateCreateAwal)}"`
+            cek = false;
+            this.tag.push("Created At dateMin")
+          }else{
+            formDate = formDate+ `date_min:null`
+            ckdt1 = false
+          }
+
+
+           if(newAnswer.dateCreateAkhir != ""){
+            formDate = formDate+ ` date_max:"${this.formatDate(newAnswer.dateCreateAkhir)}"`+`}`
+              cek = false;
+              this.tag.push("Created At dateMax")
+            }else{
+              formDate =  formDate +` date_max:null`+`}`
+              ckdt2 = false
+            }
+
+            if(!ckdt1 && !ckdt2 ){
+              formDate = ""
+            }
+
+          //// updated At
+          let ckdt11 = true;
+          let ckdt21 = true;
+          let formDateUpdate = `updated_at : {`;
+          if(newAnswer.dateCreateAwal != ""){
+           formDateUpdate = formDateUpdate +`date_min:"${ this.formatDate(newAnswer.dateUpdateAwal)}"`
+            cek = false;
+            this.tag.push("Created At dateMin")
+          }else{
+            formDateUpdate = formDateUpdate+ `date_min:null`
+            ckdt11 = false
+          }
+
+
+           if(newAnswer.dateCreateAkhir != ""){
+            formDateUpdate = formDateUpdate+ ` date_max:"${this.formatDate(newAnswer.dateUpdateAkhir)}"`+`}`
+              cek = false;
+              this.tag.push("Created At dateMax")
+            }else{
+              formDateUpdate =  formDateUpdate +` date_max:null`+`}`
+              ckdt21 = false
+            }
+
+            if(!ckdt11 && !ckdt21 ){
+              formDateUpdate = ""
+            }
+
+
+
+
+          this.fetchAgain(status,customerId,projectId,total,userCreate,formDate, formDateUpdate)
         }
         if(cek){
             this.search = ""
@@ -509,12 +584,81 @@ export default {
 
          this.$refs.vuetable.refresh()
     },
-    //  fetchAgain(kategori, status){
+    fetchAgain(status,customerId,projectId,total,userCreate, updatedAt, createdAt){
+       if(this.$route.query.id){
+           userId = `[${this.$route.query.id}]`
+         }
+        let querystring = `
+          query{
+                quotes (filter : {customer_id : ${customerId}
+                  project_id : ${projectId}
+                  status  : ${status}
+                  total : ${total}
+                  userCreate : ${userCreate}
+                  ${updatedAt}
+                  ${createdAt}
+                }){
+                  count
+                  quotes{
+                    id
+                  status{
+                    id
+                    name
+                  }
+                    version
+                    closed_at
+                    created_at
+                    updated_at
+                    project{
+                      id
+                      name
+                      category{
+                        id
+                        name
+                      }
+                      status
+                      tgl_reminder
+                     customer_id
+                    }
+                    total
+                    total_hpp
+                    valid_until
+                    userCreate{
+                      id
+                      name
+                      role{
+                        id
+                        name
+                      }
+                    }
 
+                  }
+                }
+              }
 
-    // }
+        `
+        console.log(querystring)
+
+        fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: querystring
+      }),
+        }).then(function(response) {
+            return response.json()
+        }).then(function(text) {
+          console.log(text)
+            return text.data.quotes.quotes
+        })
+        .then(resp => {
+            this.data = resp;
+          });
+
+    }
   },
-
   computed: {
     isSelectedAll() {
       return this.selectedItems.length >= this.items.length;
