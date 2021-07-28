@@ -35,6 +35,7 @@
               <div class="row">
                 <div class="col-6">
                   <h3>Item</h3>
+                  {{dataSelected1}}
                 </div>
                   <div class="col-6" style="text-align:right">
                      <b-button
@@ -52,16 +53,30 @@
             <b-card class="mb-4" >
                <div class="row">
                   <div class="col-6"><h3>Agent Item</h3></div>
-                  <div class="col-6"></div>
+                  <div class="col-6" style="text-align:right">
+                      <b-button
+                        variant="danger"
+                        size="sm"
+                        @click="deleteItemGroup"> delete
+                       <!-- ({{itemDelCount}}) -->
+                    </b-button>
+                  </div>
                </div>
                 <div v-if="dataSelected1.length > 0" class="row">
-                    <table-agent :dataComponent="dataSelected1"></table-agent>
+                    <table-agent :dataComponent="dataSelected1" v-on:btnDel="removeBigData"></table-agent>
                 </div>
             </b-card>
             <b-card class="mb-4" >
                 <div class="row">
                   <div class="col-6"><h3>Thinner Item</h3></div>
-                  <div class="col-6"></div>
+                  <div class="col-6" style="text-align:right">
+                      <b-button
+                        variant="danger"
+                        size="sm"
+                        @click="deleteItemGroup"> delete
+                       <!-- ({{itemDelCount}}) -->
+                    </b-button>
+                  </div>
                </div>
                 <div v-if="dataSelected1.length > 0" class="row">
                     <table-agent :dataComponent="dataSelected1"></table-agent>
@@ -111,6 +126,7 @@
                             </div>
                         </b-card>
                     </div>
+
                 <b-row>
                     <b-colxx xxs="6" class="text-center">
                     <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip">
@@ -368,13 +384,16 @@ export default {
                     name: suggestion.item.name,
                     warna: suggestion.item.color,
                     vs: suggestion.item.vs,
-                    balance: suggestion.item.balance
+                    balance: suggestion.item.balance,
+                    id : suggestion.item.id
 
                 }
                 this.bigData.push(data);
-                if(suggestion.item.type.id == 1)this.dataSelected1.push(data);
-                else if(suggestion.item.type.id == 1)this.dataSelected2.push(data);
-                else this.dataSelected3.push(data);
+                //data = this.fetchAgain(data)
+                // if(suggestion.item.type.id == 1)this.dataSelected1.push(data);
+                // else if(suggestion.item.type.id == 1)this.dataSelected2.push(data); //nanti ganti 2 ya
+                // else this.dataSelected3.push(data);
+                this.fetchAgain(data,suggestion.item.type)
             }
                 console.log(this.bigData);
             return suggestion.item.name;
@@ -384,6 +403,50 @@ export default {
                 background: "#"+a,
             }
             return style
+        },
+        fetchAgain(data,suggestion){
+
+          let queryString = `
+            query{
+                itemDetail(item_id:${data.id}){
+                  detailSellingPrice{
+                    priceCategory{
+                      id
+                      name
+                    }
+                    price
+                  }
+                }
+              }
+
+
+          `
+          console.log(queryString)
+          fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                query: queryString,
+            }),
+            })
+            .then(function(response) {
+                return response.json()
+            })
+            .then(function(text) {
+                console.log(text.data.itemDetail);
+                return text.data.itemDetail;
+            })
+            .then(resp => {
+              console.log(resp.detailSellingPrice)
+              console.log(suggestion)
+              data.price = resp.detailSellingPrice
+                  if(suggestion.id == 1)this.dataSelected1.push(data);
+                else if(suggestion.id == 1)this.dataSelected2.push(data); //nanti ganti 2 ya
+                else this.dataSelected3.push(data);
+            })
+         // return data
         },
         check(a){
             let kembar = false;
@@ -409,6 +472,7 @@ export default {
                         items{
                             count
                             items{
+                                id
                                 no
                                 name
                                 balance
