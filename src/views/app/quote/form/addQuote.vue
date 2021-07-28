@@ -53,7 +53,7 @@
                             @selected="onAutosuggestSelected"
                             @input="onAutoSuggestInputChange"
                         >
-                        <template slot="before-section-default"> 
+                        <template slot="before-section-default">
                             <div class="p-1">
                                 <b-button
                                     class="glyph-icon simple-icon-plus"
@@ -67,23 +67,23 @@
                                     <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip tooltip-label-right">
                                             <b-card class="mb-4" title="Profil Customer">
                                                 <b-form-group label-cols="3" horizontal label="Kode">
-                                                    
+
                                                 </b-form-group>
 
                                                 <b-form-group label-cols="3" horizontal label="Nama">
-                                                    
+
                                                 </b-form-group>
 
                                                 <b-form-group label-cols="3" horizontal label="Kategori">
-                                                    
+
                                                 </b-form-group>
 
                                                 <b-form-group label-cols="3" horizontal label="Kategori Harga">
-                                                    
+
                                                 </b-form-group>
 
                                                 <b-form-group label-cols="3" horizontal label="Limit Piutang" >
-                                                    
+
                                                 </b-form-group>
                                             </b-card>
                                     </b-form>
@@ -126,7 +126,7 @@
                             @selected="onAutosuggestSelected2"
                             @input="onAutoSuggestInputChange2"
                         >
-                        <template slot="before-section-default"> 
+                        <template slot="before-section-default">
                             <div class="p-1">
                                 <b-button
                                     class="glyph-icon simple-icon-plus"
@@ -140,23 +140,23 @@
                                     <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip tooltip-label-right">
                                             <b-card class="mb-4" title="Profil Customer">
                                                 <b-form-group label-cols="3" horizontal label="Kode">
-                                                    
+
                                                 </b-form-group>
 
                                                 <b-form-group label-cols="3" horizontal label="Nama">
-                                                    
+
                                                 </b-form-group>
 
                                                 <b-form-group label-cols="3" horizontal label="Kategori">
-                                                    
+
                                                 </b-form-group>
 
                                                 <b-form-group label-cols="3" horizontal label="Kategori Harga">
-                                                    
+
                                                 </b-form-group>
 
                                                 <b-form-group label-cols="3" horizontal label="Limit Piutang" >
-                                                    
+
                                                 </b-form-group>
                                             </b-card>
                                     </b-form>
@@ -179,87 +179,77 @@
             </b-form>
             </b-colxx>
         </b-row>
+        {{area}}
         <b-form-group label-cols="3" horizontal label="Pilih Area">
-            <v-select
-            v-model="area"
-            :options="areaOptions"
-            label="name"
-            :disabled="proKat === ''"
-            placeholder="Harap pilih project"/>
-        </b-form-group>
-        <b-row>
-            <b-colxx xxs="12" xl="6">
-                <b-form-group label-cols="3" horizontal label="Section Area">
-                <v-select
-                    label="name"
-                    v-model="surface"
-                    multiple
-                    :options="surfaceOptions"
-                    :disabled="proKat === ''"
-                    placeholder="Harap pilih project"
-                />
+          <v-select
+          v-model="area"
+          :options="areaOptions"
+          label="name"
+          @input="newArea"
+          :disabled="proKat === ''"
+          placeholder="Harap pilih project"/>
+      </b-form-group>
+        <div class="separator mb-2"></div>
+        <!-- {{arrKumpulanArea}} -->
+         <b-card class="mb-4" v-for="(areas,index) in arrKumpulanArea" v-bind:key="areas.id" >
+                  <b-row style="margin-bottom: 2vh">
+                    <b-colxx xxs="6" xl="6"><h2>{{areas.name}}</h2></b-colxx>
+                    <b-colxx xxs="6" xl="6"  style="text-align:right">
+                      <b-button variant="danger" @click="deleteProject(index)">Delete</b-button>
+                    </b-colxx>
+                  </b-row>
+                 <b-row>
+                    <b-colxx xxs="12" xl="6">
+                        <b-form-group label-cols="3" horizontal label="Section Area">
+                        <v-select
+                            label="name"
+                            v-model="areas.surface"
+                            multiple
+                            :options="surfaceOptions"
+                            :disabled="proKat === ''"
+                            placeholder="Harap pilih project"
+                        />
+                        </b-form-group>
+                    </b-colxx>
+                    <b-colxx xxs="12" xl="6">
+                        <b-form-group label-cols="3" horizontal label="Luas Area">
+                            <b-form-input type="number" step="0.01" v-model="areas.luas" />
+                        </b-form-group>
+                    </b-colxx>
+                </b-row>
+                <b-form-group label-cols="3" horizontal label="Pilih Item" :disabled="proKat === ''">
+                    <vue-autosuggest
+                        class="autosuggest"
+                        :input-props="{id:'autosuggest__input3', class:'form-control', placeholder:'Ketik nama item'}"
+                        :suggestions="filteredOptions3"
+                        :render-suggestion="renderSuggestion3"
+                        :get-suggestion-value="getSuggestionValue3"
+                        :limit="6"
+
+
+                        @selected="onAutosuggestSelected3($event,index)"
+                        @input="onAutoSuggestInputChange3"
+                    >
+                    <template slot="before-section-default">
+                        <div class="p-1">
+                            <b-button
+                                class="glyph-icon simple-icon-plus"
+                                variant="success"
+                                v-b-modal.modalright
+                                size="sm"
+                                style="width: 100%;"
+                                @click="showModal('modalright')">
+                            </b-button>
+                          <!-- disini tempatnya modal tadi ya shan -->
+                        </div>
+                    </template>
+                    </vue-autosuggest>
                 </b-form-group>
-            </b-colxx>
-            <b-colxx xxs="12" xl="6">
-                <b-form-group label-cols="3" horizontal label="Luas Area">
-                    <b-form-input type="number" step="0.01" />
-                </b-form-group>  
-            </b-colxx>
-        </b-row>
-        <b-form-group label-cols="3" horizontal label="Pilih Item" :disabled="proKat === ''">
-            <vue-autosuggest
-                class="autosuggest"
-                :input-props="{id:'autosuggest__input3', class:'form-control', placeholder:'Ketik nama item'}"
-                :suggestions="filteredOptions3"
-                :render-suggestion="renderSuggestion3"
-                :get-suggestion-value="getSuggestionValue3"
-                :limit="6"
-                v-model="schItem"
-                @selected="onAutosuggestSelected3"
-                @input="onAutoSuggestInputChange3"
-            >
-            <template slot="before-section-default"> 
-                <div class="p-1">
-                    <b-button
-                        class="glyph-icon simple-icon-plus"
-                        variant="success"
-                        v-b-modal.modalright
-                        size="sm"
-                        style="width: 100%;"
-                        @click="showModal('modalright')">
-                    </b-button>
-                    <b-modal id="modalright" ref="modalright" title="Add Customer" modal-class="modal-right">
-                        <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip tooltip-label-right">
-                                <b-card class="mb-4" title="Profil Customer">
-                                    <b-form-group label-cols="3" horizontal label="Kode">
-                                        
-                                    </b-form-group>
-
-                                    <b-form-group label-cols="3" horizontal label="Nama">
-                                        
-                                    </b-form-group>
-
-                                    <b-form-group label-cols="3" horizontal label="Kategori">
-                                        
-                                    </b-form-group>
-
-                                    <b-form-group label-cols="3" horizontal label="Kategori Harga">
-                                        
-                                    </b-form-group>
-
-                                    <b-form-group label-cols="3" horizontal label="Limit Piutang" >
-                                        
-                                    </b-form-group>
-                                </b-card>
-                        </b-form>
-                    </b-modal>
-                </div>
-            </template>
-            </vue-autosuggest>
-        </b-form-group>
-        <b-form-group label-cols="3" horizontal>
-        <switches v-model="primarySmall" theme="custom" color="primary" class="vue-switcher-small" style="float: left;"></switches><label class="text text-medium ml-2">Only Items</label>
-        </b-form-group>
+                <b-form-group label-cols="3" horizontal>
+                <switches v-model="primarySmall" theme="custom" color="primary" class="vue-switcher-small" style="float: left;"></switches><label class="text text-medium ml-2">Only Items</label>
+                </b-form-group>
+                <table-item :dataComponent="areas.selectedItem"></table-item>
+         </b-card>
     </b-colxx>
     <b-colxx xxs="12" xl="4" class="col-right">
             <b-card class="mb-4" style="position: sticky; top: 20vh">
@@ -328,6 +318,7 @@ import { getDirection, setThemeRadius } from "../../../../utils";
 import selectCategory from "../../../../components/selectCategory.vue";
 import Datepicker from "vuejs-datepicker";
 import Switches from "vue-switches";
+import TableItem from "./tableAddItemQuote.vue"
 
 import {
     validationMixin
@@ -350,6 +341,7 @@ const phone = helpers.regex('numeric', /^(09)[0-9]{9}/);
 export default {
     components: {
         "v-select": vSelect,
+        "table-item" : TableItem,
         "vue-autosuggest": VueAutosuggest,
         "selectCategory": selectCategory,
         datepicker: Datepicker,
@@ -367,10 +359,21 @@ export default {
             proKat: "",
             tglQuote: "",
             tglUntil: "",
+
+            arrDetailProject : [],
+
+/////
+            arrKumpulanArea : [],
             area: "",
+///ini nanti tak pakai
+
+            luasArea : -1,
+            arrSelectedItem : [],
+
+
             surface: [],
             surfaceOptions: [],
-            schItem: "",
+          //  schItem: "",
             primarySmall: false,
 
             areaOptions: [],
@@ -383,7 +386,9 @@ export default {
             filteredOptions3: [],
             selected3: {},
             dataSchItem: [],
-            dataItem: []
+            dataItem: [],
+
+
         };
     },
     mixins: [validationMixin],
@@ -404,7 +409,18 @@ export default {
             return "/app/datatable/customerTable/cDetail?id="+val
 		},
         dateSelected(e) {
-            
+
+        },
+        newArea(){
+          let cek = true
+            for(let i=0; i<this.arrKumpulanArea.length; i++){
+              if(this.arrKumpulanArea[i].id == this.area.id){
+                cek = false
+              }
+            }
+          if(cek){
+            this.arrKumpulanArea.push(this.area)
+          }
         },
         dateFormat(date){
             let d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -441,6 +457,9 @@ export default {
             })
             .then(resp => {
                 this.areaOptions = resp;
+                for(let i=0; i< this.areaOptions.length; i++){
+                  this.areaOptions[i].selectedItem = []
+                }
             })
         },
         fetchSurface(){
@@ -635,6 +654,9 @@ export default {
             this.fetchSurface();
             return suggestion.item.name;
         },
+        deleteProject(index){
+            this.arrKumpulanArea.splice(index,1)
+        },
 
         //autoSuggest item
         onAutoSuggestInputChange3(text, oldText) {
@@ -659,7 +681,7 @@ export default {
                             }
                         ];
                     }, 500);
-                }  
+                }
                 else{
                     this.fetchItem();
                     console.log("masuk2");
@@ -677,14 +699,26 @@ export default {
             }
         },
 
-        onAutosuggestSelected3(item) {
-            this.selected3 = item;
+        onAutosuggestSelected3($event,a) {
+          console.log(a)
+          console.log($event.item)
+          let cek = true
+          for(let i=0; i<this.arrKumpulanArea[a].selectedItem.length; i++){
+              if(this.arrKumpulanArea[a].selectedItem[i].id == $event.item.id){
+                cek = false
+              }
+          }
+          if(cek){
+             this.arrKumpulanArea[a].selectedItem.push($event.item)
+          }
+          console.log(this.arrKumpulanArea[a].selectedItem)
         },
         renderSuggestion3(suggestion) {
             const character = suggestion.item;
             return <b-card class="mb-0 d-flex flex-row" no-body><img src="/assets/img/profiles/l-1.jpg" alt="Card image cap" class="img-thumbnail list-thumbnail rounded-circle align-self-center m-2 small"/><div class="d-flex flex-grow-1 min-width-zero"><div class="pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero"><div class="min-width-zero"><h6 class="text-muted text-medium mb-1">{character.name}</h6><p class="text-muted text-small mb-2">{character.workPhone}</p></div></div></div></b-card>
         },
         getSuggestionValue3(suggestion) {
+
             return suggestion.item.name;
         },
         fetchProject(custId,proName){
@@ -855,7 +889,7 @@ export default {
 		.then(resp => {
             this.isLoad = true;
             this.tglQuote = new Date(Date.now());
-            this.tglUntil = new Date(new Date().getTime()+(30*24*60*60*1000));  
+            this.tglUntil = new Date(new Date().getTime()+(30*24*60*60*1000));
             this.dataCust = resp;
 		})
     }

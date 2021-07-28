@@ -22,7 +22,6 @@
                         :get-suggestion-value="getSuggestionValue"
                         :limit="6"
                         clearable
-                        v-model="item"
                         @selected="onAutosuggestSelected"
                         @input="onAutoSuggestInputChange"
                     >
@@ -185,7 +184,7 @@ export default {
         return {
             isLoad: false,
             namaSch: "",
-            item: "",
+         //   item: "",
             dataItem:[],
             bigData:[],
             dataSelected1: [],
