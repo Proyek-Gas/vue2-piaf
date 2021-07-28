@@ -432,7 +432,6 @@ export default {
                                     id
                                     name
                                 }
-
                             }
                         }
                     }

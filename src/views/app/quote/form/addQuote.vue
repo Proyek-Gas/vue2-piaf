@@ -257,6 +257,9 @@
             </template>
             </vue-autosuggest>
         </b-form-group>
+        <b-form-group label-cols="3" horizontal>
+        <switches v-model="primarySmall" theme="custom" color="primary" class="vue-switcher-small" style="float: left;"></switches><label class="text text-medium ml-2">Only Items</label>
+        </b-form-group>
     </b-colxx>
     <b-colxx xxs="12" xl="4" class="col-right">
             <b-card class="mb-4" style="position: sticky; top: 20vh">
@@ -324,6 +327,7 @@ import "vue-select/dist/vue-select.css";
 import { getDirection, setThemeRadius } from "../../../../utils";
 import selectCategory from "../../../../components/selectCategory.vue";
 import Datepicker from "vuejs-datepicker";
+import Switches from "vue-switches";
 
 import {
     validationMixin
@@ -348,7 +352,8 @@ export default {
         "v-select": vSelect,
         "vue-autosuggest": VueAutosuggest,
         "selectCategory": selectCategory,
-        datepicker: Datepicker
+        datepicker: Datepicker,
+        switches: Switches
     },
     data() {
         return {
@@ -366,6 +371,7 @@ export default {
             surface: [],
             surfaceOptions: [],
             schItem: "",
+            primarySmall: false,
 
             areaOptions: [],
             filteredOptions: [],
@@ -376,6 +382,7 @@ export default {
             dataPro: [],
             filteredOptions3: [],
             selected3: {},
+            dataSchItem: [],
             dataItem: []
         };
     },
@@ -386,6 +393,10 @@ export default {
         },
         tglUntil:{
             required
+        }
+    },
+    watch:{
+        primarySmall(val){
         }
     },
     methods: {
@@ -633,20 +644,36 @@ export default {
             */
             //this.item = '';
         }
-        this.fetchSchItem(text);
-            if(text && text.length >= 2){
-                setTimeout(() => {
-                    const filteredData = this.dataItem.filter(option => {
-                        return option.name.toLowerCase().indexOf(text.toLowerCase()) > -1;
-                    });
-            
-                    // Store data in one property, and filtered in another
-                    this.filteredOptions3 = [
-                        {
-                        data: filteredData
-                        }
-                    ];
-                }, 500);
+        console.log(this.primarySmall);
+            if(text.length >= 2){
+                if(!this.primarySmall){
+                    this.fetchSchItem(text);
+                    console.log("masuk1");
+                    setTimeout(() => {
+                        const filteredData = this.dataSchItem.filter(option => {
+                            return option.name.toLowerCase().indexOf(text.toLowerCase()) > -1;
+                        });
+                        this.filteredOptions3 = [
+                            {
+                                data: filteredData
+                            }
+                        ];
+                    }, 500);
+                }  
+                else{
+                    this.fetchItem();
+                    console.log("masuk2");
+                    setTimeout(() => {
+                        const filteredData = this.dataItem.items.filter(option => {
+                            return option.name.toLowerCase().indexOf(text.toLowerCase()) > -1;
+                        });
+                        this.filteredOptions3 = [
+                            {
+                                data: filteredData
+                            }
+                        ];
+                    }, 500);
+                }
             }
         },
 
@@ -742,6 +769,51 @@ export default {
             })
             .then(function(text) {
                 return text.data.schemeAndItemSearch;
+            })
+            .then(resp => {
+                this.dataSchItem = resp;
+                console.log(this.dataSchItem);
+            })
+        },
+        fetchItem(){
+            fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    query: `
+                        query{
+                            items{
+                                count
+                                items{
+                                    no
+                                    name
+                                    itemCategory{
+                                        id
+                                        name
+                                    }
+                                    color{
+                                        id_ral
+                                        hex_code
+                                        ind_name
+                                        eng_name
+                                    }
+                                    type{
+                                        id
+                                        name
+                                    }
+                                }
+                            }
+                        }
+                    `,
+                }),
+            })
+            .then(function(response) {
+                return response.json()
+            })
+            .then(function(text) {
+                return text.data.items;
             })
             .then(resp => {
                 this.dataItem = resp;
