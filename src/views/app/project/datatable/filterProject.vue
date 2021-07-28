@@ -180,6 +180,7 @@ export default {
       ],
       ListKategoriProject : [],
       customerSelection : [],
+      customerSelectionClone : [],
       dataReturn : {
          name:'',
          status : "-1",
@@ -205,7 +206,7 @@ export default {
 
     reset(){
       this.vueSelected = ""
-      this.customerSelection = []
+      this.customerSelection = this.customerSelectionClone
       this.dataReturn = {
          name:'',
          status : "-1",
@@ -229,6 +230,7 @@ export default {
     },
 
      fetchOptions(search, loading) {
+       this.customerSelection = this.customerSelectionClone
       loading(true);
       setTimeout(() => {
         this.customerSelection = this.customerSelection.filter(row=>{
@@ -297,6 +299,7 @@ export default {
         })
         .then(resp => {
             this.customerSelection = resp
+            this.customerSelectionClone = resp
         })
 
  }

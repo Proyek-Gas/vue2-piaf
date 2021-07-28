@@ -23,9 +23,9 @@
     </b-row>
 
     <b-row>
+      <template v-if="isLoad">
       <b-colxx xxs="12">
         <b-card>
-          <div class="loader" >LOADING</div><!--Your Loading Message -->
           <vuetable
             ref="vuetable"
             style="display:block; overflow-x:auto;width:auto"
@@ -75,6 +75,10 @@
           @vuetable-pagination:change-page="onChangePage"
         />
       </b-colxx>
+      </template>
+      <template v-else>
+          <div class="loading"></div>
+      </template>
     </b-row>
 
     <v-contextmenu ref="contextmenu">
@@ -234,9 +238,11 @@ export default {
     }).then(function(response) {
         return response.json()
     }).then(function(text) {
+      console.log(text)
         return text.data.scheme.schemes;
     })
     .then(resp => {
+      console.log(resp)
         this.data = resp;
         this.dataClone = resp;
         this.isLoad = true
@@ -341,7 +347,7 @@ export default {
       return style
   },
     onUpdateAnswer: function(newAnswer){
-        let cek = true;
+        let cek = true
         this.tag =[]
         if(newAnswer){
           let cekFetch = false;

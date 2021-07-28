@@ -126,7 +126,7 @@
               <!-- <template slot="id" slot-scope="props">
                 <i  class="simple-icon-arrow-down" @click="cellClicked($event, props.rowData)"></i>
               </template> -->
-              <template slot="action">
+              <template slot="action" >
                   <b-dropdown  text="actions" variant="outline-secondary">
                     <b-dropdown-item>Detail</b-dropdown-item>
                     <b-dropdown-item>Edit</b-dropdown-item>
@@ -274,14 +274,7 @@ export default {
     } else{
        this.custid = `null`;
     }
-    fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          query:  `
-         query{
+    let querystring = `   query{
                 quotes (filter :  ${this.custid}){
                   count
                   quotes{
@@ -319,8 +312,15 @@ export default {
 
                   }
                 }
-              }
-              `
+              }`
+              console.log(querystring)
+    fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: querystring
       }),
     }).then(function(response) {
         return response.json()
@@ -344,6 +344,10 @@ export default {
       console.log(paginationData);
       this.$refs.pagination.setPaginationData(paginationData);
     },
+     movePageDetail(val){
+			//window.location = window.location.href+"/pDetail?id="+val;
+      return "quoteTable/qDetail?id="+val
+		},
      onCellClicked (data, field, event) {
         console.log('cellClicked: ', field.name)
         console.log(data.id)
@@ -655,6 +659,7 @@ export default {
         })
         .then(resp => {
             this.data = resp;
+            this.$refs.vuetable.refresh();
           });
 
     }
