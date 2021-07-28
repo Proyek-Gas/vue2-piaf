@@ -184,7 +184,7 @@ export default {
         return {
             isLoad: false,
             namaSch: "",
-            item: "",
+         //   item: "",
             dataItem:[],
             bigData:[],
             dataSelected1: [],
