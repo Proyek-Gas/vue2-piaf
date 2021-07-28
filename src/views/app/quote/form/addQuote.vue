@@ -201,7 +201,7 @@
                 </b-form-group>
             </b-colxx>
             <b-colxx xxs="12" xl="6">
-                <b-form-group label-cols="3" horizontal label="Luas Area">
+                <b-form-group label-cols="4" horizontal label="Luas Area">
                     <b-form-input type="number" step="0.01" />
                 </b-form-group>  
             </b-colxx>
@@ -257,65 +257,66 @@
             </template>
             </vue-autosuggest>
         </b-form-group>
-        <b-form-group label-cols="3" horizontal>
-        <switches v-model="primarySmall" theme="custom" color="primary" class="vue-switcher-small" style="float: left;"></switches><label class="text text-medium ml-2">Only Items</label>
-        </b-form-group>
     </b-colxx>
     <b-colxx xxs="12" xl="4" class="col-right">
-            <b-card class="mb-4" style="position: sticky; top: 20vh">
-                <b-card-title>Quote Summary</b-card-title>
-                <b-row class="mb-2">
-                    <b-colxx xl="3">
-                    <p class="text text-small mb-2">
-                        {{ dateFormat(tglQuote) }}
-                    </p>
-                    </b-colxx>
-                    <b-colxx xl="3">
-                        <b-badge pill variant="warning">Baru</b-badge>
-                    </b-colxx>
-                    <b-colxx xl="3">
-                        <b-badge pill variant="primary">{{ quote }}</b-badge>
-                    </b-colxx>
-                    <b-colxx xl="3">
-                    <p class="text text-small mb-2">
-                        {{ dateFormat(tglUntil) }}
-                    </p>
-                    </b-colxx>
-                    </b-row>
-                <b-card v-if="custNama != ''" class="mb-3 d-flex flex-row" no-body>
-                    <img src="/assets/img/profiles/l-1.jpg" alt="Card image cap" class="img-thumbnail list-thumbnail rounded-circle align-self-center m-2 small"/>
-                    <div class="d-flex flex-grow-1 min-width-zero">
-                        <div class="pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero">
-                            <div class="min-width-zero">
-                                <h6 class="text-muted text-medium mb-1">
-                                    {{ custNama }}
-                                </h6>
-                                <p class="text-muted text-small mb-2">
-                                    {{ custEmail }}
-                                </p>
-                                <p class="text-muted text-small mb-2">
-                                    {{ custCate }}
-                                </p>
-                                <p class="text-muted text-small mb-2">
-                                    {{ proNama }}
-                                </p>
-                            </div>
+        <b-card class="mb-4" style="position: sticky; top: 20vh">
+            <b-card-title>Quote Summary</b-card-title>
+            <b-row class="mb-2">
+                <b-colxx xxs="3">
+                <p class="text text-small mb-2">
+                    {{ dateFormat(tglQuote) }}
+                </p>
+                </b-colxx>
+                <b-colxx xxs="3">
+                    <b-badge pill variant="warning">Rejected(M)</b-badge>
+                </b-colxx>
+                <b-colxx xxs="3">
+                    <b-badge pill variant="primary">0</b-badge>
+                </b-colxx>
+                <b-colxx xxs="3">
+                <p class="text text-small mb-2">
+                    {{ dateFormat(tglUntil) }}
+                </p>
+                </b-colxx>
+                </b-row>
+            <b-card v-if="custNama != ''" class="mb-3 d-flex flex-row" no-body>
+                <img src="/assets/img/profiles/l-1.jpg" alt="Card image cap" class="img-thumbnail list-thumbnail rounded-circle align-self-center m-2 small"/>
+                <div class="d-flex flex-grow-1 min-width-zero">
+                    <div class="pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero">
+                        <div class="min-width-zero">
+                            <h6 class="text-muted text-medium mb-1">
+                                {{ custNama }}
+                            </h6>
+                            <p class="text-muted text-small mb-2">
+                                {{ custEmail }}
+                            </p>
+                            <p class="text-muted text-small mb-2">
+                                {{ custCate }}
+                            </p>
+                            <p class="text-muted text-small mb-2">
+                                {{ proNama }}
+                            </p>
                         </div>
                     </div>
-                </b-card>
-                <b-row>
-                    <b-colxx xxs="6" class="text-center">
-                    <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip">
-                        <b-button type="submit" variant="primary" style="width: 100%">Add</b-button>
-                    </b-form>
-                    </b-colxx>
-                    <b-colxx xxs="6" class="text-center">
-                    <b-button @click="onFormReset" type="submit" variant="danger" style="width: 100%">Reset</b-button>
-                    </b-colxx>
-                </b-row>
+                </div>
             </b-card>
-
-        </b-colxx>
+            <b-card v-else class="mb-3 d-flex flex-row" no-body>
+                <p class="text-muted m-3" style="font-style: italic;">No customer selected</p>
+            </b-card>
+            <p class="text text-medium mb-2">Area</p>
+            <p class="text-muted m-3" style="font-style: italic;">No area selected</p>
+            <b-row>
+                <b-colxx xxs="6" class="text-center">
+                <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip">
+                    <b-button type="submit" variant="primary" style="width: 100%">{{ btn1 }}</b-button>
+                </b-form>
+                </b-colxx>
+                <b-colxx xxs="6" class="text-center">
+                <b-button @click="onFormReset" type="submit" variant="danger" style="width: 100%">{{ btn2 }}</b-button>
+                </b-colxx>
+            </b-row>
+        </b-card>
+    </b-colxx>
 </b-row>
 </div>
 </template>
@@ -327,7 +328,6 @@ import "vue-select/dist/vue-select.css";
 import { getDirection, setThemeRadius } from "../../../../utils";
 import selectCategory from "../../../../components/selectCategory.vue";
 import Datepicker from "vuejs-datepicker";
-import Switches from "vue-switches";
 
 import {
     validationMixin
@@ -353,12 +353,12 @@ export default {
         "vue-autosuggest": VueAutosuggest,
         "selectCategory": selectCategory,
         datepicker: Datepicker,
-        switches: Switches
     },
     data() {
         return {
             isLoad: false,
             quote: "# 5037",
+            status: "",
             custEmail: "",
             custId: "",
             custNama: "",
@@ -372,6 +372,8 @@ export default {
             surfaceOptions: [],
             schItem: "",
             primarySmall: false,
+            btn1: "",
+            btn2: "",
 
             areaOptions: [],
             filteredOptions: [],
@@ -382,8 +384,7 @@ export default {
             dataPro: [],
             filteredOptions3: [],
             selected3: {},
-            dataSchItem: [],
-            dataItem: []
+            dataSchItem: []
         };
     },
     mixins: [validationMixin],
@@ -395,16 +396,12 @@ export default {
             required
         }
     },
-    watch:{
-        primarySmall(val){
-        }
-    },
     methods: {
         movePageDetail(val){
             return "/app/datatable/customerTable/cDetail?id="+val
 		},
         dateSelected(e) {
-            
+
         },
         dateFormat(date){
             let d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -643,38 +640,23 @@ export default {
             *  something else, but don't filter by null.
             */
             //this.item = '';
+            this.dataSchItem = [];
+            this.filteredOptions3 = [];
         }
         console.log(this.primarySmall);
-            if(text.length >= 2){
-                if(!this.primarySmall){
-                    this.fetchSchItem(text);
-                    console.log("masuk1");
-                    setTimeout(() => {
-                        const filteredData = this.dataSchItem.filter(option => {
-                            return option.name.toLowerCase().indexOf(text.toLowerCase()) > -1;
-                        });
-                        this.filteredOptions3 = [
-                            {
-                                data: filteredData
-                            }
-                        ];
-                    }, 500);
-                }  
-                else{
-                    this.fetchItem();
-                    console.log("masuk2");
-                    setTimeout(() => {
-                        const filteredData = this.dataItem.items.filter(option => {
-                            return option.name.toLowerCase().indexOf(text.toLowerCase()) > -1;
-                        });
-                        this.filteredOptions3 = [
-                            {
-                                data: filteredData
-                            }
-                        ];
-                    }, 500);
-                }
+            if(text !== "" && text.length >= 2){
+                this.fetchSchItem(text);
+                console.log("masuk1");
+                    const filteredData = this.dataSchItem.filter(option => {
+                        return option.name.toLowerCase().indexOf(text.toLowerCase()) > -1;
+                    });
+                    this.filteredOptions3 = [
+                        {
+                            data: filteredData
+                        }
+                    ];
             }
+            console.log(this.filteredOptions3);
         },
 
         onAutosuggestSelected3(item) {
@@ -682,7 +664,47 @@ export default {
         },
         renderSuggestion3(suggestion) {
             const character = suggestion.item;
-            return <b-card class="mb-0 d-flex flex-row" no-body><img src="/assets/img/profiles/l-1.jpg" alt="Card image cap" class="img-thumbnail list-thumbnail rounded-circle align-self-center m-2 small"/><div class="d-flex flex-grow-1 min-width-zero"><div class="pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero"><div class="min-width-zero"><h6 class="text-muted text-medium mb-1">{character.name}</h6><p class="text-muted text-small mb-2">{character.workPhone}</p></div></div></div></b-card>
+            console.log(character.isItem);
+            if(character.isItem == true){
+                return <b-card class="mb-0 d-flex flex-row" no-body>
+                            <div src="/assets/img/profiles/l-1.jpg" 
+                                alt="Card image cap" 
+                                class="align-self-center list-thumbnail-letters rounded-circle small mr-2" 
+                                style={{ background: `#${character.color.hex_code}` }}>
+                            </div>
+                            <div class="d-flex flex-grow-1 min-width-zero">
+                                <div class="pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero">
+                                    <div class="min-width-zero">
+                                        <h6 class="text-muted text-medium mb-1">{character.name}</h6>
+                                        <p class="text-muted text-small mb-2">{character.item_code} - {character.itemCategory.name}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <h6 class="mr-1 text-muted text-medium mt-3">
+                                ITEM
+                            </h6>
+                        </b-card>
+
+            }else{
+                return <b-card class="mb-0 d-flex flex-row" no-body>
+                            <div src="/assets/img/profiles/l-1.jpg" 
+                                alt="Card image cap" 
+                                class="align-self-center list-thumbnail-letters small mr-2" 
+                                style={{ background: `#${character.color.hex_code}` }}>
+                            </div>
+                            <div class="d-flex flex-grow-1 min-width-zero">
+                                <div class="pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero">
+                                    <div class="min-width-zero">
+                                        <h6 class="text-muted text-medium mb-1">{character.name}</h6>
+                                        <p class="text-muted text-small mb-2">{character.color.ind_name}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <h6 class="mr-1 text-muted text-medium mt-3">
+                                SCHEME
+                            </h6>
+                        </b-card>
+            }
         },
         getSuggestionValue3(suggestion) {
             return suggestion.item.name;
@@ -775,53 +797,19 @@ export default {
                 console.log(this.dataSchItem);
             })
         },
-        fetchItem(){
-            fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    query: `
-                        query{
-                            items{
-                                count
-                                items{
-                                    no
-                                    name
-                                    itemCategory{
-                                        id
-                                        name
-                                    }
-                                    color{
-                                        id_ral
-                                        hex_code
-                                        ind_name
-                                        eng_name
-                                    }
-                                    type{
-                                        id
-                                        name
-                                    }
-                                }
-                            }
-                        }
-                    `,
-                }),
-            })
-            .then(function(response) {
-                return response.json()
-            })
-            .then(function(text) {
-                return text.data.items;
-            })
-            .then(resp => {
-                this.dataItem = resp;
-                console.log(this.dataItem);
-            })
-        }
     },
     async mounted(){
+        this.status = this.$route.query.status;
+        console.log(this.status);
+        if(this.status){
+            if(this.status == 1){
+                this.btn1 = "Submit";
+                this.btn2 = "Close";
+            }
+        }else{
+            this.btn1 = "Submit";
+            this.btn2 = "Draft";
+        }
         fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
 			method: 'POST',
 			headers: {

@@ -256,14 +256,12 @@
                 <div class="top-right-button-container">
                     <b-button
                         class="glyph-icon simple-icon-pencil"
-                        v-b-modal.modalright
                         variant="warning"
                         size="sm"
                         @click="movePageEdit(proId)">
                     </b-button>
                     <b-button
                         class="glyph-icon simple-icon-trash"
-                        v-b-modal.modalright
                         variant="danger"
                         size="sm"
                         v-b-modal.modalbasic>

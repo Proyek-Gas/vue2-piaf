@@ -12,9 +12,10 @@
         <b-card class="mb-4 d-flex flex-row p-3" no-body>
             <div
                 class="btn mb-1"
-                style="width:15%; text-align :center"
+                style="width:20%; text-align :center"
                 :style="returnColor(hex)">
-                <label class="mt-4">{{ ind }}</label><br>
+                <label class="mt-2">{{ ind }}</label><br>
+                <label class="mt-2">{{ eng }}</label>
             </div>
             <div class="d-flex flex-grow-1 min-width-zero ml-3">
               <div
@@ -24,9 +25,7 @@
                     <h6>
                         <b-badge class="mb-2" pill :variant="detail.status === 1 ?  'success' : 'danger'" >In Progress</b-badge>
                     </h6>
-                  <router-link to="?">
                     <h6 class="mb-1 card-subtitle truncate">{{ detail.name }}</h6>
-                  </router-link>
                   <p v-if="detail.notes != ''" class="text-muted text-small mb-2">{{ detail.notes }}</p>
                   <p v-else class="text-muted text-small mb-2" style="font-style: italic;">(Notes)</p>
                 </div>
@@ -41,7 +40,7 @@
                     @click="movePageEdit(schId)">
                 </b-button>
                 <b-button
-                    class="glyph-icon simple-icon-trash"
+                    class="glyph-icon simple-icon-trash ml-2"
                     v-b-modal.modalright
                     variant="danger"
                     size="sm"
@@ -156,6 +155,7 @@ export default {
             isLoad: true,
             hex: "",
             ind:"",
+            eng:"",
     	    detail: [],
             dataUt: [],
             dataAg: [],
@@ -281,6 +281,7 @@ export default {
                     this.isLoad = true;
                     this.hex = this.detail.color.hex_code;
                     this.ind = this.detail.color.ind_name;
+                    this.eng = this.detail.color.eng_name;
                     this.dataUt = this.detail.items;
                     console.log(this.dataUt);
                     if(!this.detail.notes){

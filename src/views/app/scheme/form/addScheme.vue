@@ -22,7 +22,6 @@
                         :get-suggestion-value="getSuggestionValue"
                         :limit="6"
                         clearable
-                        v-model="item"
                         @selected="onAutosuggestSelected"
                         @input="onAutoSuggestInputChange"
                     >

@@ -127,7 +127,7 @@
                 <i  class="simple-icon-arrow-down" @click="cellClicked($event, props.rowData)"></i>
               </template> -->
               <template slot="action" >
-                  <b-dropdown  text="actions" variant="outline-secondary">
+                  <b-dropdown text="Actions" variant="outline-secondary">
                     <b-dropdown-item>Detail</b-dropdown-item>
                     <b-dropdown-item>Edit</b-dropdown-item>
                     <b-dropdown-item>Delete</b-dropdown-item>

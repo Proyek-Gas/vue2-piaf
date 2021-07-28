@@ -61,7 +61,7 @@
               <i  class="simple-icon-arrow-down" @click="cellClicked($event, props.rowData)"></i>
             </template>
             <template slot="action" slot-scope="props">
-                <b-dropdown  text="actions" variant="outline-secondary">
+                <b-dropdown  text="Actions" variant="outline-secondary">
                   <b-dropdown-item :to="movePageDetail(props.rowData.id)">Detail</b-dropdown-item>
                   <b-dropdown-item :to="movePageEdit(props.rowData.id)">Edit</b-dropdown-item>
                   <b-dropdown-item>Delete</b-dropdown-item>
