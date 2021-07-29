@@ -29,10 +29,7 @@
                         :placeholder="$t('form-components.date')"
                         @cleared="clear"
                         v-model="tglUntil"
-                        @selected="dateSelected()"
                     ></datepicker>
-                    <!-- <b-form-input type="text" v-model="$v.tglUntil.$model" :state="!$v.tglUntil.$error" style="display:none;"/>
-                    <b-form-invalid-feedback v-if="!$v.tglUntil.required">Harap pilih tanggal</b-form-invalid-feedback> -->
                 </b-form-group>
             </b-colxx>
         </b-row>
@@ -91,8 +88,6 @@
                             </div>
                         </template>
                         </vue-autosuggest>
-                        <b-form-input type="text" v-model="$v.custNama.$model" :state="!$v.custNama.$error" style="display:none;" placeholder="Masukkan judul proyek"/>
-                        <b-form-invalid-feedback v-if="!$v.custNama.required">Harap pilih customer</b-form-invalid-feedback>
                     </b-form-group>
                     <b-card class="mb-0" title="Data Customer">
                         <h6 class="text-muted text-medium mb-1">
@@ -164,8 +159,8 @@
                             </div>
                         </template>
                         </vue-autosuggest>
-                        <b-form-input type="text" v-model="$v.custNama.$model" :state="!$v.custNama.$error" style="display:none;" placeholder="Masukkan judul proyek"/>
-                        <b-form-invalid-feedback v-if="!$v.custNama.required">Harap pilih customer</b-form-invalid-feedback>
+                        <b-form-input type="text" v-model="$v.proNama.$model" :state="!$v.proNama.$error" style="display:none;" placeholder="Masukkan judul proyek"/>
+                        <b-form-invalid-feedback v-if="!$v.proNama.required">Harap pilih project</b-form-invalid-feedback>
                     </b-form-group>
                     <b-card class="mb-0" title="Data Project">
                         <h6 class="text-muted text-medium mb-1">
@@ -246,7 +241,6 @@
                     </vue-autosuggest>
                 </b-form-group>
                 <b-form-group label-cols="3" horizontal>
-                <switches v-model="primarySmall" theme="custom" color="primary" class="vue-switcher-small" style="float: left;"></switches><label class="text text-medium ml-2">Only Items</label>
                 </b-form-group>
                 <table-item :dataComponent="areas.selectedItem"></table-item>
          </b-card>
@@ -336,7 +330,7 @@ const {
     numeric,
     maxValue,
     minValue,
-    helpers
+    helpers,
 } = require("vuelidate/lib/validators");
 
 const upperCase = helpers.regex('upperCase', /^[A-Z]*$/)
@@ -396,20 +390,14 @@ export default {
     },
     mixins: [validationMixin],
     validations: {
-        custNama:{
+        proNama:{
             required
         },
-        tglUntil:{
-            required
-        }
     },
     methods: {
         movePageDetail(val){
             return "/app/datatable/customerTable/cDetail?id="+val
 		},
-        dateSelected(e) {
-
-        },
         newArea(){
           let cek = true
             for(let i=0; i<this.arrKumpulanArea.length; i++){
@@ -491,7 +479,15 @@ export default {
         onValitadeFormSubmit() {
             this.$v.$touch();
             if(!this.$v.$invalid){
-                console.log("valid");
+                if(new Date(this.tglUntil) < new Date(this.tglQuote)){
+                    this.$toast("Tanggal berlaku tidak valid", {
+                        type: "warning",
+                        hideProgressBar: true,
+                        timeout: 2000
+                    });
+                }else{
+                    console.log("valid");
+                }
                 // let date;
                 // let str;
                 // if(this.tglQuote != ''){
@@ -649,6 +645,7 @@ export default {
         getSuggestionValue2(suggestion) {
             this.proNama = suggestion.item.name;
             this.proKat = suggestion.item.category;
+            this.fetchCustomer(suggestion.item.customer_id);
             this.fetchArea(this.proKat.id);
             this.fetchSurface();
             return suggestion.item.name;
@@ -745,6 +742,44 @@ export default {
 
             return suggestion.item.name;
         },
+        fetchCustomer(val){
+            fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    query: `
+                        query{ customerDetail(customer_id:"${val}") {
+                            name                         
+                            email                         
+                            category{
+                                name
+                            }
+                            priceCategory{                             
+                                name
+                            }
+                        }
+                        }
+                    `,
+                }),
+            })
+            .then(function(response) {
+                return response.json()
+            })
+            .then(function(text) {
+                console.log(text.data.customerDetail);
+                return text.data.customerDetail;
+            })
+            .then(resp => {
+                console.log(resp)
+                if(resp != null){
+                    this.custNama = resp.name;  
+                    this.custEmail = resp.email;
+                    this.custCate = resp.category.name +" - "+ resp.priceCategory.name;    
+                }
+            })
+        },
         fetchProject(custId,proName){
             let str = "";
             let filter = "";
@@ -772,6 +807,7 @@ export default {
                             name
                             id
                             status
+                            customer_id
                             category {
                                 id
                                 name
@@ -836,7 +872,6 @@ export default {
     },
     async mounted(){
         this.status = this.$route.query.status;
-        console.log(this.status);
         if(this.status){
             if(this.status == 1){
                 this.btn1 = "Submit";

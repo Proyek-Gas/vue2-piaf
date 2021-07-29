@@ -79,7 +79,7 @@
                     </vue-autosuggest>
                 </b-form-group>
                 <b-form-group label-cols="3" horizontal label="Ratio">
-                    <b-form-input type="number" step="0.1" v-model="$v.rThin.$model" :state="!$v.rThin.$error" :disabled="warna === ''" placeholder="Harap pilih agent" />
+                    <b-form-input type="number" step="0.1" v-model="$v.rThin.$model" :state="!$v.rThin.$error" :disabled="select2 === 0" placeholder="Harap pilih thinner" />
                     <b-form-invalid-feedback v-if="!$v.rThin.minValue">Minimum 1</b-form-invalid-feedback>
                     <b-form-invalid-feedback v-else-if="!$v.rThin.maxValue">Maksimal 100</b-form-invalid-feedback>
                 </b-form-group>  
@@ -434,7 +434,7 @@ export default {
                     </b-card>;
         },
         getSuggestionValue2(suggestion) {
-            this.agent = suggestion.item.name;
+            this.agent = String(suggestion.item.id);
             this.select1 = 1;
             return suggestion.item.name;
         },
@@ -492,8 +492,9 @@ export default {
                     </b-card>;
         },
         getSuggestionValue3(suggestion) {
-            this.thin = suggestion.item.name;
+            this.thin = String(suggestion.item.name);
             this.select2 = 1;
+            this.rThin = String(4);
             return suggestion.item.name;
         },
         returnColor(a){
@@ -534,6 +535,8 @@ export default {
                             liter
                             agent_item_id
                             ratio_agent
+                            recommended_thinner_id
+                            ratio_recommended_thinner_id
                             unit2Name
                             ratio2
                             unit3Name
@@ -575,10 +578,19 @@ export default {
                     this.itemName = this.detail.name;
                     this.itemCate = this.detail.itemCategory.name;
                     this.dataHarga = this.detail.detailSellingPrice;
-                    if(!this.detail.ratio2){
-                         this.liter = "";
-                    }else{
+                    if(!this.detail.agent_id || !this.detail.ratio_agent || this.detail.ratio_agent != 0){
+                        this.agent = this.detail.agent_id;
+                        this.rAgent = this.detail.ratio_agent;
+                    }
+                    if(!this.detail.recommended_thinner_id || !this.detail.ratio_recommended_thinner_id){
+                        this.thin = this.detail.recommended_thinner_id;
+                        this.rThin = this.detail.ratio_recommended_thinner_id;
+                    }
+                    if(this.detail.ratio2){
                         this.liter = this.detail.ratio2;
+                    }
+                    if(this.detail.ratio2 && this.detail.ratio3){
+                        this.rAgent = this.detail.ratio3 - this.detail.ratio2;
                     }
                     if(this.detail.unit2Name == "GLN"){
                         this.kemas = 1;
@@ -692,6 +704,7 @@ export default {
                         items{
                             count
                             items{
+                                id
                                 no
                                 name
                                 itemCategory{
