@@ -34,13 +34,13 @@
               <div class="row">
                 <div class="col-6">
                   <h3>Item</h3>
-                  {{dataSelected1}}
+                  <!-- {{dataSelected1}} -->
                 </div>
                   <div class="col-6" style="text-align:right">
                      <b-button
                         variant="danger"
                         size="sm"
-                        @click="deleteItemGroup"> delete
+                        @click="deleteItemGroup(1)"> delete
                        <!-- ({{itemDelCount}}) -->
                     </b-button>
                   </div>
@@ -56,13 +56,13 @@
                       <b-button
                         variant="danger"
                         size="sm"
-                        @click="deleteItemGroup"> delete
+                        @click="deleteItemGroup(2)"> delete
                        <!-- ({{itemDelCount}}) -->
                     </b-button>
                   </div>
                </div>
-                <div v-if="dataSelected1.length > 0" class="row">
-                    <table-agent :dataComponent="dataSelected1" v-on:btnDel="removeBigData"></table-agent>
+                <div v-if="dataSelected2.length > 0" class="row">
+                    <table-agent :dataComponent="dataSelected2" v-on:btnDel="removeBigData"></table-agent>
                 </div>
             </b-card>
             <b-card class="mb-4" >
@@ -72,13 +72,13 @@
                       <b-button
                         variant="danger"
                         size="sm"
-                        @click="deleteItemGroup"> delete
+                        @click="deleteItemGroup(3)"> delete
                        <!-- ({{itemDelCount}}) -->
                     </b-button>
                   </div>
                </div>
-                <div v-if="dataSelected1.length > 0" class="row">
-                    <table-agent :dataComponent="dataSelected1"></table-agent>
+                <div v-if="dataSelected3.length > 0" class="row">
+                    <table-agent :dataComponent="dataSelected3"></table-agent>
                 </div>
             </b-card>
         </b-form>
@@ -207,12 +207,23 @@ export default {
         },
     },
     methods: {
-      deleteItemGroup(){
+      deleteItemGroup(type){
+          let cek = false;
+          let arrOld = []
+          if(type == 1){
+            arrOld = this.dataSelected1
+          }else if(type == 2){
+            arrOld = this.dataSelected2
+          }else{
+            arrOld = this.dataSelected3
+          }
           let newArrSelected = [];
           let newArrBigData = [];
-          for(let j=0; j<this.dataSelected1.length; j++ ){
-            if(!this.dataSelected1[j].action){
-                newArrSelected.push(this.dataSelected1[j])
+          for(let j=0; j<arrOld.length; j++ ){
+            if(!arrOld[j].action){
+                newArrSelected.push(arrOld[j])
+            } else{
+              cek = true
             }
           }
 
@@ -221,9 +232,20 @@ export default {
                 newArrBigData.push(this.bigData[j])
             }
           }
-          this.bigData = newArrBigData
-          this.dataSelected1 = newArrSelected
+          if(cek){
+            this.bigData = newArrBigData
+          }
+
+          if(type == 1){
+             this.dataSelected1 = newArrSelected
+          }else if(type==2){
+            this.dataSelected2 = newArrSelected
+          }else{
+            this.dataSelected3 = newArrSelected
+          }
+
       },
+
         onValitadeFormSubmit() {
             this.$v.$touch();
             if(!this.$v.$invalid){
@@ -326,7 +348,9 @@ export default {
         },
         renderSuggestion(suggestion) {
             const character = suggestion.item;
-            if(character.type.id == 1){
+            console.log(character)
+
+              if( character.type.id == 1 ){
                 return <b-card class="mb-0 p-1 d-flex flex-row" no-body>
                             <div src="/assets/img/profiles/l-1.jpg"
                                 alt="Card image cap"
@@ -346,36 +370,72 @@ export default {
                                 </div>
                             </div>
                         </b-card>;
-            }else{
-                return <b-card class="mb-0 p-1 d-flex flex-row" no-body>
-                            <div v-if={character.type.id == 2} src="/assets/img/profiles/l-1.jpg"
-                                alt="Card image cap"
-                                class="align-self-center list-thumbnail-letters rounded-circle small mr-2"
-                                style={{ background: "white", color: 'black', border: "5px solid black" }}>Ag
-                            </div>
-                            <div v-if={character.type.id == 3} src="/assets/img/profiles/l-1.jpg"
-                                alt="Card image cap"
-                                class="align-self-center list-thumbnail-letters rounded-circle small mr-2"
-                                style={{ background: "white", color: 'black', border: "5px solid black" }}>Th
-                            </div>
-                            <div class="d-flex flex-grow-1 min-width-zero">
-                                <div class="pl-0 align-self-right d-flex flex-column flex-lg-row justify-content-between min-width-zero">
-                                    <div class="min-width-zero">
-                                            <h6 class="text-muted text-medium mt-2">
-                                                {character.name}
-                                            </h6>
-                                        <p class="text-muted text-small mb-2">
-                                            {character.no} - {character.itemCategory.name}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </b-card>;
-            }
+                  }else if(character.type.id == 2){
+                      return <b-card class="mb-0 p-1 d-flex flex-row" no-body>
+                                  <div  src="/assets/img/profiles/l-1.jpg"
+                                      alt="Card image cap"
+                                      class="align-self-center list-thumbnail-letters rounded-circle small mr-2"
+                                      style={{ background: "white", color: 'black', border: "5px solid black" }}>Ag
+                                  </div>
+                                  <div class="d-flex flex-grow-1 min-width-zero">
+                                      <div class="pl-0 align-self-right d-flex flex-column flex-lg-row justify-content-between min-width-zero">
+                                          <div class="min-width-zero">
+                                                  <h6 class="text-muted text-medium mt-2">
+                                                      {character.name}
+                                                  </h6>
+                                              <p class="text-muted text-small mb-2">
+                                                  {character.no} - {character.itemCategory.name}
+                                              </p>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </b-card>;
+                  }else if(character.type.id == 3){
+                      return <b-card class="mb-0 p-1 d-flex flex-row" no-body>
+                                  <div  src="/assets/img/profiles/l-1.jpg"
+                                      alt="Card image cap"
+                                      class="align-self-center list-thumbnail-letters rounded-circle small mr-2"
+                                      style={{ background: "white", color: 'black', border: "5px solid black" }}>TH
+                                  </div>
+                                  <div class="d-flex flex-grow-1 min-width-zero">
+                                      <div class="pl-0 align-self-right d-flex flex-column flex-lg-row justify-content-between min-width-zero">
+                                          <div class="min-width-zero">
+                                                  <h6 class="text-muted text-medium mt-2">
+                                                      {character.name}
+                                                  </h6>
+                                              <p class="text-muted text-small mb-2">
+                                                  {character.no} - {character.itemCategory.name}
+                                              </p>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </b-card>;
+                  }else{
+                     return <b-card class="mb-0 p-1 d-flex flex-row" no-body>
+                                  <div  src="/assets/img/profiles/l-1.jpg"
+                                      alt="Card image cap"
+                                      class="align-self-center list-thumbnail-letters rounded-circle small mr-2"
+                                      style={{ background: "white", color: 'black', border: "5px solid black" }}>???
+                                  </div>
+                                  <div class="d-flex flex-grow-1 min-width-zero">
+                                      <div class="pl-0 align-self-right d-flex flex-column flex-lg-row justify-content-between min-width-zero">
+                                          <div class="min-width-zero">
+                                                  <h6 class="text-muted text-medium mt-2">
+                                                      {character.name}
+                                                  </h6>
+                                              <p class="text-muted text-small mb-2">
+                                                  {character.no} - {character.itemCategory.name}
+                                              </p>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </b-card>;
+                  }
+
         },
         getSuggestionValue(suggestion) {
             this.item = suggestion.item.name;
-            console.log(suggestion.item.type.id);
+          //  console.log(suggestion.item.type.id);
             let ada = this.check(suggestion.item.no);
             if(!ada){
                 let data = {
@@ -392,7 +452,7 @@ export default {
                 // if(suggestion.item.type.id == 1)this.dataSelected1.push(data);
                 // else if(suggestion.item.type.id == 1)this.dataSelected2.push(data); //nanti ganti 2 ya
                 // else this.dataSelected3.push(data);
-                this.fetchAgain(data,suggestion.item.type)
+                this.fetchAgain(data)
             }
                 console.log(this.bigData);
             return suggestion.item.name;
@@ -403,11 +463,15 @@ export default {
             }
             return style
         },
-        fetchAgain(data,suggestion){
+        fetchAgain(data){
 
           let queryString = `
             query{
                 itemDetail(item_id:${data.id}){
+                    type{
+                      name
+                      id
+                    }
                   detailSellingPrice{
                     priceCategory{
                       id
@@ -439,11 +503,12 @@ export default {
             })
             .then(resp => {
               console.log(resp.detailSellingPrice)
-              console.log(suggestion)
               data.price = resp.detailSellingPrice
-                  if(suggestion.id == 1)this.dataSelected1.push(data);
-                else if(suggestion.id == 1)this.dataSelected2.push(data); //nanti ganti 2 ya
+              if(resp.type.id != null){
+                if(resp.type.id == 1)this.dataSelected1.push(data);
+                else if(resp.type.id == 2)this.dataSelected2.push(data); //nanti ganti 2 ya
                 else this.dataSelected3.push(data);
+              }
             })
          // return data
         },

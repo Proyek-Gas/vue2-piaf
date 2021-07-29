@@ -33,9 +33,9 @@
                   </div>
                 </template>
                 <template slot="harga" slot-scope="props">
-                     <div v-if="props.rowData.price.length ">
-                        <p style="font-size:5 pt;">{{props.rowData.price.priceCategory.name}}</p>
-                        <p style="font-size:10pt;margin-top:-10px"><strong>{{shortNumber(props.rowData.price)}}</strong></p>
+                     <div v-if="props.rowData.price.length " style="text-align:right">
+                        <p style="font-size:5 pt;">{{props.rowData.price[0].priceCategory.name}}</p>
+                        <p style="font-size:10pt;margin-top:-10px"><strong>{{props.rowData.price[0].price | currency}}</strong></p>
                      </div>
                 </template>
                  <template slot="btndel" slot-scope="props">

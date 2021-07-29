@@ -7,6 +7,8 @@
                           :api-mode="false"
                           :fields="fields"
                           :data="dataComponent"
+                           :detail-row-component="detailRow"
+                            detail-row-transition="expand"
 
                       >
                           <template slot="cek" slot-scope="props">
@@ -18,8 +20,10 @@
                               </b-form-group>
                           </template>
                           <template slot="name" slot-scope ="props">
+                            <div  @click="cellClicked($event, props.rowData)">
                               <p style="font-size:5 pt">{{props.rowData.no}}</p>
                               <p style="font-size:10pt"><strong>{{props.rowData.name}}</strong></p>
+                            </div>
                           </template>
                           <template slot="loss" slot-scope="props">
 
@@ -48,6 +52,12 @@
                                   />
 
                           </template>
+                           <template slot="harga" slot-scope="props">
+                            <div v-if="props.rowData.price.length " style="text-align:right">
+                                <p style="font-size:5 pt;">{{props.rowData.price[0].priceCategory.name}}</p>
+                                <p style="font-size:10pt;margin-top:-10px"><strong>{{props.rowData.price[0].price | currency}}</strong></p>
+                            </div>
+                        </template>
                           <template slot="btndel" slot-scope="props">
                               <b-button class=" btn mb-1" variant="danger default" @click="$emit('btnDel',props.rowData);deleteItem(props.rowData.no)">Delete <i class="simple-icon-close"></i></b-button>
                           </template>
@@ -65,12 +75,14 @@
 <script>
 
 import Vuetable from "vuetable-2/src/components/Vuetable";
+import DetailRow from "./detailRowTableAddItem.vue";
 
 export default{
-    components : {
-      vuetable :Vuetable
-    },
     props : ["dataComponent","counter"],
+    components : {
+      vuetable :Vuetable,
+    },
+
     methods : {
         returnColor(a){
           const style = {
@@ -93,6 +105,11 @@ export default{
           this.dataComponent = data
           console.log(this.dataComponent.length)
       },
+         cellClicked ($event, data) {
+          // console.log('cellClicked: ', $event)
+          this.$refs.vuetable.toggleDetailRow(data.id)
+        },
+      //ini belum dipake karena tidak bisa
        check:function(e,data){
           console.log(e)
           console.log(data)
@@ -104,10 +121,12 @@ export default{
               this.counter = this.counter-1;
             }
           }
-        }
+        },
+
     },
     data(){
       return {
+        detailRow : DetailRow,
          fields: [
            {
              name : "__slot:cek",
@@ -140,6 +159,12 @@ export default{
               title : "Coat(%)",
               dataClass: "text-muted",
               width: "5%"
+            },
+            {
+              name : "__slot:harga",
+              title : "Harga",
+              dataClass : "text-muted",
+              width : "10%"
             },
             {
               name : "__slot:btndel",

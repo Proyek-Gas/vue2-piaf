@@ -590,7 +590,7 @@ export default {
     },
     fetchAgain(status,customerId,projectId,total,userCreate, updatedAt, createdAt){
        if(this.$route.query.id){
-           userId = `[${this.$route.query.id}]`
+           customerId = `["${this.$route.query.id}"]`
          }
         let querystring = `
           query{
