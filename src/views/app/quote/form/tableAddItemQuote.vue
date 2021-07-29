@@ -13,6 +13,20 @@
                      <p style="font-size:5 pt">{{props.rowData.id}}</p>
                     <p style="font-size:10pt"><strong>{{props.rowData.name}}</strong></p>
                 </template>
+                <template slot="coat" slot-scope="props">
+                      <b-form-input
+                          type="number"
+                          v-model="props.rowData.coat"
+                          class="mb-2 mr-sm-2 mb-sm-0"
+                        />
+                </template>
+                <template slot="vol" slot-scope="props">
+                      <b-form-input
+                          type="number"
+                          v-model="props.rowData.vol"
+                          class="mb-2 mr-sm-2 mb-sm-0"
+                        />
+                </template>
              </vuetable>
       </div>
   </div>
@@ -46,6 +60,24 @@ export default{
              title : "Coat",
              dataClass : "text-muted",
              width:"5%"
+           },
+           {
+             name : "__slot:dft",
+             title : "DFT",
+             dataClass : "text-muted",
+             width : "5%"
+           },
+           {
+             name : "__slot:loss",
+             title : "LOSS",
+             dataClass : "text-muted",
+             width : "5%"
+           },
+           {
+             name : "__slot:vol",
+             title : "VOL",
+             dataClass :"text-muted",
+             width : "5%"
            }
         ]
     }
