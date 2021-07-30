@@ -126,13 +126,13 @@
               <!-- <template slot="id" slot-scope="props">
                 <i  class="simple-icon-arrow-down" @click="cellClicked($event, props.rowData)"></i>
               </template> -->
-              <template slot="action" >
-                  <b-dropdown text="Actions" variant="outline-secondary">
-                    <b-dropdown-item>Detail</b-dropdown-item>
-                    <b-dropdown-item>Edit</b-dropdown-item>
-                    <b-dropdown-item>Delete</b-dropdown-item>
-                </b-dropdown>
-              </template>
+              <template slot="action" slot-scope="props">
+                <b-dropdown  text="Actions" variant="outline-secondary">
+                    <b-dropdown-item :to="movePageDetail(props.rowData.id, props.rowData.version, props.rowData.status.name)">Detail</b-dropdown-item>
+                  <b-dropdown-item>Edit</b-dropdown-item>
+                  <b-dropdown-item @click="showModal(props.rowData.name,'modalbasic')">Delete</b-dropdown-item>
+              </b-dropdown>
+            </template>
             </vuetable>
           </b-card>
           <vuetable-pagination-bootstrap
@@ -344,9 +344,9 @@ export default {
       console.log(paginationData);
       this.$refs.pagination.setPaginationData(paginationData);
     },
-     movePageDetail(val){
+     movePageDetail(val, val2, val3){
 			//window.location = window.location.href+"/pDetail?id="+val;
-      return "quoteTable/qDetail?id="+val
+      return "quoteTable/qDetail?id="+val+"&ver="+val2+"&status="+val3;
 		},
      onCellClicked (data, field, event) {
         console.log('cellClicked: ', field.name)
@@ -360,9 +360,6 @@ export default {
     onChangePage(page) {
       this.$refs.vuetable.changePage(page);
     },
-    movePageDetail(val){
-			window.location ="/app/datatable/customerTable/cDetail?id="+val;
-		},
     showAvatar(row){
       const tmp = row.split(' ');
       if(tmp.length  == 1){

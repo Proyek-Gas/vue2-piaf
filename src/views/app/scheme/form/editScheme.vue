@@ -22,47 +22,63 @@
                         :get-suggestion-value="getSuggestionValue"
                         :limit="6"
                         clearable
-                        v-model="item" 
                         @selected="onAutosuggestSelected"
                         @input="onAutoSuggestInputChange"
                     >
+                    <template slot="before-section-default"> section header content for specific section goes here </template>
+
                     </vue-autosuggest>
                 </b-form-group>
             </b-card>
-            <b-card class="mb-4" title="Item">
-                <div v-if="dataSelected1.length > 0">
-                    <vuetable
-                        ref="vuetable"
-                        style="display:block; overflow-x:auto;width:auto"
-                        :api-mode="false"
-                        :fields="fields"
-                        :data="dataSelected1"
-                    >
-                    </vuetable>
+            <b-card class="mb-4" >
+              <div class="row">
+                <div class="col-6">
+                  <h3>Item</h3>
+                  <!-- {{dataSelected1}} -->
+                </div>
+                  <div class="col-6" style="text-align:right">
+                     <b-button
+                        variant="danger"
+                        size="sm"
+                        @click="deleteItemGroup(1)"> delete
+                       <!-- ({{itemDelCount}}) -->
+                    </b-button>
+                  </div>
+              </div>
+                <div v-if="dataSelected1.length > 0" class="row">
+                      <table-item :dataComponent="dataSelected1" :counter="itemDelCount" v-on:btnDel="removeBigData"></table-item>
                 </div>
             </b-card>
-            <b-card class="mb-4" title="Agent">
-                <div v-if="dataSelected2.length > 0">
-                    <vuetable
-                        ref="vuetable"
-                        style="display:block; overflow-x:auto;width:auto"
-                        :api-mode="false"
-                        :fields="fields"
-                        :data="dataSelected2"
-                    >
-                    </vuetable>
+            <b-card class="mb-4" >
+               <div class="row">
+                  <div class="col-6"><h3>Agent Item</h3></div>
+                  <div class="col-6" style="text-align:right">
+                      <b-button
+                        variant="danger"
+                        size="sm"
+                        @click="deleteItemGroup(2)"> delete
+                       <!-- ({{itemDelCount}}) -->
+                    </b-button>
+                  </div>
+               </div>
+                <div v-if="dataSelected2.length > 0" class="row">
+                    <table-agent :dataComponent="dataSelected2" v-on:btnDel="removeBigData"></table-agent>
                 </div>
             </b-card>
-            <b-card class="mb-4" title="Thinner">
-                <div v-if="dataSelected3.length > 0">
-                    <vuetable
-                        ref="vuetable"
-                        style="display:block; overflow-x:auto;width:auto"
-                        :api-mode="false"
-                        :fields="fields"
-                        :data="dataSelected3"
-                    >
-                    </vuetable>
+            <b-card class="mb-4" >
+                <div class="row">
+                  <div class="col-6"><h3>Thinner Item</h3></div>
+                  <div class="col-6" style="text-align:right">
+                      <b-button
+                        variant="danger"
+                        size="sm"
+                        @click="deleteItemGroup(3)"> delete
+                       <!-- ({{itemDelCount}}) -->
+                    </b-button>
+                  </div>
+               </div>
+                <div v-if="dataSelected3.length > 0" class="row">
+                    <table-agent :dataComponent="dataSelected3"></table-agent>
                 </div>
             </b-card>
         </b-form>
@@ -71,10 +87,10 @@
             <b-card class="mb-4" style="position: sticky; top: 20vh">
                 <b-card-title>Summary</b-card-title>
                 <b-card v-if="namaSch != ''" class="mb-3 d-flex flex-row p-2" no-body>
-                    <div src="/assets/img/profiles/l-1.jpg" 
-                        alt="Card image cap" 
-                        class="align-self-center list-thumbnail-letters small" 
-                        :style="returnColor(hex)">
+                    <div src="/assets/img/profiles/l-1.jpg"
+                        alt="Card image cap"
+                        class="align-self-center list-thumbnail-letters small"
+                        >
                     </div>
                     <div class="d-flex flex-grow-1 min-width-zero ml-2">
                         <div class="pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero">
@@ -93,9 +109,9 @@
                 <p class="text text-medium mb-2">Daftar Item</p>
                     <div v-for="item in bigData" :key="item.no">
                         <b-card class="mb-3 d-flex flex-row p-2" no-body>
-                            <div src="/assets/img/profiles/l-1.jpg" 
-                                alt="Card image cap" 
-                                class="align-self-center list-thumbnail-letters rounded-circle small" 
+                            <div src="/assets/img/profiles/l-1.jpg"
+                                alt="Card image cap"
+                                class="align-self-center list-thumbnail-letters rounded-circle small"
                                 :style="returnColor(item.warna.hex_code)">
                             </div>
                             <div class="d-flex flex-grow-1 min-width-zero ml-2">
@@ -109,10 +125,11 @@
                             </div>
                         </b-card>
                     </div>
+
                 <b-row>
                     <b-colxx xxs="6" class="text-center">
                     <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip">
-                        <b-button type="submit" variant="primary" style="width: 100%">Add</b-button>
+                        <b-button type="submit" variant="primary" style="width: 100%">Edit</b-button>
                     </b-form>
                     </b-colxx>
                     <b-colxx xxs="6" class="text-center">
@@ -123,10 +140,15 @@
         </b-colxx>
 </b-row>
 </div>
+<div v-else>
+    <div class="loading"></div>
+</div>
 </template>
 
 <script>
 import Vuetable from "vuetable-2/src/components/Vuetable";
+import tableItem from "./tableAddItemScheme.vue";
+import tableAgent from "./tableAddItemAgentScheme.vue";
 import { VueAutosuggest } from "vue-autosuggest";
 import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
@@ -157,55 +179,27 @@ export default {
         vuetable: Vuetable,
         "v-select": vSelect,
         "vue-autosuggest": VueAutosuggest,
-        "selectCategory": selectCategory
+        "selectCategory": selectCategory,
+        "table-item" : tableItem,
+        "table-agent" : tableAgent
     },
     data() {
         return {
             isLoad: false,
             namaSch: "",
-            hex: "",
-            item: "",
+         //   item: "",
             dataItem:[],
-            dataTmp: [],
             bigData:[],
             dataSelected1: [],
             dataSelected2: [],
             dataSelected3: [],
+            itemToAdd: [],
 
             filteredOptions: [],
             selected: {},
-            dataWarna: [],  
-            
-            fields: [
-            {
-                name: "name",
-                title: "No",
-                titleClass: "",
-                dataClass: "text-muted",
-                width:"25%"
-                },
-                {
-                name: "warna",
-                title: "Warna",
-                titleClass: "",
-                dataClass: "text-muted",
-                width:"25%"
-                },
-                {
-                name: "vs",
-                title: "VS",
-                titleClass: "",
-                dataClass: "text-muted",
-                width:"25%"
-                },
-                {
-                name: "balance",
-                title: "Balance",
-                titleClass: "",
-                dataClass: "text-muted",
-                width:"25%"
-                }
-            ],
+            dataWarna: [],
+
+            itemDelCount : 0,
         };
     },
     mixins: [validationMixin],
@@ -217,61 +211,116 @@ export default {
         },
     },
     methods: {
+        deleteItemGroup(type){
+            let cek = false;
+            let arrOld = []
+            if(type == 1){
+                arrOld = this.dataSelected1
+            }else if(type == 2){
+                arrOld = this.dataSelected2
+            }else{
+                arrOld = this.dataSelected3
+            }
+            let newArrSelected = [];
+            let newArrBigData = [];
+            for(let j=0; j<arrOld.length; j++ ){
+                if(!arrOld[j].action){
+                    newArrSelected.push(arrOld[j])
+                } else{
+                cek = true
+                }
+            }
+
+            for(let j=0; j<this.bigData.length; j++ ){
+                if(!this.bigData[j].action){
+                    newArrBigData.push(this.bigData[j])
+                }
+            }
+            if(cek){
+                this.bigData = newArrBigData
+            }
+
+            if(type == 1){
+                this.dataSelected1 = newArrSelected
+            }else if(type==2){
+                this.dataSelected2 = newArrSelected
+            }else{
+                this.dataSelected3 = newArrSelected
+            }
+
+        },
+
         onValitadeFormSubmit() {
             this.$v.$touch();
             if(!this.$v.$invalid){
-                fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
-                    method: 'POST',
-                    headers: {
-                    'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        query: `
-                            mutation{
-                                addScheme(params:{
-                                    name:"${this.namaSch}"
-                                    notes:""
-                                    items:{
-                                        item_id:0
-                                        coat:0
-                                        dry_film_thickness:0
-                                        loss:0
-                                    }
-                                }){
-                                    status
-                                    message
-                                }
-                            }
-                        `,
-                    }),
-                })
-                .then(function(response) {
-					return response.json()
-				})
-				.then(function(text) {
-					console.log(text);
-					return text.data.addItem;
-				})
-				.then(resp => {
-					console.log(resp.message);
-					if(resp.status.toLowerCase() == "success"){
-                        this.$toast(resp.message, {
-                            type: "success",
-                            hideProgressBar: true,
-                            timeout: 2000
-                        });
-                        setTimeout(() => {
-                            window.location = window.location.origin+"/app/datatable/itemTable";
-                        }, 1000);
-                    }else{
-                        this.$toast(resp.message, {
-                            type: "error",
-                            hideProgressBar: true,
-                            timeout: 2000
-                        });
-                    }
-				});
-                
+                for (let i = 0; i < this.bigData.length; i++) {               
+                    console.log(this.bigData[i]);
+                }
+                console.log(this.itemToAdd);
+                console.log(`
+                //             mutation{
+                //                 updateScheme(params:{
+                //                     name:"${this.namaSch}"
+                //                     notes:""
+                //                     ${this.bigData}
+                //                 }){
+                //                     status
+                //                     message
+                //                 }
+                //             }
+                //         `);
+                // fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+                //     method: 'POST',
+                //     headers: {
+                //     'Content-Type': 'application/json',
+                //     },
+                //     body: JSON.stringify({
+                //         query: `
+                //             mutation{
+                //                 updateScheme(params:{
+                //                     name:"${this.namaSch}"
+                //                     notes:""
+                //                     items:{
+                //                         item_id:0
+                //                         coat:0
+                //                         dry_film_thickness:0
+                //                         loss:0
+                //                     }
+                //                 }){
+                //                     status
+                //                     message
+                //                 }
+                //             }
+                //         `,
+                //     }),
+                // })
+                // .then(function(response) {
+				// 	return response.json()
+				// })
+				// .then(function(text) {
+				// 	console.log(text);
+				// 	return text.data.updateScheme;
+				// })
+				// .then(resp => {
+				// 	console.log(resp.message);
+				// 	if(resp.status.toLowerCase() == "success"){
+                //         this.$toast(resp.message, {
+                //             type: "success",
+                //             hideProgressBar: true,
+                //             timeout: 2000
+                //         });
+                //         setTimeout(() => {
+                //             window.location = window.location.origin+"/app/datatable/itemTable";
+                //         }, 1000);
+                //     }else{
+                //         this.$toast(resp.message, {
+                //             type: "error",
+                //             hideProgressBar: true,
+                //             timeout: 2000
+                //         });
+                //     }
+				// });
+
             }else{
                 console.log("error");
             }
@@ -289,7 +338,7 @@ export default {
             */
             return;
         }
-        
+
         const filteredData = this.dataItem.items.filter(option => {
             return option.name.toLowerCase().indexOf(text.toLowerCase()) > -1;
         });
@@ -303,13 +352,29 @@ export default {
         onAutosuggestSelected(item) {
             this.selected = item;
         },
+        removeBigData : function (item){
+          let newArr = this.bigData
+          let index = -1;
+            for(let i=0; i< newArr.length; i++){
+             if(newArr[i].no == item.no){
+               index = i
+             }
+            }
+
+            if(index != -1){
+              newArr.splice(index,1)
+            }
+            this.bigData = newArr
+        },
         renderSuggestion(suggestion) {
             const character = suggestion.item;
-            if(character.type.id == 1){
+            console.log(character)
+
+              if( character.type.id == 1 ){
                 return <b-card class="mb-0 p-1 d-flex flex-row" no-body>
-                            <div src="/assets/img/profiles/l-1.jpg" 
-                                alt="Card image cap" 
-                                class="align-self-center list-thumbnail-letters rounded-circle small mr-2" 
+                            <div src="/assets/img/profiles/l-1.jpg"
+                                alt="Card image cap"
+                                class="align-self-center list-thumbnail-letters rounded-circle small mr-2"
                                 style={{ background: `#${character.color.hex_code}`, color: 'black'}}><center>{character.color.id_ral}</center>
                             </div>
                             <div class="d-flex flex-grow-1 min-width-zero">
@@ -325,36 +390,72 @@ export default {
                                 </div>
                             </div>
                         </b-card>;
-            }else{
-                return <b-card class="mb-0 p-1 d-flex flex-row" no-body>
-                            <div v-if={character.type.id == 2} src="/assets/img/profiles/l-1.jpg" 
-                                alt="Card image cap" 
-                                class="align-self-center list-thumbnail-letters rounded-circle small mr-2" 
-                                style={{ background: "white", color: 'black', border: "5px solid black" }}>Ag
-                            </div>
-                            <div v-if={character.type.id == 3} src="/assets/img/profiles/l-1.jpg" 
-                                alt="Card image cap" 
-                                class="align-self-center list-thumbnail-letters rounded-circle small mr-2" 
-                                style={{ background: "white", color: 'black', border: "5px solid black" }}>Th
-                            </div>
-                            <div class="d-flex flex-grow-1 min-width-zero">
-                                <div class="pl-0 align-self-right d-flex flex-column flex-lg-row justify-content-between min-width-zero">
-                                    <div class="min-width-zero">
-                                            <h6 class="text-muted text-medium mt-2">
-                                                {character.name}
-                                            </h6>
-                                        <p class="text-muted text-small mb-2">
-                                            {character.no} - {character.itemCategory.name}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </b-card>;  
-            }
+                  }else if(character.type.id == 2){
+                      return <b-card class="mb-0 p-1 d-flex flex-row" no-body>
+                                  <div  src="/assets/img/profiles/l-1.jpg"
+                                      alt="Card image cap"
+                                      class="align-self-center list-thumbnail-letters rounded-circle small mr-2"
+                                      style={{ background: "white", color: 'black', border: "5px solid black" }}>Ag
+                                  </div>
+                                  <div class="d-flex flex-grow-1 min-width-zero">
+                                      <div class="pl-0 align-self-right d-flex flex-column flex-lg-row justify-content-between min-width-zero">
+                                          <div class="min-width-zero">
+                                                  <h6 class="text-muted text-medium mt-2">
+                                                      {character.name}
+                                                  </h6>
+                                              <p class="text-muted text-small mb-2">
+                                                  {character.no} - {character.itemCategory.name}
+                                              </p>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </b-card>;
+                  }else if(character.type.id == 3){
+                      return <b-card class="mb-0 p-1 d-flex flex-row" no-body>
+                                  <div  src="/assets/img/profiles/l-1.jpg"
+                                      alt="Card image cap"
+                                      class="align-self-center list-thumbnail-letters rounded-circle small mr-2"
+                                      style={{ background: "white", color: 'black', border: "5px solid black" }}>TH
+                                  </div>
+                                  <div class="d-flex flex-grow-1 min-width-zero">
+                                      <div class="pl-0 align-self-right d-flex flex-column flex-lg-row justify-content-between min-width-zero">
+                                          <div class="min-width-zero">
+                                                  <h6 class="text-muted text-medium mt-2">
+                                                      {character.name}
+                                                  </h6>
+                                              <p class="text-muted text-small mb-2">
+                                                  {character.no} - {character.itemCategory.name}
+                                              </p>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </b-card>;
+                  }else{
+                     return <b-card class="mb-0 p-1 d-flex flex-row" no-body>
+                                  <div  src="/assets/img/profiles/l-1.jpg"
+                                      alt="Card image cap"
+                                      class="align-self-center list-thumbnail-letters rounded-circle small mr-2"
+                                      style={{ background: "white", color: 'black', border: "5px solid black" }}>???
+                                  </div>
+                                  <div class="d-flex flex-grow-1 min-width-zero">
+                                      <div class="pl-0 align-self-right d-flex flex-column flex-lg-row justify-content-between min-width-zero">
+                                          <div class="min-width-zero">
+                                                  <h6 class="text-muted text-medium mt-2">
+                                                      {character.name}
+                                                  </h6>
+                                              <p class="text-muted text-small mb-2">
+                                                  {character.no} - {character.itemCategory.name}
+                                              </p>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </b-card>;
+                  }
+
         },
         getSuggestionValue(suggestion) {
             this.item = suggestion.item.name;
-            console.log(suggestion.item);
+          //  console.log(suggestion.item.type.id);
             let ada = this.check(suggestion.item.no);
             if(!ada){
                 let data = {
@@ -362,12 +463,18 @@ export default {
                     name: suggestion.item.name,
                     warna: suggestion.item.color,
                     vs: suggestion.item.vs,
-                    balance: suggestion.item.balance
+                    balance: suggestion.item.balance,
+                    id : suggestion.item.id
 
                 }
                 this.bigData.push(data);
-                suggestion.item.type.id == 1 ? suggestion.item.type.id == 2 ? this.dataSelected1.push(data) : this.dataSelected2.push(data) : this.dataSelected3.push(data)
+                //data = this.fetchAgain(data)
+                // if(suggestion.item.type.id == 1)this.dataSelected1.push(data);
+                // else if(suggestion.item.type.id == 1)this.dataSelected2.push(data); //nanti ganti 2 ya
+                // else this.dataSelected3.push(data);
+                this.fetchAgain(data)
             }
+                console.log(this.bigData);
             return suggestion.item.name;
         },
         returnColor(a){
@@ -376,14 +483,109 @@ export default {
             }
             return style
         },
+        fetchAgain(data){
+
+          let queryString = `
+            query{
+                itemDetail(item_id:${data.id}){
+                    type{
+                      name
+                      id
+                    }
+                    detailSellingPrice{
+                    priceCategory{
+                      id
+                      name
+                    }
+                    price
+                  }
+                }
+              }
+
+
+          `
+          console.log(queryString)
+          fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                query: queryString,
+            }),
+            })
+            .then(function(response) {
+                return response.json()
+            })
+            .then(function(text) {
+                console.log(text.data);
+                return text.data.itemDetail;
+            })
+            .then(resp => {
+              console.log(resp.detailSellingPrice)
+              data.price = resp.detailSellingPrice
+              if(resp.type.id != null){
+                if(resp.type.id == 1)this.dataSelected1.push(data);
+                else if(resp.type.id == 2)this.dataSelected2.push(data); //nanti ganti 2 ya
+                else this.dataSelected3.push(data);
+              }
+            })
+         // return data
+        },
         check(a){
             let kembar = false;
             this.bigData.forEach(element => {
+                console.log(element.no);
+                console.log(a);
                 if(element.no == a){
                     kembar = true;
                 }
             });
             return kembar;
+        },
+        fetchItem(data){
+            fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    query: `
+                        query{
+                            itemDetail(item_id:${data.no}){
+                                name
+                                type{
+                                    id
+                                    name
+                                }
+                                detailSellingPrice{
+                                    priceCategory{
+                                        id
+                                        name
+                                    }
+                                    price
+                                }
+                            }
+                        }
+                    `,
+                }),
+            })
+            .then(function(response) {
+                return response.json()
+            })
+            .then(function(text) {
+                return text.data.itemDetail;
+            })
+            .then(resp => {
+                this.tmp = resp;
+                console.log(this.tmp);
+                console.log(this.dataSelected1);
+                data.price = this.tmp.detailSellingPrice;
+                data.name = this.tmp.name;
+                if(this.tmp.type.id == 1){
+                    this.dataSelected1.push(data);
+                }
+            })
         }
     },
     async mounted(){
@@ -443,19 +645,25 @@ export default {
                     }, 50)
                 }else{
                     console.log("aman");
-                    this.isLoad = true;
                     this.namaSch = this.detail.name;
                     this.hex = this.detail.color.hex_code;
                     this.dataTmp = this.detail.items;
+                    console.log(this.dataTmp);
                     for (let i = 0; i < this.dataTmp.length; i++) {
                         let data = {
                             no: this.dataTmp[i].item_id,
-                            name: this.dataTmp[i].item_id,
+                            name: "",
                             warna: this.dataTmp[i].color,
                             vs: this.dataTmp[i].vs,
-                            balance: this.dataTmp[i].balance
+                            balance: this.dataTmp[i].balance,
+                            coat: this.dataTmp[i].coat,
+                            dft: this.dataTmp[i].coat,
+                            loss: this.dataTmp[i].coat,
+                            price: []
 
                         }
+                        console.log(data);
+                        this.fetchItem(data);
                         this.bigData.push(data);
                     }
                     if(!this.detail.notes){
@@ -463,59 +671,60 @@ export default {
                     }
                 }
             })
+            fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    query: `
+                        query{
+                            items{
+                                count
+                                items{
+                                    id
+                                    no
+                                    name
+                                    balance
+                                    itemCategory{
+                                        id
+                                        name
+                                    }
+                                    vs_volume_solid
+                                    color{
+                                        id_ral
+                                        hex_code
+                                        ind_name
+                                        eng_name
+                                    }
+                                    packaging_name
+                                    liter
+                                    agent_item_id
+                                    ratio_agent
+    
+                                    type{
+                                        id
+                                        name
+                                    }
+                                }
+                            }
+                        }
+                    `,
+                }),
+            })
+            .then(function(response) {
+                return response.json()
+            })
+            .then(function(text) {
+                return text.data.items;
+            })
+            .then(resp => {
+                this.isLoad = true;
+                this.dataItem = resp;
+            })
         }else{
             window.location = window.location.origin +"/error?id=404&name=scheme";
         }
-        fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
-            method: 'POST',
-            headers: {
-            'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                query: `
-                    query{
-                        items{
-                            count
-                            items{
-                                no
-                                name
-                                balance
-                                itemCategory{
-                                    id
-                                    name
-                                }
-                                vs_volume_solid
-                                color{
-                                    id_ral
-                                    hex_code
-                                    ind_name
-                                    eng_name
-                                }
-                                packaging_name
-                                liter
-                                agent_item_id
-                                ratio_agent
-
-                                type{
-                                    id
-                                    name
-                                }
-
-                            }
-                        }
-                    }
-                `,
-            }),
-        })
-        .then(function(response) {
-            return response.json()
-        })
-        .then(function(text) {
-            return text.data.items;
-        })
-        .then(resp => {
-            this.dataItem = resp;       
-        })
     }
 };
 </script>

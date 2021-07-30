@@ -90,7 +90,7 @@
                     <div src="/assets/img/profiles/l-1.jpg"
                         alt="Card image cap"
                         class="align-self-center list-thumbnail-letters small"
-                        :style="returnColor(hex)">
+                        >
                     </div>
                     <div class="d-flex flex-grow-1 min-width-zero ml-2">
                         <div class="pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero">
@@ -139,6 +139,9 @@
             </b-card>
         </b-colxx>
 </b-row>
+</div>
+<div v-else>
+    <div class="loading"></div>
 </div>
 </template>
 
@@ -190,6 +193,7 @@ export default {
             dataSelected1: [],
             dataSelected2: [],
             dataSelected3: [],
+            itemToAdd: [],
 
             filteredOptions: [],
             selected: {},
@@ -207,99 +211,115 @@ export default {
         },
     },
     methods: {
-      deleteItemGroup(type){
-          let cek = false;
-          let arrOld = []
-          if(type == 1){
-            arrOld = this.dataSelected1
-          }else if(type == 2){
-            arrOld = this.dataSelected2
-          }else{
-            arrOld = this.dataSelected3
-          }
-          let newArrSelected = [];
-          let newArrBigData = [];
-          for(let j=0; j<arrOld.length; j++ ){
-            if(!arrOld[j].action){
-                newArrSelected.push(arrOld[j])
-            } else{
-              cek = true
+        deleteItemGroup(type){
+            let cek = false;
+            let arrOld = []
+            if(type == 1){
+                arrOld = this.dataSelected1
+            }else if(type == 2){
+                arrOld = this.dataSelected2
+            }else{
+                arrOld = this.dataSelected3
             }
-          }
-
-           for(let j=0; j<this.bigData.length; j++ ){
-            if(!this.bigData[j].action){
-                newArrBigData.push(this.bigData[j])
+            let newArrSelected = [];
+            let newArrBigData = [];
+            for(let j=0; j<arrOld.length; j++ ){
+                if(!arrOld[j].action){
+                    newArrSelected.push(arrOld[j])
+                } else{
+                cek = true
+                }
             }
-          }
-          if(cek){
-            this.bigData = newArrBigData
-          }
 
-          if(type == 1){
-             this.dataSelected1 = newArrSelected
-          }else if(type==2){
-            this.dataSelected2 = newArrSelected
-          }else{
-            this.dataSelected3 = newArrSelected
-          }
+            for(let j=0; j<this.bigData.length; j++ ){
+                if(!this.bigData[j].action){
+                    newArrBigData.push(this.bigData[j])
+                }
+            }
+            if(cek){
+                this.bigData = newArrBigData
+            }
 
-      },
+            if(type == 1){
+                this.dataSelected1 = newArrSelected
+            }else if(type==2){
+                this.dataSelected2 = newArrSelected
+            }else{
+                this.dataSelected3 = newArrSelected
+            }
+
+        },
 
         onValitadeFormSubmit() {
             this.$v.$touch();
             if(!this.$v.$invalid){
-                fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
-                    method: 'POST',
-                    headers: {
-                    'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        query: `
-                            mutation{
-                                addScheme(params:{
-                                    name:"${this.namaSch}"
-                                    notes:""
-                                    items:{
-                                        item_id:0
-                                        coat:0
-                                        dry_film_thickness:0
-                                        loss:0
-                                    }
-                                }){
-                                    status
-                                    message
-                                }
-                            }
-                        `,
-                    }),
-                })
-                .then(function(response) {
-					return response.json()
-				})
-				.then(function(text) {
-					console.log(text);
-					return text.data.addItem;
-				})
-				.then(resp => {
-					console.log(resp.message);
-					if(resp.status.toLowerCase() == "success"){
-                        this.$toast(resp.message, {
-                            type: "success",
-                            hideProgressBar: true,
-                            timeout: 2000
-                        });
-                        setTimeout(() => {
-                            window.location = window.location.origin+"/app/datatable/itemTable";
-                        }, 1000);
-                    }else{
-                        this.$toast(resp.message, {
-                            type: "error",
-                            hideProgressBar: true,
-                            timeout: 2000
-                        });
-                    }
-				});
+                for (let i = 0; i < this.bigData.length; i++) {               
+                    console.log(this.bigData[i]);
+                }
+                console.log(this.itemToAdd);
+                console.log(`
+                //             mutation{
+                //                 addScheme(params:{
+                //                     name:"${this.namaSch}"
+                //                     notes:""
+                //                     ${this.bigData}
+                //                 }){
+                //                     status
+                //                     message
+                //                 }
+                //             }
+                //         `);
+                // fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+                //     method: 'POST',
+                //     headers: {
+                //     'Content-Type': 'application/json',
+                //     },
+                //     body: JSON.stringify({
+                //         query: `
+                //             mutation{
+                //                 addScheme(params:{
+                //                     name:"${this.namaSch}"
+                //                     notes:""
+                //                     items:{
+                //                         item_id:0
+                //                         coat:0
+                //                         dry_film_thickness:0
+                //                         loss:0
+                //                     }
+                //                 }){
+                //                     status
+                //                     message
+                //                 }
+                //             }
+                //         `,
+                //     }),
+                // })
+                // .then(function(response) {
+				// 	return response.json()
+				// })
+				// .then(function(text) {
+				// 	console.log(text);
+				// 	return text.data.addItem;
+				// })
+				// .then(resp => {
+				// 	console.log(resp.message);
+				// 	if(resp.status.toLowerCase() == "success"){
+                //         this.$toast(resp.message, {
+                //             type: "success",
+                //             hideProgressBar: true,
+                //             timeout: 2000
+                //         });
+                //         setTimeout(() => {
+                //             window.location = window.location.origin+"/app/datatable/schemeTable";
+                //         }, 1000);
+                //     }else{
+                //         this.$toast(resp.message, {
+                //             type: "error",
+                //             hideProgressBar: true,
+                //             timeout: 2000
+                //         });
+                //     }
+				// });
 
             }else{
                 console.log("error");
@@ -481,8 +501,6 @@ export default {
                   }
                 }
               }
-
-
           `
           console.log(queryString)
           fetch('https://dev.quotation.node.zoomit.co.id/graphql', {

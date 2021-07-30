@@ -129,7 +129,8 @@
     "cDetail": "Customer Detail",
     "pDetail": "Project Detail",
     "iDetail": "Item Detail",
-    "sDetail": "Scheme Detail"
+    "sDetail": "Scheme Detail",
+    "qDetail": "Quote Detail"
   },
   "dashboards": {
     "pending-orders": "Pending Orders",
