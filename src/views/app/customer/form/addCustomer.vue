@@ -382,7 +382,8 @@ export default {
 			return text.data.priceCategory;
 		})
 		.then(resp => {
-			this.katHargaOption = resp
+            this.katHargaOption = resp
+            this.katHarga = this.katHargaOption[10].name;
 		})
     }
 };

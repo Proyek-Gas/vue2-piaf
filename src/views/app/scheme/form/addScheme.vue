@@ -570,14 +570,11 @@ export default {
             return response.json()
         })
         .then(function(text) {
-            console.log(text.data.items);
             return text.data.items;
         })
         .then(resp => {
             this.isLoad = true;
             this.dataItem = resp;
-            console.log(this.dataItem);
-
         })
     }
 };
