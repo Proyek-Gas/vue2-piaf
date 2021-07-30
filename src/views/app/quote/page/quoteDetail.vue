@@ -98,7 +98,7 @@
                             </b-colxx>
                             <b-colxx xxs="6" xl="6" class="text-left">
                             <p class="text text-medium mt-1">
-                                {{ surface(area.surface_preparation) }}
+                                {{ area.surface_preparation }}
                             </p>
                             </b-colxx>
                         </b-row>
