@@ -194,6 +194,7 @@ export default {
             dataSelected2: [],
             dataSelected3: [],
             itemToAdd: [],
+            itemToAdd2: [],
 
             filteredOptions: [],
             selected: {},
@@ -253,22 +254,37 @@ export default {
         onValitadeFormSubmit() {
             this.$v.$touch();
             if(!this.$v.$invalid){
-                for (let i = 0; i < this.bigData.length; i++) {               
-                    console.log(this.bigData[i]);
+                for (let i = 0; i < this.bigData.length; i++) { 
+                    let data = {
+                        item_id: this.bigData[i].id,
+                        coat: this.bigData[i].coat,
+                        dft: this.bigData[i].dry_film_thickness,
+                        loss: this.bigData[i].loss,
+
+                    }
+                    this.itemToAdd.push(data);
                 }
-                console.log(this.itemToAdd);
+                console.log(Object.assign({}, this.itemToAdd));
+                var a = Object.assign({}, this.itemToAdd);
+                console.log("yow");
                 console.log(`
-                //             mutation{
-                //                 addScheme(params:{
-                //                     name:"${this.namaSch}"
-                //                     notes:""
-                //                     ${this.bigData}
-                //                 }){
-                //                     status
-                //                     message
-                //                 }
-                //             }
-                //         `);
+                    mutation{
+                        addScheme(params:{
+                            name:"${this.namaSch}"
+                            notes:"" 
+                            items:[
+                    `+
+                            Object.values({}, this.itemToAdd)
+                    +
+                    `]            
+
+                            
+                    }){
+                        status
+                            message
+                        }
+                    }
+                `);
                 // fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
                 //     method: 'POST',
                 //     headers: {
@@ -280,12 +296,7 @@ export default {
                 //                 addScheme(params:{
                 //                     name:"${this.namaSch}"
                 //                     notes:""
-                //                     items:{
-                //                         item_id:0
-                //                         coat:0
-                //                         dry_film_thickness:0
-                //                         loss:0
-                //                     }
+                //                     items:${this.itemToAdd}
                 //                 }){
                 //                     status
                 //                     message

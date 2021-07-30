@@ -93,21 +93,28 @@
                         <b-row>
                             <b-colxx xxs="6" xl="6" class="text-left">
                             <p class="text text-medium mt-1">
-                                Section Area
+                                Section Area : 
                             </p>
                             </b-colxx>
                             <b-colxx xxs="6" xl="6" class="text-left">
-                            <p class="text text-medium mt-1">
-                                {{ area.surface_preparation }}
-                            </p>
+                                <div v-if="area.surface_preparation != null" >
+                                    <div v-for="item in splitSurface(area.surface_preparation)" :key="item">
+                                        <h6>
+                                            <b-badge class="mb-0" pill variant="secondary" style="width: 100%;">{{ item }}</b-badge> 
+                                        </h6>
+                                    </div>
+                                </div>
+                                <div v-else>
+                                    <p class="text-muted text-medium mt-1" style="font-style: italic;">No surface selected</p>
+                                </div>
                             </b-colxx>
                         </b-row>
                     </b-colxx>
                     <b-colxx xxs="12" xl="6">
                         <b-row>
-                            <b-colxx xxs="6" xl="6" class="text-left">
+                            <b-colxx xxs="6" xl="6" class="text-right">
                             <p class="text text-medium mt-1">
-                                Luas Area
+                                Luas Area : 
                             </p>
                             </b-colxx>
                             <b-colxx xxs="6" xl="6" class="text-left">
@@ -190,7 +197,6 @@ export default {
             tglUntil: "",
             detail: [],
             arrDetailProject : [],
-
 /////
             arrKumpulanArea : [],
             area: "",
@@ -240,9 +246,32 @@ export default {
             this.arrKumpulanArea.push(this.area)
           }
         },
-        surface(arr){
-            let arrTmp = arr.split(",");
-            console.log(arrTmp);
+        splitSurface(arr){
+            let adaKoma = false;
+            let tmp = [];
+            console.log(arr);
+            if(arr != null){
+            for (let i = 0; i < arr.length; i++) {
+                if(arr.charAt(i) == ','){
+                    adaKoma = true;
+                }
+            }
+            console.log(adaKoma);
+            if(adaKoma){
+                let arrTmp = arr.split(",");
+                for (let i = 0; i < arrTmp.length; i++) {
+                    for (let j = 0; j < this.surfaceOptions.length; j++) {
+                        if(parseInt(arrTmp[i]) == this.surfaceOptions[j].id){
+                            console.log(this.surfaceOptions[j].name);
+                            tmp.push(this.surfaceOptions[j].name);
+                        }
+                    }
+                }
+                return tmp;
+            }else{
+                return arr;
+            }
+            }
         },
         dateFormat(date){
             let d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -294,6 +323,7 @@ export default {
                     query: `
                         query{
                             surfacePreparations{
+                                id
                                 name
                             }
                         }
@@ -308,7 +338,6 @@ export default {
             })
             .then(resp => {
                 this.surfaceOptions = resp;
-                console.log(this.surfaceOptions);
             })
         },
         onValitadeFormSubmit() {
@@ -791,6 +820,7 @@ export default {
             this.proKat = this.detail.project.category.name;
             this.arrKumpulanArea = this.detail.areaItems;
             console.log(this.arrKumpulanArea);
+            this.fetchSurface();
         })
         }else{
             window.location = window.location.origin +"/error?id=404&name=quote";
