@@ -10,22 +10,49 @@
 
               >
                 <template slot="name" slot-scope="props">
-                     <p style="font-size:5 pt">{{props.rowData.id}}</p>
-                    <p style="font-size:10pt"><strong>{{props.rowData.name}}</strong></p>
+                  <div v-if="props.rowData.isItem == true">
+                      <p style="font-size:5 pt" >{{props.rowData.id}}</p>
+                         <p style="font-size:10pt" ><strong>{{props.rowData.name}}</strong></p>
+                  </div>
+                   <div v-else>
+                       <p style="font-size:5 pt">{{props.rowData.id}}</p>
+                       <p style="font-size:10pt"><strong>{{props.rowData.name_s}}</strong></p>
+                   </div>
                 </template>
-                <template slot="coat" slot-scope="props">
+                <template slot="coat" slot-scope="props" v-if="props.rowData.isItem == false">
                       <b-form-input
                           type="number"
                           v-model="props.rowData.coat"
                           class="mb-2 mr-sm-2 mb-sm-0"
                         />
                 </template>
-                <template slot="vol" slot-scope="props">
+                <template slot="vol" slot-scope="props" v-if="props.rowData.isItem == false">
                       <b-form-input
                           type="number"
                           v-model="props.rowData.vol"
                           class="mb-2 mr-sm-2 mb-sm-0"
                         />
+                </template>
+                <template slot="dft" slot-scope="props" v-if="props.rowData.isItem == false">
+                      <b-form-input
+                          type="number"
+                          v-model="props.rowData.dft"
+                          class="mb-2 mr-sm-2 mb-sm-0"
+                        />
+                </template>
+                <template slot="loss" slot-scope="props" v-if="props.rowData.isItem == false">
+                      <b-form-input
+                          type="number"
+                          v-model="props.rowData.loss"
+                          class="mb-2 mr-sm-2 mb-sm-0"
+                        />
+                </template>
+                <template slot="harga" slot-scope="props">
+                    {{props.rowData.price.price | currency}}
+                </template>
+                <template slot="btndel" slot-scope="props">
+                    <b-button class=" btn mb-1" variant="danger default" @click="deleteItem(props.rowData.id)" v-if="props.rowData.isItem == true">Delete <i class="simple-icon-close"></i></b-button>
+                    <b-button class=" btn mb-1" variant="danger default" @click="deleteItem(props.rowData.item_id)" v-else>Delete <i class="simple-icon-close"></i></b-button>
                 </template>
              </vuetable>
       </div>
@@ -39,6 +66,28 @@ export default{
       vuetable :Vuetable
     },
   props : ["dataComponent"],
+  methods : {
+       deleteItem(id){
+          let data = this.dataComponent;
+          let index = -1;
+          for(let i=0; i<data.length; i++){
+            if(data[i].isItem){
+              if(data[i].id == id){
+                index = i;
+              }
+            }else{
+              if(data[i].item_id == id){
+                index = i;
+              }
+            }
+          }
+          if(index != -1){
+            data.splice (index,1)
+          }
+          this.dataComponent = data
+          console.log(this.dataComponent.length)
+      },
+  },
   data(){
     return {
         fields : [
@@ -49,12 +98,12 @@ export default{
               dataClass: "text-muted",
               width : "15%"
            },
-           {
-             name: "__slot:warna",
-             title: "Warna",
-             dataClass:"text-muted",
-             width: "10%"
-           },
+          //  {
+          //    name: "__slot:warna",
+          //    title: "Warna",
+          //    dataClass:"text-muted",
+          //    width: "10%"
+          //  },
            {
              name: "__slot:coat",
              title : "Coat",
@@ -78,6 +127,19 @@ export default{
              title : "VOL",
              dataClass :"text-muted",
              width : "5%"
+           },
+           {
+             name : "__slot:harga",
+             title : "Harga",
+             dataClass : "text-muted",
+             width : "10%"
+           },
+
+           {
+             name : "__slot:btndel",
+             title : "",
+             dataClass : "text-muted",
+             width : "10%"
            }
         ]
     }

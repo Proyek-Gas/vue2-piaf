@@ -180,6 +180,7 @@
             </b-colxx>
         </b-row>
         {{area}}
+        {{custId}}
         <b-form-group label-cols="3" horizontal label="Pilih Area">
           <v-select
           v-model="area"
@@ -246,7 +247,7 @@
                     </vue-autosuggest>
                 </b-form-group>
                 <b-form-group label-cols="3" horizontal>
-                <switches v-model="primarySmall" theme="custom" color="primary" class="vue-switcher-small" style="float: left;"></switches><label class="text text-medium ml-2">Only Items</label>
+                <!-- <switches v-model="primarySmall" theme="custom" color="primary" class="vue-switcher-small" style="float: left;"></switches><label class="text text-medium ml-2">Only Items</label> -->
                 </b-form-group>
                 <table-item :dataComponent="areas.selectedItem"></table-item>
          </b-card>
@@ -369,6 +370,7 @@ export default {
 /////
             arrKumpulanArea : [],
             area: "",
+            kustId  : "",
 ///ini nanti tak pakai
 
             luasArea : -1,
@@ -391,7 +393,10 @@ export default {
             dataPro: [],
             filteredOptions3: [],
             selected3: {},
-            dataSchItem: []
+            dataSchItem: [],
+
+
+            ctrFetch : 0
         };
     },
     mixins: [validationMixin],
@@ -581,6 +586,7 @@ export default {
 
         onAutosuggestSelected(item) {
             this.selected = item;
+
         },
         renderSuggestion(suggestion) {
             const character = suggestion.item;
@@ -687,13 +693,22 @@ export default {
           console.log(a)
           console.log($event.item)
           let cek = true
+          let cekItem = $event.item.isItem
           for(let i=0; i<this.arrKumpulanArea[a].selectedItem.length; i++){
               if(this.arrKumpulanArea[a].selectedItem[i].id == $event.item.id){
                 cek = false
               }
           }
           if(cek){
-             this.arrKumpulanArea[a].selectedItem.push($event.item)
+             //this.arrKumpulanArea[a].selectedItem.push($event.item)
+
+             //cek untuk apakah ini item atau scheme
+            if(cekItem){
+               this.fetchItemDetail($event.item,a,false)
+            }else{
+               this.fetchSchemeDetail($event.item,a)
+            }
+
           }
           console.log(this.arrKumpulanArea[a].selectedItem)
         },
@@ -702,9 +717,9 @@ export default {
             console.log(character.isItem);
             if(character.isItem == true){
                 return <b-card class="mb-0 d-flex flex-row" no-body>
-                            <div src="/assets/img/profiles/l-1.jpg" 
-                                alt="Card image cap" 
-                                class="align-self-center list-thumbnail-letters rounded-circle small mr-2" 
+                            <div src="/assets/img/profiles/l-1.jpg"
+                                alt="Card image cap"
+                                class="align-self-center list-thumbnail-letters rounded-circle small mr-2"
                                 style={{ background: `#${character.color.hex_code}` }}>
                             </div>
                             <div class="d-flex flex-grow-1 min-width-zero">
@@ -722,9 +737,9 @@ export default {
 
             }else{
                 return <b-card class="mb-0 d-flex flex-row" no-body>
-                            <div src="/assets/img/profiles/l-1.jpg" 
-                                alt="Card image cap" 
-                                class="align-self-center list-thumbnail-letters small mr-2" 
+                            <div src="/assets/img/profiles/l-1.jpg"
+                                alt="Card image cap"
+                                class="align-self-center list-thumbnail-letters small mr-2"
                                 style={{ background: `#${character.color.hex_code}` }}>
                             </div>
                             <div class="d-flex flex-grow-1 min-width-zero">
@@ -740,6 +755,135 @@ export default {
                             </h6>
                         </b-card>
             }
+        },
+        fetchSchemeDetail(item,index){
+          this.ctrFetch = 0;
+            let querystring = `query{
+                schemeDetail(scheme_id:${item.id}){
+                  id
+                  name
+                  notes
+                  status
+                  color{
+                    id_ral
+                    eng_name
+                    hex_code
+                    ind_name
+                  }
+                  items{
+                    item_id
+                    color{
+                      id_ral
+                      hex_code
+                      ind_name
+                      eng_name
+                    }
+                    coat
+                    dry_film_thickness
+                    loss
+                    vs_volume_solid
+                  }
+                }
+              }
+              `
+
+              console.log(querystring)
+               fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    query: querystring,
+                }),
+            })
+            .then(function(response) {
+                return response.json()
+            })
+            .then(function(text) {
+                console.log(text);
+                return text.data.schemeDetail;
+            })
+            .then(resp => {
+              for(let i=0; i< resp.items.length; i++){
+                    console.log(resp.items.length)
+                    item.loss = resp.items[i].loss;
+                    item.coat = resp.items[i].coat;
+                    item.dft = resp.items[i].dry_film_thickness;
+                    item.vol = resp.items[i].vs_volume_solid;
+                    item.item_id = resp.items[i].item_id
+                    this.fetchItemDetail(item,index,true)
+              }
+
+              // do{
+              //   let i = this.ctrFetch
+              //   item.loss = resp.items[i].loss;
+              //   item.coat = resp.items[i].coat;
+              //   item.dft = resp.items[i].dry_film_thickness;
+              //   item.vol = resp.items[i].vs_volume_solid;
+              //   item.item_id = resp.items[i].item_id
+              //   this.fetchItemDetail(item,index,true)
+              // }while(this.ctrFetch<resp.items.length)
+
+            })
+        },
+      fetchItemDetail(item, index,ck){
+             let id = null
+             if(ck){
+               id = item.item_id
+             }else{
+               id = item.id
+             }
+             console.log(id)
+              let querystring = `query{
+                itemDetail(item_id:${id} customer_id : "${this.custId}" ){
+                  no
+                  name
+                  id
+                    type{
+                      name
+                      id
+                    }
+                    name
+    								vs_volume_solid
+                    itemCategory{
+                      name
+                      id
+                    }
+                  detailSellingPrice{
+                    priceCategory{
+                      id
+                      name
+                    }
+                    price
+                  }
+                }
+              }
+              `
+
+            fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    query: querystring,
+                }),
+            })
+            .then(function(response) {
+                return response.json()
+            })
+            .then(function(text) {
+                console.log(text);
+                return text.data.itemDetail;
+            })
+            .then(resp => {
+              item.no = resp.no;
+              item.name_s = resp.name
+                item.price = resp.detailSellingPrice;
+                this.ctrFetch = this.ctrFetch+1;
+                this.arrKumpulanArea[index].selectedItem.push(item)
+            })
         },
         getSuggestionValue3(suggestion) {
 
