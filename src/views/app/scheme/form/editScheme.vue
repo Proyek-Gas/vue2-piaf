@@ -251,14 +251,21 @@ export default {
             }
 
         },
-        checkIsian(value){
+        checkIsian(value, type){
             let cek = true;
             let cek2 = true;
                 if(!value){
                     cek = false;
                 }else{
-                    if(value < 0 || value > 100){
-                        cek2 = false;
+                    if(type == 1){
+                        if(value < 0 || value > 100){
+                            cek2 = false;
+                        }
+                    }
+                    else{
+                        if(value < 0 || value > 1000){
+                            cek2 = false;
+                        }
                     }
                 }
 
@@ -275,9 +282,9 @@ export default {
                 let ctr2 = 0;
                 let ctr3 = 0;
                 for (let i = 0; i < this.bigData.length; i++) { 
-                    let arr = this.checkIsian(this.bigData[i].coat);
-                    let arr2 = this.checkIsian(this.bigData[i].dft);
-                    let arr3 = this.checkIsian(this.bigData[i].loss);
+                    let arr = this.checkIsian(this.bigData[i].coat,1);
+                    let arr2 = this.checkIsian(this.bigData[i].dft,2);
+                    let arr3 = this.checkIsian(this.bigData[i].loss,1);
                     if(arr[0] == true && arr[1] == true){
                         ctr = ctr + 1;
                     }
