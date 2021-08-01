@@ -50,7 +50,7 @@
                                     v-model="props.rowData.coat"
                                     class="mb-2 mr-sm-2 mb-sm-0"
                                   />
-
+                                  
                           </template>
                            <template slot="harga" slot-scope="props">
                             <div v-if="props.rowData.price.length " style="text-align:right">
@@ -68,6 +68,7 @@
                             </div>
                           </template> -->
                       </vuetable>
+                      
             </div>
       </div>
 

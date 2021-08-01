@@ -60,6 +60,21 @@
 </template>
 <script>
 import Vuetable from "vuetable-2/src/components/Vuetable";
+import {
+    validationMixin
+} from "vuelidate";
+
+const {
+    required,
+    maxLength,
+    minLength,
+    alpha,
+    email,
+    numeric,
+    maxValue,
+    minValue,
+    helpers
+} = require("vuelidate/lib/validators");
 
 export default{
   components : {
@@ -144,6 +159,7 @@ export default{
         ]
     }
   }
+  
 
 }
 </script>

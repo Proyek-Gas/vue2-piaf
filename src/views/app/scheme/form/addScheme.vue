@@ -194,7 +194,7 @@ export default {
             dataSelected2: [],
             dataSelected3: [],
             itemToAdd: [],
-            itemToAdd2: [],
+            coat:"",
 
             filteredOptions: [],
             selected: {},
@@ -209,7 +209,7 @@ export default {
             required,
             minLength: minLength(10),
             maxLength: maxLength(255)
-        },
+        }
     },
     methods: {
         deleteItemGroup(type){
@@ -250,88 +250,129 @@ export default {
             }
 
         },
+        checkIsian(value){
+            let cek = true;
+            let cek2 = true;
+                if(!value){
+                    cek = false;
+                }else{
+                    if(value < 0 || value > 100){
+                        cek2 = false;
+                    }
+                }
+
+            return [cek, cek2];
+        },
 
         onValitadeFormSubmit() {
             this.$v.$touch();
             if(!this.$v.$invalid){
+                let data = {};
+                let sukses = true;
+                let sukses2 = true;
+                let sukses3 = true;
+                let ctr = 0;
+                let ctr2 = 0;
+                let ctr3 = 0;
                 for (let i = 0; i < this.bigData.length; i++) { 
-                    let data = {
-                        item_id: this.bigData[i].id,
-                        coat: this.bigData[i].coat,
-                        dft: this.bigData[i].dry_film_thickness,
-                        loss: this.bigData[i].loss,
-
+                    let arr = this.checkIsian(this.bigData[i].coat);
+                    let arr2 = this.checkIsian(this.bigData[i].dft);
+                    let arr3 = this.checkIsian(this.bigData[i].loss);
+                    if(arr[0] == true && arr[1] == true){
+                        ctr = ctr + 1;
                     }
+                    if(arr2[0] == true && arr2[1] == true){
+                        ctr2 = ctr2 + 1;
+                    }
+                    if(arr3[0] == true && arr3[1] == true){
+                        ctr3 = ctr3 + 1;
+                    }
+                }
+                console.log(this.bigData.length);
+                console.log(ctr);
+                if(ctr < this.bigData.length){
+                    sukses = false;
+                    this.$toast("Coat tidak valid", {
+                        type: "warning",
+                        hideProgressBar: true,
+                        timeout: 2000
+                    });
+                }else if (ctr2 < this.bigData.length){
+                    sukses2 = false;
+                    this.$toast("Dft tidak valid", {
+                        type: "warning",
+                        hideProgressBar: true,
+                        timeout: 2000
+                    });
+                }else if (ctr3 < this.bigData.length){
+                    sukses3 = false;
+                    this.$toast("Loss tidak valid", {
+                        type: "warning",
+                        hideProgressBar: true,
+                        timeout: 2000
+                    });
+                }
+                if(sukses && sukses2 && sukses3){
+                    console.log("masuk");
+                for (let i = 0; i < this.bigData.length; i++) {
+                    console.log(this.bigData);
+                    data = `{
+                        item_id:${this.bigData[i].id},
+                        coat:${this.bigData[i].coat},
+                        dry_film_thickness:${this.bigData[i].dft},
+                        loss:${this.bigData[i].loss}
+                    }`
                     this.itemToAdd.push(data);
                 }
-                console.log(Object.assign({}, this.itemToAdd));
-                var a = Object.assign({}, this.itemToAdd);
-                console.log("yow");
-                console.log(`
-                    mutation{
-                        addScheme(params:{
-                            name:"${this.namaSch}"
-                            notes:"" 
-                            items:[
-                    `+
-                            Object.values({}, this.itemToAdd)
-                    +
-                    `]            
-
-                            
-                    }){
-                        status
-                            message
-                        }
+                // console.log(this.itemToAdd);
+                fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+                    method: 'POST',
+                    headers: {
+                    'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        query: `
+                            mutation{
+                                addScheme(params:{
+                                    name:"${this.namaSch}"
+                                    notes:""
+                                    color_id_ral:"RAL 1000"
+                                    items:[${this.itemToAdd}]
+                                }){
+                                    status
+                                    message
+                                }
+                            }
+                        `,
+                    }),
+                })
+                .then(function(response) {
+					return response.json()
+				})
+				.then(function(text) {
+					console.log(text);
+					return text.data.addScheme;
+				})
+				.then(resp => {
+					console.log(resp.message);
+					if(resp.status.toLowerCase() == "success"){
+                        this.$toast(resp.message, {
+                            type: "success",
+                            hideProgressBar: true,
+                            timeout: 2000
+                        });
+                        setTimeout(() => {
+                            window.location = window.location.origin+"/app/datatable/schemeTable";
+                        }, 1000);
+                    }else{
+                        this.$toast(resp.message, {
+                            type: "error",
+                            hideProgressBar: true,
+                            timeout: 2000
+                        });
                     }
-                `);
-                // fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
-                //     method: 'POST',
-                //     headers: {
-                //     'Content-Type': 'application/json',
-                //     },
-                //     body: JSON.stringify({
-                //         query: `
-                //             mutation{
-                //                 addScheme(params:{
-                //                     name:"${this.namaSch}"
-                //                     notes:""
-                //                     items:${this.itemToAdd}
-                //                 }){
-                //                     status
-                //                     message
-                //                 }
-                //             }
-                //         `,
-                //     }),
-                // })
-                // .then(function(response) {
-				// 	return response.json()
-				// })
-				// .then(function(text) {
-				// 	console.log(text);
-				// 	return text.data.addItem;
-				// })
-				// .then(resp => {
-				// 	console.log(resp.message);
-				// 	if(resp.status.toLowerCase() == "success"){
-                //         this.$toast(resp.message, {
-                //             type: "success",
-                //             hideProgressBar: true,
-                //             timeout: 2000
-                //         });
-                //         setTimeout(() => {
-                //             window.location = window.location.origin+"/app/datatable/schemeTable";
-                //         }, 1000);
-                //     }else{
-                //         this.$toast(resp.message, {
-                //             type: "error",
-                //             hideProgressBar: true,
-                //             timeout: 2000
-                //         });
-                //     }
-				// });
-
+				});
+                }
             }else{
                 console.log("error");
             }
@@ -478,6 +519,7 @@ export default {
                     id : suggestion.item.id
 
                 }
+                console.log(data);
                 this.bigData.push(data);
                 //data = this.fetchAgain(data)
                 // if(suggestion.item.type.id == 1)this.dataSelected1.push(data);

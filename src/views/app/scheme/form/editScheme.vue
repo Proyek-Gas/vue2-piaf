@@ -90,6 +90,7 @@
                     <div src="/assets/img/profiles/l-1.jpg"
                         alt="Card image cap"
                         class="align-self-center list-thumbnail-letters small"
+                        :style="returnColor(hex)"
                         >
                     </div>
                     <div class="d-flex flex-grow-1 min-width-zero ml-2">
@@ -188,6 +189,7 @@ export default {
             isLoad: false,
             namaSch: "",
          //   item: "",
+            ral:"",
             dataItem:[],
             bigData:[],
             dataSelected1: [],
@@ -249,77 +251,142 @@ export default {
             }
 
         },
+        checkIsian(value){
+            let cek = true;
+            let cek2 = true;
+                if(!value){
+                    cek = false;
+                }else{
+                    if(value < 0 || value > 100){
+                        cek2 = false;
+                    }
+                }
 
+            return [cek, cek2];
+        },
         onValitadeFormSubmit() {
             this.$v.$touch();
             if(!this.$v.$invalid){
-                for (let i = 0; i < this.bigData.length; i++) {               
-                    console.log(this.bigData[i]);
+                let data = {};
+                let sukses = true;
+                let sukses2 = true;
+                let sukses3 = true;
+                let ctr = 0;
+                let ctr2 = 0;
+                let ctr3 = 0;
+                for (let i = 0; i < this.bigData.length; i++) { 
+                    let arr = this.checkIsian(this.bigData[i].coat);
+                    let arr2 = this.checkIsian(this.bigData[i].dft);
+                    let arr3 = this.checkIsian(this.bigData[i].loss);
+                    if(arr[0] == true && arr[1] == true){
+                        ctr = ctr + 1;
+                    }
+                    if(arr2[0] == true && arr2[1] == true){
+                        ctr2 = ctr2 + 1;
+                    }
+                    if(arr3[0] == true && arr3[1] == true){
+                        ctr3 = ctr3 + 1;
+                    }
                 }
-                console.log(this.itemToAdd);
-                console.log(`
-                //             mutation{
-                //                 updateScheme(params:{
-                //                     name:"${this.namaSch}"
-                //                     notes:""
-                //                     ${this.bigData}
-                //                 }){
-                //                     status
-                //                     message
-                //                 }
-                //             }
-                //         `);
-                // fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
-                //     method: 'POST',
-                //     headers: {
-                //     'Content-Type': 'application/json',
-                //     },
-                //     body: JSON.stringify({
-                //         query: `
-                //             mutation{
-                //                 updateScheme(params:{
-                //                     name:"${this.namaSch}"
-                //                     notes:""
-                //                     items:{
-                //                         item_id:0
-                //                         coat:0
-                //                         dry_film_thickness:0
-                //                         loss:0
-                //                     }
-                //                 }){
-                //                     status
-                //                     message
-                //                 }
-                //             }
-                //         `,
-                //     }),
-                // })
-                // .then(function(response) {
-				// 	return response.json()
-				// })
-				// .then(function(text) {
-				// 	console.log(text);
-				// 	return text.data.updateScheme;
-				// })
-				// .then(resp => {
-				// 	console.log(resp.message);
-				// 	if(resp.status.toLowerCase() == "success"){
-                //         this.$toast(resp.message, {
-                //             type: "success",
-                //             hideProgressBar: true,
-                //             timeout: 2000
-                //         });
-                //         setTimeout(() => {
-                //             window.location = window.location.origin+"/app/datatable/itemTable";
-                //         }, 1000);
-                //     }else{
-                //         this.$toast(resp.message, {
-                //             type: "error",
-                //             hideProgressBar: true,
-                //             timeout: 2000
-                //         });
-                //     }
-				// });
+                console.log(this.bigData.length);
+                console.log(ctr);
+                if(ctr < this.bigData.length){
+                    sukses = false;
+                    this.$toast("Coat tidak valid", {
+                        type: "warning",
+                        hideProgressBar: true,
+                        timeout: 2000
+                    });
+                }else if (ctr2 < this.bigData.length){
+                    sukses2 = false;
+                    this.$toast("Dft tidak valid", {
+                        type: "warning",
+                        hideProgressBar: true,
+                        timeout: 2000
+                    });
+                }else if (ctr3 < this.bigData.length){
+                    sukses3 = false;
+                    this.$toast("Loss tidak valid", {
+                        type: "warning",
+                        hideProgressBar: true,
+                        timeout: 2000
+                    });
+                }
+                if(sukses && sukses2 && sukses3){
+                    console.log("masuk");
+                for (let i = 0; i < this.bigData.length; i++) {
+                    console.log(this.bigData[i].id);
+                    data = `{
+                        item_id:${this.bigData[i].id},
+                        coat:${this.bigData[i].coat},
+                        dry_film_thickness:${this.bigData[i].dft},
+                        loss:${this.bigData[i].loss}
+                    }`
+                    this.itemToAdd.push(data);
+                }
+                console.log(`mutation{
+                                updateScheme(
+                                    scheme_id:${this.schId}
+                                    params:{
+                                    name:"${this.namaSch}"
+                                    notes:""
+                                    color_id_ral:"${this.ral}"
+                                    items:[${this.itemToAdd}]
+                                }){
+                                    status
+                                    message
+                                }
+                            }`);
+                fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+                    method: 'POST',
+                    headers: {
+                    'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        query: `
+                            mutation{
+                                updateScheme(
+                                    scheme_id:${this.schId}
+                                    params:{
+                                    name:"${this.namaSch}"
+                                    notes:""
+                                    color_id_ral:"${this.ral}"
+                                    items:[${this.itemToAdd}]
+                                }){
+                                    status
+                                    message
+                                }
+                            }
+                        `,
+                    }),
+                })
+                .then(function(response) {
+					return response.json()
+				})
+				.then(function(text) {
+					console.log(text);
+					return text.data.updateScheme;
+				})
+				.then(resp => {
+					console.log(resp.message);
+					if(resp.status.toLowerCase() == "success"){
+                        this.$toast(resp.message, {
+                            type: "success",
+                            hideProgressBar: true,
+                            timeout: 2000
+                        });
+                        setTimeout(() => {
+                            window.location = window.location.origin+"/app/datatable/schemeTable";
+                        }, 1000);
+                    }else{
+                        this.$toast(resp.message, {
+                            type: "error",
+                            hideProgressBar: true,
+                            timeout: 2000
+                        });
+                    }
+				});
+                }
 
             }else{
                 console.log("error");
@@ -552,7 +619,8 @@ export default {
                 body: JSON.stringify({
                     query: `
                         query{
-                            itemDetail(item_id:${data.no}){
+                            itemDetail(item_id:${data.id}){
+                                id
                                 name
                                 type{
                                     id
@@ -586,7 +654,7 @@ export default {
                     this.dataSelected1.push(data);
                 }
             })
-        }
+        },
     },
     async mounted(){
         this.schId = this.$route.query.id;
@@ -647,11 +715,12 @@ export default {
                     console.log("aman");
                     this.namaSch = this.detail.name;
                     this.hex = this.detail.color.hex_code;
+                    this.ral = this.detail.color.id_ral;
                     this.dataTmp = this.detail.items;
                     console.log(this.dataTmp);
                     for (let i = 0; i < this.dataTmp.length; i++) {
                         let data = {
-                            no: this.dataTmp[i].item_id,
+                            id: this.dataTmp[i].item_id,
                             name: "",
                             warna: this.dataTmp[i].color,
                             vs: this.dataTmp[i].vs,
