@@ -37,7 +37,7 @@
         <b-row>
             <b-colxx xxs="12" xl="6">
             <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip tooltip-label-right">
-                <b-card class="mb-4" title="Untuk Customer">
+                <b-card class="mb-4" title="Customer">
                     <b-form-group label-cols="3" horizontal label="Customer">
                         <vue-autosuggest
                             class="autosuggest"
@@ -108,7 +108,7 @@
             </b-colxx>
             <b-colxx xxs="12" xl="6">
                 <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip tooltip-label-right">
-                <b-card class="mb-4" title="Untuk Project">
+                <b-card class="mb-4" title="Project">
                     <b-form-group label-cols="3" horizontal label="Project">
                         <vue-autosuggest
                             class="autosuggest"
@@ -1072,10 +1072,10 @@ export default {
 			return text.data.customers;
 		})
 		.then(resp => {
+            this.dataCust = resp;
             this.isLoad = true;
             this.tglQuote = new Date(Date.now());
             this.tglUntil = new Date(new Date().getTime()+(30*24*60*60*1000));
-            this.dataCust = resp;
 		})
     }
 };

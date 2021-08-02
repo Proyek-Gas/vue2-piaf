@@ -122,7 +122,7 @@ const routes = [
             path: 'quoteTable/qDetail',
             component: () => import(/* webpackChunkName: "piaf" */ './views/app/quote/page/quoteDetail'),
             // meta: { roles: [UserRole.Admin, UserRole.Editor] },
-          }
+          },
         ],
       },
       {

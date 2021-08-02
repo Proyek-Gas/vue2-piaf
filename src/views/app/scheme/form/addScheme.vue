@@ -90,7 +90,7 @@
                     <div src="/assets/img/profiles/l-1.jpg"
                         alt="Card image cap"
                         class="align-self-center list-thumbnail-letters small"
-                        :style="returnColor(hex)">
+                        >
                     </div>
                     <div class="d-flex flex-grow-1 min-width-zero ml-2">
                         <div class="pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero">
@@ -139,6 +139,9 @@
             </b-card>
         </b-colxx>
 </b-row>
+</div>
+<div v-else>
+    <div class="loading"></div>
 </div>
 </template>
 
@@ -190,6 +193,8 @@ export default {
             dataSelected1: [],
             dataSelected2: [],
             dataSelected3: [],
+            itemToAdd: [],
+            coat:"",
 
             filteredOptions: [],
             selected: {},
@@ -204,51 +209,129 @@ export default {
             required,
             minLength: minLength(10),
             maxLength: maxLength(255)
-        },
+        }
     },
     methods: {
-      deleteItemGroup(type){
-          let cek = false;
-          let arrOld = []
-          if(type == 1){
-            arrOld = this.dataSelected1
-          }else if(type == 2){
-            arrOld = this.dataSelected2
-          }else{
-            arrOld = this.dataSelected3
-          }
-          let newArrSelected = [];
-          let newArrBigData = [];
-          for(let j=0; j<arrOld.length; j++ ){
-            if(!arrOld[j].action){
-                newArrSelected.push(arrOld[j])
-            } else{
-              cek = true
+        deleteItemGroup(type){
+            let cek = false;
+            let arrOld = []
+            if(type == 1){
+                arrOld = this.dataSelected1
+            }else if(type == 2){
+                arrOld = this.dataSelected2
+            }else{
+                arrOld = this.dataSelected3
             }
-          }
-
-           for(let j=0; j<this.bigData.length; j++ ){
-            if(!this.bigData[j].action){
-                newArrBigData.push(this.bigData[j])
+            let newArrSelected = [];
+            let newArrBigData = [];
+            for(let j=0; j<arrOld.length; j++ ){
+                if(!arrOld[j].action){
+                    newArrSelected.push(arrOld[j])
+                } else{
+                cek = true
+                }
             }
-          }
-          if(cek){
-            this.bigData = newArrBigData
-          }
 
-          if(type == 1){
-             this.dataSelected1 = newArrSelected
-          }else if(type==2){
-            this.dataSelected2 = newArrSelected
-          }else{
-            this.dataSelected3 = newArrSelected
-          }
+            for(let j=0; j<this.bigData.length; j++ ){
+                if(!this.bigData[j].action){
+                    newArrBigData.push(this.bigData[j])
+                }
+            }
+            if(cek){
+                this.bigData = newArrBigData
+            }
 
-      },
+            if(type == 1){
+                this.dataSelected1 = newArrSelected
+            }else if(type==2){
+                this.dataSelected2 = newArrSelected
+            }else{
+                this.dataSelected3 = newArrSelected
+            }
+
+        },
+        checkIsian(value, type){
+            let cek = true;
+            let cek2 = true;
+                if(!value){
+                    cek = false;
+                }else{
+                    if(type == 1){
+                        if(value < 0 || value > 100){
+                            cek2 = false;
+                        }
+                    }
+                    else{
+                        if(value < 0 || value > 1000){
+                            cek2 = false;
+                        }
+                    }
+                }
+
+            return [cek, cek2];
+        },
 
         onValitadeFormSubmit() {
             this.$v.$touch();
             if(!this.$v.$invalid){
+                let data = {};
+                let sukses = true;
+                let sukses2 = true;
+                let sukses3 = true;
+                let ctr = 0;
+                let ctr2 = 0;
+                let ctr3 = 0;
+                for (let i = 0; i < this.bigData.length; i++) { 
+                    let arr = this.checkIsian(this.bigData[i].coat,1);
+                    let arr2 = this.checkIsian(this.bigData[i].dft,2);
+                    let arr3 = this.checkIsian(this.bigData[i].loss,1);
+                    if(arr[0] == true && arr[1] == true){
+                        ctr = ctr + 1;
+                    }
+                    if(arr2[0] == true && arr2[1] == true){
+                        ctr2 = ctr2 + 1;
+                    }
+                    if(arr3[0] == true && arr3[1] == true){
+                        ctr3 = ctr3 + 1;
+                    }
+                }
+                console.log(this.bigData.length);
+                console.log(ctr);
+                if(ctr < this.bigData.length){
+                    sukses = false;
+                    this.$toast("Coat tidak valid", {
+                        type: "warning",
+                        hideProgressBar: true,
+                        timeout: 2000
+                    });
+                }else if (ctr2 < this.bigData.length){
+                    sukses2 = false;
+                    this.$toast("Dft tidak valid", {
+                        type: "warning",
+                        hideProgressBar: true,
+                        timeout: 2000
+                    });
+                }else if (ctr3 < this.bigData.length){
+                    sukses3 = false;
+                    this.$toast("Loss tidak valid", {
+                        type: "warning",
+                        hideProgressBar: true,
+                        timeout: 2000
+                    });
+                }
+                if(sukses && sukses2 && sukses3){
+                    console.log("masuk");
+                for (let i = 0; i < this.bigData.length; i++) {
+                    console.log(this.bigData);
+                    data = `{
+                        item_id:${this.bigData[i].id},
+                        coat:${this.bigData[i].coat},
+                        dry_film_thickness:${this.bigData[i].dft},
+                        loss:${this.bigData[i].loss}
+                    }`
+                    this.itemToAdd.push(data);
+                }
+                // console.log(this.itemToAdd);
                 fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
                     method: 'POST',
                     headers: {
@@ -260,12 +343,8 @@ export default {
                                 addScheme(params:{
                                     name:"${this.namaSch}"
                                     notes:""
-                                    items:{
-                                        item_id:0
-                                        coat:0
-                                        dry_film_thickness:0
-                                        loss:0
-                                    }
+                                    color_id_ral:"RAL 1000"
+                                    items:[${this.itemToAdd}]
                                 }){
                                     status
                                     message
@@ -279,7 +358,7 @@ export default {
 				})
 				.then(function(text) {
 					console.log(text);
-					return text.data.addItem;
+					return text.data.addScheme;
 				})
 				.then(resp => {
 					console.log(resp.message);
@@ -290,7 +369,7 @@ export default {
                             timeout: 2000
                         });
                         setTimeout(() => {
-                            window.location = window.location.origin+"/app/datatable/itemTable";
+                            window.location = window.location.origin+"/app/datatable/schemeTable";
                         }, 1000);
                     }else{
                         this.$toast(resp.message, {
@@ -300,7 +379,7 @@ export default {
                         });
                     }
 				});
-
+                }
             }else{
                 console.log("error");
             }
@@ -447,6 +526,7 @@ export default {
                     id : suggestion.item.id
 
                 }
+                console.log(data);
                 this.bigData.push(data);
                 //data = this.fetchAgain(data)
                 // if(suggestion.item.type.id == 1)this.dataSelected1.push(data);
@@ -481,8 +561,6 @@ export default {
                   }
                 }
               }
-
-
           `
           console.log(queryString)
           fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
