@@ -50,7 +50,7 @@
         <b-row>
             <b-colxx xxs="12" xl="6">
             <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip tooltip-label-right">
-                <b-card class="mb-4" title="Customer">  
+                <b-card class="mb-4" title="Customer">
                     <b-card class="mb-0" title="Data Customer">
                         <h6 class="text-muted text-medium mb-1">
                             {{ custNama }}
@@ -93,14 +93,14 @@
                         <b-row>
                             <b-colxx xxs="6" xl="6" class="text-left">
                             <p class="text text-medium mt-1">
-                                Section Area : 
+                                Section Area :
                             </p>
                             </b-colxx>
                             <b-colxx xxs="6" xl="6" class="text-left">
                                 <div v-if="area.surface_preparation != null" >
                                     <div v-for="item in splitSurface(area.surface_preparation)" :key="item">
                                         <h6>
-                                            <b-badge class="mb-0" pill variant="secondary" style="width: 100%;">{{ item }}</b-badge> 
+                                            <b-badge class="mb-0" pill variant="secondary" style="width: 100%;">{{ item }}</b-badge>
                                         </h6>
                                     </div>
                                 </div>
@@ -114,7 +114,7 @@
                         <b-row>
                             <b-colxx xxs="6" xl="6" class="text-right">
                             <p class="text text-medium mt-1">
-                                Luas Area : 
+                                Luas Area :
                             </p>
                             </b-colxx>
                             <b-colxx xxs="6" xl="6" class="text-left">
@@ -123,9 +123,22 @@
                             </p>
                             </b-colxx>
                         </b-row>
+
                     </b-colxx>
                 </b-row>
-                
+                <b-row>
+
+                      <b-colxx xxs="12" xl="12" class="text-left">
+                        <p class="mb-2">
+                                HPP/Total
+                                <span class="float-right text-muted">  {{area.total_hpp |currency}}/  {{area.total | currency}}</span>
+                              </p>
+                              <b-progress :value="(area.total_hpp / area.total) * 100"></b-progress>
+                  </b-colxx>
+                </b-row>
+                <b-row>
+                    <table-item :dataComponent="area.items"></table-item>
+                </b-row>
          </b-card>
     </b-colxx>
     <b-colxx xxs="12" xl="4" class="col-right">
@@ -180,6 +193,7 @@ import { getDirection, setThemeRadius } from "../../../../utils";
 import selectCategory from "../../../../components/selectCategory.vue";
 import Datepicker from "vuejs-datepicker";
 import Switches from "vue-switches";
+import TableItem from "./tableItemQuote.vue"
 
 import {
     validationMixin
@@ -206,7 +220,7 @@ export default {
         "vue-autosuggest": VueAutosuggest,
         "selectCategory": selectCategory,
         datepicker: Datepicker,
-        Pie,
+        "table-item" : TableItem
     },
     data() {
         return {
@@ -590,9 +604,9 @@ export default {
             console.log(character.isItem);
             if(character.isItem == true){
                 return <b-card class="mb-0 d-flex flex-row" no-body>
-                            <div src="/assets/img/profiles/l-1.jpg" 
-                                alt="Card image cap" 
-                                class="align-self-center list-thumbnail-letters rounded-circle small mr-2" 
+                            <div src="/assets/img/profiles/l-1.jpg"
+                                alt="Card image cap"
+                                class="align-self-center list-thumbnail-letters rounded-circle small mr-2"
                                 style={{ background: `#${character.color.hex_code}` }}>
                             </div>
                             <div class="d-flex flex-grow-1 min-width-zero">
@@ -610,9 +624,9 @@ export default {
 
             }else{
                 return <b-card class="mb-0 d-flex flex-row" no-body>
-                            <div src="/assets/img/profiles/l-1.jpg" 
-                                alt="Card image cap" 
-                                class="align-self-center list-thumbnail-letters small mr-2" 
+                            <div src="/assets/img/profiles/l-1.jpg"
+                                alt="Card image cap"
+                                class="align-self-center list-thumbnail-letters small mr-2"
                                 style={{ background: `#${character.color.hex_code}` }}>
                             </div>
                             <div class="d-flex flex-grow-1 min-width-zero">
@@ -642,12 +656,12 @@ export default {
                 body: JSON.stringify({
                     query: `
                         query{ customerDetail(customer_id:"${val}") {
-                            name                         
-                            email                         
+                            name
+                            email
                             category{
                                 name
                             }
-                            priceCategory{                             
+                            priceCategory{
                                 name
                             }
                         }
@@ -665,9 +679,9 @@ export default {
             .then(resp => {
                 console.log(resp)
                 if(resp != null){
-                    this.custNama = resp.name;  
+                    this.custNama = resp.name;
                     this.custEmail = resp.email;
-                    this.custCate = resp.category.name +" - "+ resp.priceCategory.name;    
+                    this.custCate = resp.category.name +" - "+ resp.priceCategory.name;
                 }
             })
         },
@@ -815,13 +829,16 @@ export default {
                             total_hpp
                             surface_preparation
                             items{
-                                        item_id
-                            liter
-                            coat
-                            dry_film_thickness
-                            theoritical
-                            practical
-                            loss
+                                item_name
+                                price
+                                subtotal
+                                item_id
+                                liter
+                                coat
+                                dry_film_thickness
+                                theoritical
+                                practical
+                                loss
                             }
                         }
                     }
@@ -881,6 +898,6 @@ export default {
         }else{
             window.location = window.location.origin +"/error?id=404&name=quote";
         }
-    }   
+    }
 };
 </script>
