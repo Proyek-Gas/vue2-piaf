@@ -178,12 +178,14 @@
         {{custId}}
         <b-form-group label-cols="3" horizontal label="Pilih Area">
           <v-select
-          v-model="area"
-          :options="areaOptions"
-          label="name"
-          @input="newArea"
-          :disabled="proKat === ''"
-          placeholder="Harap pilih project"/>
+            v-model="area"
+            :options="areaOptions"
+            label="name"
+            @input="newArea"
+            :disabled="proKat === ''"
+            placeholder="Harap pilih project"/>
+            <b-form-input type="text" v-model="$v.area.$model" :state="!$v.area.$error" style="display:none;" placeholder="Masukkan judul proyek"/>
+            <b-form-invalid-feedback v-if="!$v.area.required">Harap pilih area</b-form-invalid-feedback>
       </b-form-group>
         <div class="separator mb-2"></div>
         <!-- {{arrKumpulanArea}} -->
@@ -256,7 +258,7 @@
                 </p>
                 </b-colxx>
                 <b-colxx xxs="3">
-                    <b-badge pill variant="warning">Rejected(M)</b-badge>
+                    <b-badge pill variant="warning">New</b-badge>
                 </b-colxx>
                 <b-colxx xxs="3">
                     <b-badge pill variant="primary">0</b-badge>
@@ -306,6 +308,9 @@
         </b-card>
     </b-colxx>
 </b-row>
+</div>
+<div v-else>
+    <div class="loading"></div>
 </div>
 </template>
 
@@ -396,6 +401,9 @@ export default {
     mixins: [validationMixin],
     validations: {
         proNama:{
+            required
+        },
+        area:{
             required
         },
     },
@@ -1031,16 +1039,8 @@ export default {
         },
     },
     async mounted(){
-        this.status = this.$route.query.status;
-        if(this.status){
-            if(this.status == 1){
-                this.btn1 = "Submit";
-                this.btn2 = "Close";
-            }
-        }else{
-            this.btn1 = "Submit";
-            this.btn2 = "Draft";
-        }
+        this.btn1 = "Submit";
+        this.btn2 = "Draft";
         fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
 			method: 'POST',
 			headers: {
@@ -1075,7 +1075,7 @@ export default {
             this.dataCust = resp;
             this.isLoad = true;
             this.tglQuote = new Date(Date.now());
-            this.tglUntil = new Date(new Date().getTime()+(30*24*60*60*1000));
+            this.tglUntil = new Date(new Date().getTime()+(31*24*60*60*1000));
 		})
     }
 };

@@ -133,8 +133,32 @@
             <b-card class="mb-4" no-body>
                 <b-tabs card no-fade>
                 <b-tab title="Action" active title-item-class="w-50 text-center">
-                    <h5 class="mb-4 card-title">Homemade Cheesecake with Fresh Berries and Mint</h5>
-                    <b-button size="sm" variant="outline-primary">Edit</b-button>
+                    <div v-if="status != 6">
+                        <div v-if="btn1 != '' && btn2 != ''" >
+                        <b-row>
+                            <b-colxx xxs="6" class="text-center">
+                            <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip">
+                                <b-button type="submit" variant="primary" style="width: 100%">{{ btn1 }}</b-button>
+                            </b-form>
+                            </b-colxx>
+                            <b-colxx xxs="6" class="text-center">
+                            <b-button @click="onFormReset" type="submit" variant="danger" style="width: 100%">{{ btn2 }}</b-button>
+                            </b-colxx>
+                        </b-row>
+                        </div>
+                        <div v-if="btn3 != ''" >
+                            <b-row class="mt-2">
+                                <b-colxx xxs="12" class="text-center">
+                                <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip">
+                                    <b-button type="submit" variant="primary" style="width: 100%">{{ btn3 }}</b-button>
+                                </b-form>
+                                </b-colxx>
+                            </b-row>
+                        </div>
+                    </div>
+                    <div v-else>
+                        <p class="text-muted text-medium mt-1">No action</p>
+                    </div>
                 </b-tab>
                 <b-tab title="Logs" title-item-class="w-50 text-center">
                     <h5 class="mb-4 card-title">Wedding Cake with Flowers Macarons and Blueberries</h5>
@@ -160,6 +184,7 @@ import Switches from "vue-switches";
 import {
     validationMixin
 } from "vuelidate";
+import Pie from '../../../../components/Charts/Pie.vue';
 const {
     required,
     maxLength,
@@ -181,6 +206,7 @@ export default {
         "vue-autosuggest": VueAutosuggest,
         "selectCategory": selectCategory,
         datepicker: Datepicker,
+        Pie,
     },
     data() {
         return {
@@ -212,6 +238,7 @@ export default {
             primarySmall: false,
             btn1: "",
             btn2: "",
+            btn3: "",
 
             areaOptions: [],
             filteredOptions: [],
@@ -766,7 +793,8 @@ export default {
                         }
                         }
                         status{
-                        name
+                            id
+                            name
                         }
                         total
                         last_version
@@ -812,7 +840,7 @@ export default {
             console.log(this.detail);
             this.isLoad = true;
             this.tglQuote = new Date(this.detail.created_at);
-            this.tglUntil = new Date(new Date(this.detail.created_at).getTime()+(30*24*60*60*1000));
+            this.tglUntil = new Date(new Date(this.detail.created_at).getTime()+(31*24*60*60*1000));
             this.custNama = this.detail.project.customer.name;
             this.custEmail = this.detail.project.customer.email;
             this.custCate = this.detail.project.customer.category.name + " - "+ this.detail.project.customer.priceCategory.name;
@@ -821,6 +849,34 @@ export default {
             this.arrKumpulanArea = this.detail.areaItems;
             console.log(this.arrKumpulanArea);
             this.fetchSurface();
+            this.user = this.detail.userCreate;
+            this.status = this.detail.status.id;
+            console.log(this.status);
+            if(this.status == 1){
+                if(this.user || this.user.role.name.toLowerCase() == "manager"){
+                    this.btn1 = "Submit";
+                    this.btn2 = "Close";
+                }
+            }
+            else if(this.status == 2){
+                if(this.user || this.user.role.name.toLowerCase() == "manager"){
+                    this.btn1 = "Approve";
+                    this.btn2 = "Reject";
+                    this.btn3 = "Close";
+                }
+            }else if (this.status == 3){
+
+            }else if (this.status == 7){
+                this.btn1 = "";
+                this.btn2 = "";
+                this.btn3 = "Cancel";
+            }
+            if(this.user){
+                if(this.user.role.name.toLowerCase() == "manager"){
+                }
+            }else{
+
+            }
         })
         }else{
             window.location = window.location.origin +"/error?id=404&name=quote";

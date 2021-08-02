@@ -195,6 +195,7 @@ export default {
       sort: "",
       perPage: 4,
       search: "",
+      schName: "",
       from: 0,
       to: 0,
       total: 0,

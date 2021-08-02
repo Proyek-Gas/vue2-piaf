@@ -128,7 +128,7 @@
               </template> -->
               <template slot="action" slot-scope="props">
                 <b-dropdown  text="Actions" variant="outline-secondary">
-                    <b-dropdown-item :to="movePageDetail(props.rowData.id, props.rowData.version, props.rowData.status.name)">Detail</b-dropdown-item>
+                    <b-dropdown-item :to="movePageDetail(props.rowData.id, props.rowData.version)">Detail</b-dropdown-item>
                   <b-dropdown-item>Edit</b-dropdown-item>
                   <b-dropdown-item @click="showModal(props.rowData.name,'modalbasic')">Delete</b-dropdown-item>
               </b-dropdown>
@@ -344,9 +344,9 @@ export default {
       console.log(paginationData);
       this.$refs.pagination.setPaginationData(paginationData);
     },
-     movePageDetail(val, val2, val3){
+     movePageDetail(val, val2){
 			//window.location = window.location.href+"/pDetail?id="+val;
-      return "quoteTable/qDetail?id="+val+"&ver="+val2+"&status="+val3;
+      return "quoteTable/qDetail?id="+val+"&ver="+val2;
 		},
      onCellClicked (data, field, event) {
         console.log('cellClicked: ', field.name)
