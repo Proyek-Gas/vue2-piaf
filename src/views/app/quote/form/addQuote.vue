@@ -393,9 +393,8 @@ export default {
             filteredOptions3: [],
             selected3: {},
             dataSchItem: [],
-
-
-            ctrFetch : 0
+            dataItem: [],
+            itemCount: ""
         };
     },
     mixins: [validationMixin],
@@ -693,8 +692,7 @@ export default {
             }
             console.log(this.filteredOptions3);
         },
-
-      async  onAutosuggestSelected3($event,a) {
+        onAutosuggestSelected3($event,a) {
           console.log(a)
           console.log($event.item)
           let cek = true
@@ -706,12 +704,11 @@ export default {
           }
           if(cek){
              //this.arrKumpulanArea[a].selectedItem.push($event.item)
-
              //cek untuk apakah ini item atau scheme
             if(cekItem){
-                this.fetchItemDetail($event.item,a,false,-1)
+                this.fetchItemDetail($event.item,a,true)
             }else{
-               this.fetchSchemeDetail($event.item,a)
+                this.fetchSchemeDetail($event.item,a,false)
             }
 
           }
@@ -761,7 +758,7 @@ export default {
                         </b-card>
             }
         },
-      fetchSchemeDetail(item,index){
+        fetchSchemeDetail(item,index, isItem){
         //  this.ctrFetch = 0;
             let querystring = `query{
                 schemeDetail(scheme_id:${item.id}){
@@ -811,17 +808,19 @@ export default {
                 return text.data.schemeDetail;
             })
             .then(resp => {
-              for(let i=0; i< resp.items.length; i++){
-                    console.log(resp.items.length)
+                console.log(resp);
+                this.itemCount = resp.items.length;
+                for(let i=0; i< resp.items.length; i++){
                     item.loss = resp.items[i].loss;
                     item.coat = resp.items[i].coat;
                     item.dft = resp.items[i].dry_film_thickness;
                     item.vol = resp.items[i].vs_volume_solid;
-                    item.item_id = resp.items[i].item_id
+                    item.item_id = resp.items[i].item_id;
                     newArrItem.push(item)
-                    //this.fetchItemDetail(item,index,true)
-              }
-              this.fetchItemDetail(newArrItem,index,true,0)
+                    console.log("fetch atas:" + item.item_id)
+                    this.fetchItemDetail(item, index, isItem);
+                }
+            //   this.fetchItemDetail(newArrItem,index,true,0)
               // do{
               //   let i = this.ctrFetch
               //   item.loss = resp.items[i].loss;
@@ -834,39 +833,34 @@ export default {
 
             })
         },
-       fetchItemDetail(item, index,ck,ctrItem){
-             let id = null
-             if(ck){
-               id = item[ctrItem].item_id
-             }else{
-               id = item.id
-             }
-             console.log(id)
-              let querystring = `query{
-                itemDetail(item_id:${id} customer_id : "${this.custId}" ){
-                  no
-                  name
-                  id
-                    type{
-                      name
-                      id
+        fetchItemDetail(item, index, isItem){
+            console.log("Id" + item.item_id);
+            let name = "";
+                let querystring = `query{
+                        itemDetail(item_id:${item.item_id} customer_id : "${this.custId}" ){
+                        no
+                        name
+                        id
+                            type{
+                            name
+                            id
+                            }
+                            name
+                                            vs_volume_solid
+                            itemCategory{
+                            name
+                            id
+                            }
+                        detailSellingPrice{
+                            priceCategory{
+                            id
+                            name
+                            }
+                            price
+                        }
+                        }
                     }
-                    name
-    								vs_volume_solid
-                    itemCategory{
-                      name
-                      id
-                    }
-                  detailSellingPrice{
-                    priceCategory{
-                      id
-                      name
-                    }
-                    price
-                  }
-                }
-              }
-              `
+                    `
 
             fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
                 method: 'POST',
@@ -881,30 +875,34 @@ export default {
                 return response.json()
             })
             .then(function(text) {
-                console.log(text);
                 return text.data.itemDetail;
             })
             .then(resp => {
-              // item.no = resp.no;
-              // item.name_s = resp.name
-              //   item.price = resp.detailSellingPrice;
-              //   this.ctrFetch = this.ctrFetch+1;
-              //   this.arrKumpulanArea[index].selectedItem.push(item)
-              if(ck){
-                 item[ctrItem].no = resp.no;
-                item[ctrItem].name_s = resp.name
-                item[ctrItem].price = resp.detailSellingPrice;
-                this.arrKumpulanArea[index].selectedItem.push(item[ctrItem])
-                if(ctrItem < item.length){
-                  this.fetchItemDetail(item,index,true,ctrItem+1)
-                }
-              }else{
-                 item.no = resp.no;
-                item.name_s = resp.name
+                //console.log(resp);
+                //console.log("Count: "+this.itemCount);
+                this.dataItem = resp;
+                item.name_s = resp.name;
+                // console.log(name);
+                // item.no = resp.no;
+                // item.isItem = isItem;
+                console.log(resp);
+                item.name_s = this.dataItem.name;
                 item.price = resp.detailSellingPrice;
-                this.arrKumpulanArea[index].selectedItem.push(item)
-              }
+                console.log(item);
+                // if(this.itemCount == 2){
+                    //     for (let i = 0; i < this.itemCount; i++) {
+                        //         console.log(this.dataItem[i]);
+                //         this.arrKumpulanArea[index].selectedItem.push(this.dataItem[i])
+                //     }
+                // }
             })
+            let list = {
+                id: item.item_id,
+                coat: item.coat,
+                nama: this.dataItem
+            }
+            console.log(list);
+            
         },
         getSuggestionValue3(suggestion) {
 
