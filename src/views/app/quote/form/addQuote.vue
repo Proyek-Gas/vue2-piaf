@@ -686,7 +686,7 @@ export default {
             console.log(this.filteredOptions3);
         },
 
-        onAutosuggestSelected3($event,a) {
+      async  onAutosuggestSelected3($event,a) {
           console.log(a)
           console.log($event.item)
           let cek = true
@@ -701,7 +701,7 @@ export default {
 
              //cek untuk apakah ini item atau scheme
             if(cekItem){
-               this.fetchItemDetail($event.item,a,false)
+                this.fetchItemDetail($event.item,a,false,-1)
             }else{
                this.fetchSchemeDetail($event.item,a)
             }
@@ -753,8 +753,8 @@ export default {
                         </b-card>
             }
         },
-        fetchSchemeDetail(item,index){
-          this.ctrFetch = 0;
+      fetchSchemeDetail(item,index){
+        //  this.ctrFetch = 0;
             let querystring = `query{
                 schemeDetail(scheme_id:${item.id}){
                   id
@@ -783,9 +783,10 @@ export default {
                 }
               }
               `
+              let newArrItem = []
 
               console.log(querystring)
-               fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+             fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
                 method: 'POST',
                 headers: {
                 'Content-Type': 'application/json',
@@ -809,9 +810,10 @@ export default {
                     item.dft = resp.items[i].dry_film_thickness;
                     item.vol = resp.items[i].vs_volume_solid;
                     item.item_id = resp.items[i].item_id
-                    this.fetchItemDetail(item,index,true)
+                    newArrItem.push(item)
+                    //this.fetchItemDetail(item,index,true)
               }
-
+              this.fetchItemDetail(newArrItem,index,true,0)
               // do{
               //   let i = this.ctrFetch
               //   item.loss = resp.items[i].loss;
@@ -824,10 +826,10 @@ export default {
 
             })
         },
-      fetchItemDetail(item, index,ck){
+       fetchItemDetail(item, index,ck,ctrItem){
              let id = null
              if(ck){
-               id = item.item_id
+               id = item[ctrItem].item_id
              }else{
                id = item.id
              }
@@ -875,11 +877,25 @@ export default {
                 return text.data.itemDetail;
             })
             .then(resp => {
-              item.no = resp.no;
-              item.name_s = resp.name
+              // item.no = resp.no;
+              // item.name_s = resp.name
+              //   item.price = resp.detailSellingPrice;
+              //   this.ctrFetch = this.ctrFetch+1;
+              //   this.arrKumpulanArea[index].selectedItem.push(item)
+              if(ck){
+                 item[ctrItem].no = resp.no;
+                item[ctrItem].name_s = resp.name
+                item[ctrItem].price = resp.detailSellingPrice;
+                this.arrKumpulanArea[index].selectedItem.push(item[ctrItem])
+                if(ctrItem < item.length){
+                  this.fetchItemDetail(item,index,true,ctrItem+1)
+                }
+              }else{
+                 item.no = resp.no;
+                item.name_s = resp.name
                 item.price = resp.detailSellingPrice;
-                this.ctrFetch = this.ctrFetch+1;
                 this.arrKumpulanArea[index].selectedItem.push(item)
+              }
             })
         },
         getSuggestionValue3(suggestion) {
@@ -974,7 +990,7 @@ export default {
                 console.log(this.dataPro);
             })
         },
-        fetchSchItem(val){
+     fetchSchItem(val){
             fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
                 method: 'POST',
                 headers: {

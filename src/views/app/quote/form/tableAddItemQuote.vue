@@ -47,8 +47,17 @@
                           class="mb-2 mr-sm-2 mb-sm-0"
                         />
                 </template>
+                <template slot="theory" slot-scope="props">
+                   {{theory (props.rowData)}}
+                </template>
+                <template slot="wft" slot-scope = "props">
+                    {{Math.round((props.rowData.dft/props.rowData.coat)*100)/100}}
+                </template>
                 <template slot="harga" slot-scope="props">
                     {{props.rowData.price.price | currency}}
+                </template>
+                <template slot="practical" slot-scope = "props">
+                  {{Math.round(props.rowData.theory * (1- props.rowData.loss/100)*100)/100}}
                 </template>
                 <template slot="btndel" slot-scope="props">
                     <b-button class=" btn mb-1" variant="danger default" @click="deleteItem(props.rowData.id)" v-if="props.rowData.isItem == true">Delete <i class="simple-icon-close"></i></b-button>
@@ -87,6 +96,9 @@ export default{
           this.dataComponent = data
           console.log(this.dataComponent.length)
       },
+      theory(data){
+        return data.theory= Math.round((data.coat *10 /data.dft)*100)/100
+      }
   },
   data(){
     return {
@@ -110,12 +122,25 @@ export default{
              dataClass : "text-muted",
              width:"5%"
            },
+
            {
              name : "__slot:dft",
              title : "DFT",
              dataClass : "text-muted",
              width : "5%"
            },
+            {
+              name : "__slot:wft",
+              title : "WFT",
+              dataClass : "text-muted",
+              width : "5%"
+            },
+            {
+              name : "__slot:theory",
+              title : "Theory",
+              dataClass : "text-muted",
+              width : "5%"
+            },
            {
              name : "__slot:loss",
              title : "LOSS",
@@ -127,6 +152,12 @@ export default{
              title : "VOL",
              dataClass :"text-muted",
              width : "5%"
+           },
+           {
+             name : "__slot:practical",
+             title : "Practical",
+             dataClass : "text-muted",
+             width  : "5%"
            },
            {
              name : "__slot:harga",

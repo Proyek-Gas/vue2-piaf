@@ -160,6 +160,7 @@ export default{
               dataClass: "text-muted",
               width: "5%"
             },
+
             {
               name : "__slot:harga",
               title : "Harga",
@@ -171,7 +172,7 @@ export default{
               title : "Action",
               dataClass : "text-muted",
               width : "10%"
-            }
+            },
           ],
       }
     }
