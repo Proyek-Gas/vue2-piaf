@@ -86,7 +86,7 @@
                         <b-row>
                             <b-colxx xxs="12" xl="6"> customer_id: </b-colxx>
                             <b-colxx xxs="12" xl="6">
-                              <b-button :id="'tool-cd'+props.rowData.id" variant="secondary" class="mr-1 mb-1 small"  @click="movePageDetail(props.rowData.project.customer_id)">{{props.rowData.project.customer_id}}</b-button>
+                              <b-button :id="'tool-cd'+props.rowData.id" variant="secondary" class="mr-1 mb-1 small"  :to="movePageDetailCustomer(props.rowData.project.customer_id)">{{props.rowData.project.customer_id}}</b-button>
                                 <!-- <b-tooltip :target="'tool-cd'+props.rowData.id"
                                 placement="right"
                                 v-if="fetchDetailCustomer(props.rowData.project.customer_id).length != 0"
@@ -343,6 +343,10 @@ export default {
       this.total = paginationData.total;
       console.log(paginationData);
       this.$refs.pagination.setPaginationData(paginationData);
+    },
+
+    movePageDetailCustomer(id){
+      return  "customerTable/cDetail?id="+id;
     },
      movePageDetail(val, val2){
 			//window.location = window.location.href+"/pDetail?id="+val;

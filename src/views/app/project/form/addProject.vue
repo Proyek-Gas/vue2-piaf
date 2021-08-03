@@ -21,7 +21,7 @@
                         @selected="onAutosuggestSelected"
                         @input="onAutoSuggestInputChange"
                     >
-                    <template slot="before-section-default"> 
+                    <template slot="before-section-default">
                         <div class="p-1">
                             <b-button
                                 class="glyph-icon simple-icon-plus"
@@ -29,36 +29,37 @@
                                 v-b-modal.modalright
                                 size="sm"
                                 style="width: 100%;"
-                                @click="showModal('modalright')">
+                              >
                             </b-button>
-                            <b-modal id="modalright" ref="modalright" title="Add Customer" modal-class="modal-right">
-                                <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip tooltip-label-right">
-                                        <b-card class="mb-4" title="Profil Customer">
-                                            <b-form-group label-cols="3" horizontal label="Kode">
-                                                
-                                            </b-form-group>
 
-                                            <b-form-group label-cols="3" horizontal label="Nama">
-                                                
-                                            </b-form-group>
-
-                                            <b-form-group label-cols="3" horizontal label="Kategori">
-                                                
-                                            </b-form-group>
-
-                                            <b-form-group label-cols="3" horizontal label="Kategori Harga">
-                                                
-                                            </b-form-group>
-
-                                            <b-form-group label-cols="3" horizontal label="Limit Piutang" >
-                                                
-                                            </b-form-group>
-                                        </b-card>
-                                </b-form>
-                            </b-modal>
                         </div>
                     </template>
                     </vue-autosuggest>
+                      <b-modal id="modalright" ref="modalright" title="Add Customer" modal-class="modal-right">
+                                <!-- <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip tooltip-label-right"> -->
+                                        <!-- <b-card class="mb-4" title="Profil Customer"> -->
+                                            <b-form-group label-cols="3" horizontal label="Kode">
+
+                                            </b-form-group>
+
+                                            <b-form-group label-cols="3" horizontal label="Nama">
+
+                                            </b-form-group>
+
+                                            <b-form-group label-cols="3" horizontal label="Kategori">
+
+                                            </b-form-group>
+
+                                            <b-form-group label-cols="3" horizontal label="Kategori Harga">
+
+                                            </b-form-group>
+
+                                            <b-form-group label-cols="3" horizontal label="Limit Piutang" >
+
+                                            </b-form-group>
+                                        <!-- </b-card> -->
+                                <!-- </b-form> -->
+                            </b-modal>
                     <b-form-input type="text" v-model="$v.custNama.$model" :state="!$v.custNama.$error" style="display:none;" placeholder="Masukkan judul proyek"/>
                     <b-form-invalid-feedback v-if="!$v.custNama.required">Harap pilih customer</b-form-invalid-feedback>
                 </b-form-group>
@@ -212,6 +213,10 @@ export default {
     },
     methods: {
         showModal(refname){
+          console.log(refname)
+            //this.$refs.refname.show()
+            //document.getElementById(refname+"").show()
+
             this.$refs[refname].show()
         },
         choose(value) {
