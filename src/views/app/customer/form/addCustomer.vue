@@ -227,10 +227,6 @@ export default {
                 }else{
                     floatLimit = 0;
                 }
-                console.log(floatLimit);
-                console.log(this.alamat);
-                console.log(this.kota);
-                console.log(this.provinsi);
                 fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
                     method: 'POST',
                     headers: {
@@ -292,7 +288,8 @@ export default {
             }
         },
         onFormReset(){
-            this.kode="";this.name="";this.kategori="";this.katHarga="";this.limit="";
+            this.kode="";this.name="";this.kategori="";this.limit="";
+            this.katHarga = this.katHargaOption[10].name;
             this.email="";this.hp="";this.tlp="";this.npwp="";this.alamat="";
             this.kota="";this.provinsi="";this.negara="";
             this.$v.$reset();

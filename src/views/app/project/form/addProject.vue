@@ -9,14 +9,16 @@
         <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip tooltip-label-right">
             <b-card class="mb-4" title="Profil Project">
                 <b-form-group label-cols="3" horizontal label="Customer">
-                    <b-input-group class="" style="width: 100%;">
+                    <b-input-group>
                         <b-input-group-prepend>
                             <b-button
                                 class="glyph-icon simple-icon-plus"
                                 variant="success"
                                 size="sm"
-                                @click="showModal('modalright')">
+                                v-b-modal.modalright
+                                >
                             </b-button>
+                            <mAddCustomer v-on:answers="onUpdateAnswer"></mAddCustomer>
                         </b-input-group-prepend>
                         <vue-autosuggest
                             class="autosuggest suggest"
@@ -117,32 +119,10 @@
                 </b-row>
             </b-card>
         </b-colxx>
-        <b-modal id="modalright" ref="modalright" title="Add Customer" modal-class="modal-right">
-            <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip tooltip-label-right">
-
-                        <b-form-group label-cols="3" horizontal label="Kode">
-
-                        </b-form-group>
-
-                        <b-form-group label-cols="3" horizontal label="Nama">
-
-                        </b-form-group>
-
-                        <b-form-group label-cols="3" horizontal label="Kategori">
-
-                        </b-form-group>
-
-                        <b-form-group label-cols="3" horizontal label="Kategori Harga">
-
-                        </b-form-group>
-
-                        <b-form-group label-cols="3" horizontal label="Limit Piutang" >
-
-                        </b-form-group>
-
-            </b-form>
-        </b-modal>
 </b-row>
+</div>
+<div v-else>
+    <div class="loading"></div>
 </div>
 </template>
 
@@ -153,6 +133,7 @@ import "vue-select/dist/vue-select.css";
 import { getDirection, setThemeRadius } from "../../../../utils";
 import selectCategory from "../../../../components/selectCategory.vue";
 import Datepicker from "vuejs-datepicker";
+import mAddCustomer from "../../customer/form/modalAddCustomer.vue";
 
 import {
     validationMixin
@@ -177,6 +158,7 @@ export default {
         "v-select": vSelect,
         "vue-autosuggest": VueAutosuggest,
         "selectCategory": selectCategory,
+        "mAddCustomer" : mAddCustomer,
         datepicker: Datepicker
     },
     data() {
@@ -213,17 +195,17 @@ export default {
         }
     },
     methods: {
-        showModal(refname){
-          console.log(refname)
-            //this.$refs.refname.show()
-            //document.getElementById(refname+"").show()
-
-            this.$refs[refname].show()
-        },
         choose(value) {
             this.katPro = value.name;
             this.katProId = value.id;
             this.fetchArea(value.id);
+        },
+        onUpdateAnswer: function(newAnswer){
+            if(newAnswer){
+                console.log(newAnswer);
+                this.custNama = newAnswer.tmpNama;
+
+            }
         },
         fetchArea(val){
             fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
@@ -425,10 +407,39 @@ export default {
 </script>
 
 <style>
-@media (min-width: 768px) and (max-width: 979px) {
-  .suggest{
-    background-color: #f00;
-  }
+@media screen and (min-width: 350px) {
+  .suggest {width: 78%;}
+}
+@media screen and (min-width: 400px) {
+  .suggest {width: 81%;}
+}
+@media screen and (min-width: 450px) {
+  .suggest {width: 84%;}
+}
+@media screen and (min-width: 500px) {
+  .suggest {width: 85%;}
+}
+@media screen and (min-width: 550px) {
+  .suggest {width: 87%;}
+}
+/* Small devices (portrait tablets and large phones, 600px and up) */
+@media screen and (min-width: 600px) {
+  .suggest {width: 88%;}
+}
+
+/* Medium devices (landscape tablets, 768px and up) */
+@media screen and (min-width: 768px) {
+  .suggest {width: 88%;}
+}
+
+/* Large devices (laptops/desktops, 992px and up) */
+@media screen and (min-width: 992px) {
+  .suggest {width: 91%;}
+}
+
+/* Extra large devices (large laptops and desktops, 1200px and up) */
+@media only screen and (min-width: 1200px) {
+  .suggest {width: 91%;}
 }
 
 </style>>

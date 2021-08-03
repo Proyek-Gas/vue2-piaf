@@ -61,7 +61,7 @@
         </b-colxx>
      </b-row>
      <template slot="modal-footer">
-         <b-button variant="danger" @click="$emit('answers',null);hideModal('modalright');reset()">Reset</b-button>
+         <b-button variant="danger" hideModal('modalright');reset()">Reset</b-button>
          <b-button variant="primary" @click="$emit('answers', dataReturn);hideModal('modalright')" class="mr-1">Apply</b-button>
       </template>
    </b-modal>
