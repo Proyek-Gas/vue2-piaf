@@ -393,6 +393,7 @@ export default {
             filteredOptions3: [],
             selected3: {},
             dataSchItem: [],
+            itemPilih: [],
             dataItem: [],
             itemCount: ""
         };
@@ -804,7 +805,7 @@ export default {
                 return response.json()
             })
             .then(function(text) {
-                console.log(text);
+                console.log(text.data.schemeDetail);
                 return text.data.schemeDetail;
             })
             .then(resp => {
@@ -835,7 +836,7 @@ export default {
         },
         fetchItemDetail(item, index, isItem){
             console.log("Id" + item.item_id);
-            let name = "";
+            let data = {};
                 let querystring = `query{
                         itemDetail(item_id:${item.item_id} customer_id : "${this.custId}" ){
                         no
@@ -880,29 +881,18 @@ export default {
             .then(resp => {
                 //console.log(resp);
                 //console.log("Count: "+this.itemCount);
-                this.dataItem = resp;
-                item.name_s = resp.name;
-                // console.log(name);
+                this.itemPilih = resp;
                 // item.no = resp.no;
-                // item.isItem = isItem;
-                console.log(resp);
-                item.name_s = this.dataItem.name;
-                item.price = resp.detailSellingPrice;
-                console.log(item);
+                // item.name_s = this.dataItem.name;
+                // item.price = resp.detailSellingPrice;
                 // if(this.itemCount == 2){
                     //     for (let i = 0; i < this.itemCount; i++) {
                         //         console.log(this.dataItem[i]);
                 //         this.arrKumpulanArea[index].selectedItem.push(this.dataItem[i])
                 //     }
                 // }
+                console.log(this.dataItem);
             })
-            let list = {
-                id: item.item_id,
-                coat: item.coat,
-                nama: this.dataItem
-            }
-            console.log(list);
-            
         },
         getSuggestionValue3(suggestion) {
 

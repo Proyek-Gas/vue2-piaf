@@ -857,7 +857,6 @@ export default {
 		.then(resp => {
             this.detail = resp;
             console.log(this.detail);
-            this.isLoad = true;
             this.tglQuote = new Date(this.detail.created_at);
             this.tglUntil = new Date(new Date(this.detail.created_at).getTime()+(31*24*60*60*1000));
             this.custNama = this.detail.project.customer.name;
@@ -884,18 +883,19 @@ export default {
                     this.btn3 = "Close";
                 }
             }else if (this.status == 3){
-
-            }else if (this.status == 7){
-                this.btn1 = "";
+                
+                }else if (this.status == 7){
+                    this.btn1 = "";
                 this.btn2 = "";
                 this.btn3 = "Cancel";
             }
             if(this.user){
                 if(this.user.role.name.toLowerCase() == "manager"){
-                }
+                    }
             }else{
-
+                
             }
+            this.isLoad = true;
         })
         }else{
             window.location = window.location.origin +"/error?id=404&name=quote";
