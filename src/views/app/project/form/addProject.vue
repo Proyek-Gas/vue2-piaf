@@ -9,56 +9,34 @@
         <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip tooltip-label-right">
             <b-card class="mb-4" title="Profil Project">
                 <b-form-group label-cols="3" horizontal label="Customer">
-                    <vue-autosuggest
-                        class="autosuggest"
-                        :input-props="{id:'autosuggest__input', class:'form-control', placeholder:'Ketik nama customer'}"
-                        :suggestions="filteredOptions"
-                        :render-suggestion="renderSuggestion"
-                        :get-suggestion-value="getSuggestionValue"
-                        :limit="6"
-                        clearable
-                        v-model="custNama"
-                        @selected="onAutosuggestSelected"
-                        @input="onAutoSuggestInputChange"
-                    >
-                    <template slot="before-section-default"> 
-                        <div class="p-1">
+                    <b-input-group class="" style="width: 100%;">
+                        <b-input-group-prepend>
                             <b-button
                                 class="glyph-icon simple-icon-plus"
                                 variant="success"
-                                v-b-modal.modalright
                                 size="sm"
-                                style="width: 100%;"
                                 @click="showModal('modalright')">
                             </b-button>
-                            <b-modal id="modalright" ref="modalright" title="Add Customer" modal-class="modal-right">
-                                <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip tooltip-label-right">
-                                        <b-card class="mb-4" title="Profil Customer">
-                                            <b-form-group label-cols="3" horizontal label="Kode">
-                                                
-                                            </b-form-group>
-
-                                            <b-form-group label-cols="3" horizontal label="Nama">
-                                                
-                                            </b-form-group>
-
-                                            <b-form-group label-cols="3" horizontal label="Kategori">
-                                                
-                                            </b-form-group>
-
-                                            <b-form-group label-cols="3" horizontal label="Kategori Harga">
-                                                
-                                            </b-form-group>
-
-                                            <b-form-group label-cols="3" horizontal label="Limit Piutang" >
-                                                
-                                            </b-form-group>
-                                        </b-card>
-                                </b-form>
-                            </b-modal>
-                        </div>
-                    </template>
-                    </vue-autosuggest>
+                        </b-input-group-prepend>
+                        <vue-autosuggest
+                            class="autosuggest suggest"
+                            :input-props="{id:'autosuggest__input', class:'form-control', placeholder:'Ketik nama customer'}"
+                            :suggestions="filteredOptions"
+                            :render-suggestion="renderSuggestion"
+                            :get-suggestion-value="getSuggestionValue"
+                            :limit="6"
+                            clearable
+                            v-model="custNama"
+                            @selected="onAutosuggestSelected"
+                            @input="onAutoSuggestInputChange"
+                        >
+                        <!-- <template slot="before-section-default"> 
+                            <div class="p-1">
+                                
+                            </div>
+                        </template> -->
+                        </vue-autosuggest>
+                    </b-input-group>
                     <b-form-input type="text" v-model="$v.custNama.$model" :state="!$v.custNama.$error" style="display:none;" placeholder="Masukkan judul proyek"/>
                     <b-form-invalid-feedback v-if="!$v.custNama.required">Harap pilih customer</b-form-invalid-feedback>
                 </b-form-group>
@@ -139,7 +117,31 @@
                 </b-row>
             </b-card>
         </b-colxx>
+        <b-modal id="modalright" ref="modalright" title="Add Customer" modal-class="modal-right">
+            <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip tooltip-label-right">
+                    
+                        <b-form-group label-cols="3" horizontal label="Kode">
+                            
+                        </b-form-group>
 
+                        <b-form-group label-cols="3" horizontal label="Nama">
+                            
+                        </b-form-group>
+
+                        <b-form-group label-cols="3" horizontal label="Kategori">
+                            
+                        </b-form-group>
+
+                        <b-form-group label-cols="3" horizontal label="Kategori Harga">
+                            
+                        </b-form-group>
+
+                        <b-form-group label-cols="3" horizontal label="Limit Piutang" >
+                            
+                        </b-form-group>
+
+            </b-form>
+        </b-modal>
 </b-row>
 </div>
 </template>
@@ -417,3 +419,12 @@ export default {
 
 };
 </script>
+
+<style>
+@media (min-width: 768px) and (max-width: 979px) {
+  .suggest{
+    background-color: #f00;
+  }
+}
+
+</style>>
