@@ -426,7 +426,7 @@ export default {
 
 <style>
 @media only screen and (max-width: 600px) {
-  .suggest {width: 85%;}
+  .suggest {width: 80%;}
 }
 
 /* Small devices (portrait tablets and large phones, 600px and up) */
