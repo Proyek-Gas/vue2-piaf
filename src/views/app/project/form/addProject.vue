@@ -425,8 +425,14 @@ export default {
 </script>
 
 <style>
-@media only screen and (max-width: 600px) {
-  .suggest {width: 80%;}
+@media only screen and (min-width: 300px) {
+  .suggest {width: 78%;}
+}
+@media only screen and (min-width: 400px) {
+  .suggest {width: 81%;}
+}
+@media only screen and (min-width: 500px) {
+  .suggest {width: 85%;}
 }
 
 /* Small devices (portrait tablets and large phones, 600px and up) */
