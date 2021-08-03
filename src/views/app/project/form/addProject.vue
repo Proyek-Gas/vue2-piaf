@@ -421,10 +421,28 @@ export default {
 </script>
 
 <style>
-@media (min-width: 768px) and (max-width: 979px) {
-  .suggest{
-    background-color: #f00;
-  }
+@media only screen and (max-width: 600px) {
+  .suggest {width: 85%;}
 }
+
+/* Small devices (portrait tablets and large phones, 600px and up) */
+@media only screen and (min-width: 600px) {
+  .suggest {width: 89%;}
+}
+
+/* Medium devices (landscape tablets, 768px and up) */
+@media only screen and (min-width: 768px) {
+  .suggest {width: 89%;}
+} 
+
+/* Large devices (laptops/desktops, 992px and up) */
+@media only screen and (min-width: 992px) {
+  .suggest {width: 91%;}
+} 
+
+/* Extra large devices (large laptops and desktops, 1200px and up)
+@media only screen and (min-width: 1200px) {
+  .example {background: pink;}
+} */
 
 </style>>
