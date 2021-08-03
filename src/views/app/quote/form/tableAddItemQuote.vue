@@ -26,7 +26,7 @@
                           class="mb-2 mr-sm-2 mb-sm-0"
                         />
                 </template>
-                <template slot="vol" slot-scope="props" v-if="props.rowData.isItem == false">
+                <template slot="vol" slot-scope="props" >
                       <b-form-input
                           type="number"
                           v-model="props.rowData.vol"
@@ -47,28 +47,32 @@
                           class="mb-2 mr-sm-2 mb-sm-0"
                         />
                 </template>
-                <template slot="theory" slot-scope="props">
+                <template slot="theory" slot-scope="props" v-if="props.rowData.isItem == false">
                    {{theory (props.rowData)}}
                 </template>
-                <template slot="wft" slot-scope = "props">
+                <template slot="wft" slot-scope = "props" v-if="props.rowData.isItem == false">
                     {{Math.round((props.rowData.dft/props.rowData.coat)*100)/100}}
                 </template>
-                <template slot="harga" slot-scope="props">
+                <template slot="harga" slot-scope="props" >
                     {{props.rowData.price.price | currency}}
                 </template>
-                <template slot="practical" slot-scope = "props">
+                <template slot="subtotal" slot-scope = "props">
+                    {{subtotal(props.rowData)|currency}}
+                </template>
+                <template slot="practical" slot-scope = "props" v-if="props.rowData.isItem == false">
                   {{Math.round(props.rowData.theory * (1- props.rowData.loss/100)*100)/100}}
                 </template>
                 <template slot="btndel" slot-scope="props">
                     <b-button class=" btn mb-1" variant="danger default" @click="deleteItem(props.rowData.id)" v-if="props.rowData.isItem == true">Delete <i class="simple-icon-close"></i></b-button>
                     <b-button class=" btn mb-1" variant="danger default" @click="deleteItem(props.rowData.item_id)" v-else>Delete <i class="simple-icon-close"></i></b-button>
                 </template>
-             </vuetable>
+            </vuetable>
       </div>
   </div>
 </template>
 <script>
 import Vuetable from "vuetable-2/src/components/Vuetable";
+
 import {
     validationMixin
 } from "vuelidate";
@@ -87,10 +91,14 @@ const {
 
 export default{
   components : {
-      vuetable :Vuetable
+      vuetable :Vuetable,
     },
   props : ["dataComponent"],
   methods : {
+      subtotal(props){
+        props.subtotal = props.price.price * props.vol
+        return props.subtotal
+      },
        deleteItem(id){
           let data = this.dataComponent;
           let index = -1;
@@ -176,6 +184,12 @@ export default{
            },
            {
              name : "__slot:harga",
+             title : "Harga",
+             dataClass : "text-muted",
+             width : "10%"
+           },
+            {
+             name : "__slot:subtotal",
              title : "Harga",
              dataClass : "text-muted",
              width : "10%"
