@@ -93,7 +93,7 @@ export default  {
 
            {
              name : "__slot:subtotal",
-             title : "",
+             title : "Subtotal",
              dataClass : "text-muted",
              width : "10%"
            }

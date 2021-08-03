@@ -137,7 +137,9 @@
                   </b-colxx>
                 </b-row>
                 <b-row>
-                    <table-item :dataComponent="area.items"></table-item>
+                   <b-colxx xxs="12" xl="12">
+                      <table-item :dataComponent="area.items"></table-item>
+                   </b-colxx>
                 </b-row>
          </b-card>
     </b-colxx>
