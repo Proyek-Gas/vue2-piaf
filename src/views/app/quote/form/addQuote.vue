@@ -128,14 +128,12 @@
         {{custId}}
         <b-form-group label-cols="3" horizontal label="Pilih Area">
           <v-select
-            v-model="area"
-            :options="areaOptions"
-            label="name"
-            @input="newArea"
-            :disabled="proKat === ''"
-            placeholder="Harap pilih project"/>
-            <b-form-input type="text" v-model="$v.area.$model" :state="!$v.area.$error" style="display:none;" placeholder="Masukkan judul proyek"/>
-            <b-form-invalid-feedback v-if="!$v.area.required">Harap pilih area</b-form-invalid-feedback>
+          v-model="area"
+          :options="areaOptions"
+          label="name"
+          @input="newArea"
+          :disabled="proKat === ''"
+          placeholder="Harap pilih project"/>
       </b-form-group>
         <div class="separator mb-2"></div>
         <!-- {{arrKumpulanArea}} -->
@@ -196,6 +194,17 @@
                 <b-form-group label-cols="3" horizontal>
                 </b-form-group>
                 <table-item :dataComponent="areas.selectedItem"></table-item>
+                <b-row>
+                    <b-colxx xxs = "4" xl="4">
+                        Total Area :
+                    </b-colxx>
+                     <b-colxx xxs = "4" xl="4">
+                        Total Volume : {{countTotal(index)[1]}}
+                    </b-colxx>
+                     <b-colxx xxs = "4" xl="4">
+                        Total : {{countTotal(index)[0]}}
+                    </b-colxx>
+                </b-row>
          </b-card>
     </b-colxx>
     <b-colxx xxs="12" xl="4" class="col-right">
@@ -208,7 +217,7 @@
                 </p>
                 </b-colxx>
                 <b-colxx xxs="3">
-                    <b-badge pill variant="warning">New</b-badge>
+                    <b-badge pill variant="warning">Rejected(M)</b-badge>
                 </b-colxx>
                 <b-colxx xxs="3">
                     <b-badge pill variant="primary">0</b-badge>
@@ -248,7 +257,7 @@
             <b-row>
                 <b-colxx xxs="6" class="text-center">
                 <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip">
-                    <b-button type="submit" variant="primary" style="width: 100%">{{ btn1 }}</b-button>
+                    <b-button type="submit" variant="primary" style="width: 100%" @click="alrt">{{ btn1 }}</b-button>
                 </b-form>
                 </b-colxx>
                 <b-colxx xxs="6" class="text-center">
@@ -258,9 +267,6 @@
         </b-card>
     </b-colxx>
 </b-row>
-</div>
-<div v-else>
-    <div class="loading"></div>
 </div>
 </template>
 
@@ -347,17 +353,14 @@ export default {
             filteredOptions3: [],
             selected3: {},
             dataSchItem: [],
-            itemPilih: [],
-            dataItem: [],
-            itemCount: ""
+
+
+            ctrFetch : 0
         };
     },
     mixins: [validationMixin],
     validations: {
         proNama:{
-            required
-        },
-        area:{
             required
         },
     },
@@ -371,7 +374,24 @@ export default {
         },
         movePageDetail(val){
             return "/app/datatable/customerTable/cDetail?id="+val
-		},
+		    },
+        alrt(){
+          console.log(this.arrKumpulanArea)
+        },
+        countTotal(index){
+            let data = this.arrKumpulanArea[index].selectedItem;
+            let total = 0
+            let volume = 0
+            for(let i=0; i< data.length; i++){
+              total = total + parseInt(data[i].subtotal);
+              volume = volume + parseInt(data[i].vol);
+            }
+
+            this.arrKumpulanArea[index].total_harga = total;
+            this.arrKumpulanArea[index].volume_total = volume
+              console.log(this.arrKumpulanArea[index].volume_total)
+            return [this.arrKumpulanArea[index].total_harga,  this.arrKumpulanArea[index].volume_total]
+        },
         newArea(){
           let cek = true
             for(let i=0; i<this.arrKumpulanArea.length; i++){
@@ -657,7 +677,8 @@ export default {
             }
             console.log(this.filteredOptions3);
         },
-        onAutosuggestSelected3($event,a) {
+
+      async  onAutosuggestSelected3($event,a) {
           console.log(a)
           console.log($event.item)
           let cek = true
@@ -669,11 +690,12 @@ export default {
           }
           if(cek){
              //this.arrKumpulanArea[a].selectedItem.push($event.item)
+
              //cek untuk apakah ini item atau scheme
             if(cekItem){
-                this.fetchItemDetail($event.item,a,true)
+                this.fetchItemDetail($event.item,a,false,-1)
             }else{
-                this.fetchSchemeDetail($event.item,a,false)
+               this.fetchSchemeDetail($event.item,a)
             }
 
           }
@@ -723,7 +745,7 @@ export default {
                         </b-card>
             }
         },
-        fetchSchemeDetail(item,index, isItem){
+      fetchSchemeDetail(item,index){
         //  this.ctrFetch = 0;
             let querystring = `query{
                 schemeDetail(scheme_id:${item.id}){
@@ -769,23 +791,22 @@ export default {
                 return response.json()
             })
             .then(function(text) {
-                console.log(text.data.schemeDetail);
+                console.log(text);
                 return text.data.schemeDetail;
             })
             .then(resp => {
-                console.log(resp);
-                this.itemCount = resp.items.length;
-                for(let i=0; i< resp.items.length; i++){
+              for(let i=0; i< resp.items.length; i++){
+                    console.log(resp.items.length)
                     item.loss = resp.items[i].loss;
                     item.coat = resp.items[i].coat;
                     item.dft = resp.items[i].dry_film_thickness;
                     item.vol = resp.items[i].vs_volume_solid;
-                    item.item_id = resp.items[i].item_id;
+                    item.item_id = resp.items[i].item_id
                     newArrItem.push(item)
-                    console.log("fetch atas:" + item.item_id)
-                    this.fetchItemDetail(item, index, isItem);
-                }
-            //   this.fetchItemDetail(newArrItem,index,true,0)
+                    this.fetchItemDetail(item,index,true)
+              }
+              // console.log(newArrItem)
+              // this.fetchItemDetail(newArrItem,index,true,0)
               // do{
               //   let i = this.ctrFetch
               //   item.loss = resp.items[i].loss;
@@ -798,34 +819,40 @@ export default {
 
             })
         },
-        fetchItemDetail(item, index, isItem){
-            console.log("Id" + item.item_id);
-            let data = {};
-                let querystring = `query{
-                        itemDetail(item_id:${item.item_id} customer_id : "${this.custId}" ){
-                        no
-                        name
-                        id
-                            type{
-                            name
-                            id
-                            }
-                            name
-                                            vs_volume_solid
-                            itemCategory{
-                            name
-                            id
-                            }
-                        detailSellingPrice{
-                            priceCategory{
-                            id
-                            name
-                            }
-                            price
-                        }
-                        }
+       fetchItemDetail(item, index,ck,ctrItem){
+             let id = null
+             if(ck){
+               id = item.item_id
+               console.log("ahh"+id)
+             }else{
+               id = item.id
+             }
+             console.log(id)
+              let querystring = `query{
+                itemDetail(item_id:${id} customer_id : "${this.custId}" ){
+                  no
+                  name
+                  id
+                    type{
+                      name
+                      id
                     }
-                    `
+                    name
+    								vs_volume_solid
+                    itemCategory{
+                      name
+                      id
+                    }
+                  detailSellingPrice{
+                    priceCategory{
+                      id
+                      name
+                    }
+                    price
+                  }
+                }
+              }
+              `
 
             fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
                 method: 'POST',
@@ -840,22 +867,44 @@ export default {
                 return response.json()
             })
             .then(function(text) {
+                console.log(text);
                 return text.data.itemDetail;
             })
             .then(resp => {
-                //console.log(resp);
-                //console.log("Count: "+this.itemCount);
-                this.itemPilih = resp;
-                // item.no = resp.no;
-                // item.name_s = this.dataItem.name;
-                // item.price = resp.detailSellingPrice;
-                // if(this.itemCount == 2){
-                    //     for (let i = 0; i < this.itemCount; i++) {
-                        //         console.log(this.dataItem[i]);
-                //         this.arrKumpulanArea[index].selectedItem.push(this.dataItem[i])
-                //     }
+              console.log(resp)
+              // item.no = resp.no;
+              // item.name_s = resp.name
+              //   item.price = resp.detailSellingPrice;
+              //   this.ctrFetch = this.ctrFetch+1;
+              //   this.arrKumpulanArea[index].selectedItem.push(item)
+              if(ck){
+                console.log(resp)
+                let dtTmp = item
+                item = resp
+                console.log(resp)
+                console.log(item)
+                 item.no = resp.no;
+                item.name_s = resp.name
+                item.price = resp.detailSellingPrice;
+                item.loss = dtTmp.loss;
+                item.coat = dtTmp.coat;
+                item.isItem = false;
+                item.dft = dtTmp.dft;
+                item.vol = dtTmp.vol;
+                item.item_id = resp.id
+                console.log(ctrItem)
+                console.log(item)
+                this.arrKumpulanArea[index].selectedItem.push(item)
+                // if(ctrItem < item.length){
+                //   this.fetchItemDetail(item,index,true,ctrItem+1)
                 // }
-                console.log(this.dataItem);
+              }else{
+                 item.no = resp.no;
+                item.name_s = resp.name
+                item.vol = resp.vs_volume_solid
+                item.price = resp.detailSellingPrice;
+                this.arrKumpulanArea[index].selectedItem.push(item)
+              }
             })
         },
         getSuggestionValue3(suggestion) {
@@ -991,8 +1040,16 @@ export default {
         },
     },
     async mounted(){
-        this.btn1 = "Submit";
-        this.btn2 = "Draft";
+        this.status = this.$route.query.status;
+        if(this.status){
+            if(this.status == 1){
+                this.btn1 = "Submit";
+                this.btn2 = "Close";
+            }
+        }else{
+            this.btn1 = "Submit";
+            this.btn2 = "Draft";
+        }
         fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
 			method: 'POST',
 			headers: {
@@ -1024,10 +1081,10 @@ export default {
 			return text.data.customers;
 		})
 		.then(resp => {
-            this.dataCust = resp;
             this.isLoad = true;
             this.tglQuote = new Date(Date.now());
-            this.tglUntil = new Date(new Date().getTime()+(31*24*60*60*1000));
+            this.tglUntil = new Date(new Date().getTime()+(30*24*60*60*1000));
+            this.dataCust = resp;
 		})
     }
 };

@@ -16,7 +16,7 @@
                                 class="glyph-icon simple-icon-plus"
                                 variant="success"
                                 size="sm"
-                                v-b-modal.modalright 
+                                v-b-modal.modalright
                                 >
                             </b-button>
                             <mAddCustomer v-on:answers="onUpdateAnswer"></mAddCustomer>
@@ -33,9 +33,9 @@
                             @selected="onAutosuggestSelected"
                             @input="onAutoSuggestInputChange"
                         >
-                        <!-- <template slot="before-section-default"> 
+                        <!-- <template slot="before-section-default">
                             <div class="p-1">
-                                
+
                             </div>
                         </template> -->
                         </vue-autosuggest>
@@ -433,12 +433,12 @@ export default {
 /* Medium devices (landscape tablets, 768px and up) */
 @media screen and (min-width: 768px) {
   .suggest {width: 88%;}
-} 
+}
 
 /* Large devices (laptops/desktops, 992px and up) */
 @media screen and (min-width: 992px) {
   .suggest {width: 91%;}
-} 
+}
 
 /* Extra large devices (large laptops and desktops, 1200px and up) */
 @media only screen and (min-width: 1200px) {
