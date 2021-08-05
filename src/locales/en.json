@@ -19,7 +19,8 @@
     "register-button": "REGISTER",
     "reset-password-button": "RESET",
     "buy": "BUY",
-    "username": "Username"
+    "username": "Username",
+    "phone": "Phone number"
   },
   "menu": {
     "home": "Home",

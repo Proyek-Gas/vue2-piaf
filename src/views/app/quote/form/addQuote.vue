@@ -38,9 +38,20 @@
             <b-colxx xxs="12" xl="6">
             <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip tooltip-label-right">
                 <b-card class="mb-4" title="Customer">
-                    <b-form-group label-cols="3" horizontal label="Customer">
+                    <b-form-group horizontal>
+                        <b-input-group>
+                        <b-input-group-prepend>
+                            <b-button
+                                class="glyph-icon simple-icon-plus"
+                                variant="success"
+                                size="sm"
+                                v-b-modal.modalright 
+                                >
+                            </b-button>
+                            <mAddCustomer v-on:answers="onUpdateAnswer"></mAddCustomer>
+                        </b-input-group-prepend>
                         <vue-autosuggest
-                            class="autosuggest"
+                            class="autosuggest suggest"
                             :input-props="{id:'autosuggest__input', class:'form-control', placeholder:'Ketik nama customer'}"
                             :suggestions="filteredOptions"
                             :render-suggestion="renderSuggestion"
@@ -50,44 +61,8 @@
                             @selected="onAutosuggestSelected"
                             @input="onAutoSuggestInputChange"
                         >
-                        <template slot="before-section-default">
-                            <div class="p-1">
-                                <b-button
-                                    class="glyph-icon simple-icon-plus"
-                                    variant="success"
-                                    v-b-modal.modalright
-                                    size="sm"
-                                    style="width: 100%;"
-                                    @click="showModal('modalright')">
-                                </b-button>
-                                <b-modal id="modalright" ref="modalright" title="Add Customer" modal-class="modal-right">
-                                    <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip tooltip-label-right">
-                                            <b-card class="mb-4" title="Profil Customer">
-                                                <b-form-group label-cols="3" horizontal label="Kode">
-
-                                                </b-form-group>
-
-                                                <b-form-group label-cols="3" horizontal label="Nama">
-
-                                                </b-form-group>
-
-                                                <b-form-group label-cols="3" horizontal label="Kategori">
-
-                                                </b-form-group>
-
-                                                <b-form-group label-cols="3" horizontal label="Kategori Harga">
-
-                                                </b-form-group>
-
-                                                <b-form-group label-cols="3" horizontal label="Limit Piutang" >
-
-                                                </b-form-group>
-                                            </b-card>
-                                    </b-form>
-                                </b-modal>
-                            </div>
-                        </template>
                         </vue-autosuggest>
+                        </b-input-group>
                     </b-form-group>
                     <b-card class="mb-0" title="Data Customer">
                         <h6 class="text-muted text-medium mb-1">
@@ -109,9 +84,20 @@
             <b-colxx xxs="12" xl="6">
                 <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip tooltip-label-right">
                 <b-card class="mb-4" title="Project">
-                    <b-form-group label-cols="3" horizontal label="Project">
+                    <b-form-group horizontal>
+                        <b-input-group>
+                        <b-input-group-prepend>
+                            <b-button
+                                class="glyph-icon simple-icon-plus"
+                                variant="success"
+                                size="sm"
+                                v-b-modal.modalright2 
+                                >
+                            </b-button>
+                            <mAddProject v-on:answers="onUpdateAnswer" :dataChild="dataChild"></mAddProject>
+                        </b-input-group-prepend>
                         <vue-autosuggest
-                            class="autosuggest"
+                            class="autosuggest suggest"
                             :input-props="{id:'autosuggest__input2', class:'form-control', placeholder:'Ketik nama project'}"
                             :suggestions="filteredOptions2"
                             :render-suggestion="renderSuggestion2"
@@ -121,44 +107,8 @@
                             @selected="onAutosuggestSelected2"
                             @input="onAutoSuggestInputChange2"
                         >
-                        <template slot="before-section-default">
-                            <div class="p-1">
-                                <b-button
-                                    class="glyph-icon simple-icon-plus"
-                                    variant="success"
-                                    v-b-modal.modalright
-                                    size="sm"
-                                    style="width: 100%;"
-                                    @click="showModal('modalright')">
-                                </b-button>
-                                <b-modal id="modalright" ref="modalright" title="Add Customer" modal-class="modal-right">
-                                    <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip tooltip-label-right">
-                                            <b-card class="mb-4" title="Profil Customer">
-                                                <b-form-group label-cols="3" horizontal label="Kode">
-
-                                                </b-form-group>
-
-                                                <b-form-group label-cols="3" horizontal label="Nama">
-
-                                                </b-form-group>
-
-                                                <b-form-group label-cols="3" horizontal label="Kategori">
-
-                                                </b-form-group>
-
-                                                <b-form-group label-cols="3" horizontal label="Kategori Harga">
-
-                                                </b-form-group>
-
-                                                <b-form-group label-cols="3" horizontal label="Limit Piutang" >
-
-                                                </b-form-group>
-                                            </b-card>
-                                    </b-form>
-                                </b-modal>
-                            </div>
-                        </template>
                         </vue-autosuggest>
+                        </b-input-group>
                         <b-form-input type="text" v-model="$v.proNama.$model" :state="!$v.proNama.$error" style="display:none;" placeholder="Masukkan judul proyek"/>
                         <b-form-invalid-feedback v-if="!$v.proNama.required">Harap pilih project</b-form-invalid-feedback>
                     </b-form-group>
@@ -323,6 +273,8 @@ import selectCategory from "../../../../components/selectCategory.vue";
 import Datepicker from "vuejs-datepicker";
 import Switches from "vue-switches";
 import TableItem from "./tableAddItemQuote.vue"
+import mAddCustomer from "../../customer/form/modalAddCustomer.vue";
+import mAddProject from "../../project/form/modalAddProject.vue";
 
 import {
     validationMixin
@@ -348,6 +300,8 @@ export default {
         "table-item" : TableItem,
         "vue-autosuggest": VueAutosuggest,
         "selectCategory": selectCategory,
+        "mAddCustomer" : mAddCustomer,
+        "mAddProject" : mAddProject,
         datepicker: Datepicker,
     },
     data() {
@@ -363,7 +317,7 @@ export default {
             proKat: "",
             tglQuote: "",
             tglUntil: "",
-
+            dataChild: "",
             arrDetailProject : [],
 
 /////
@@ -408,6 +362,13 @@ export default {
         },
     },
     methods: {
+        onUpdateAnswer: function(newAnswer){
+            if(newAnswer){
+                console.log(newAnswer);
+                this.custNama = newAnswer.tmpNama;
+
+            }
+        },
         movePageDetail(val){
             return "/app/datatable/customerTable/cDetail?id="+val
 		},
@@ -600,7 +561,10 @@ export default {
             this.custId = suggestion.item.id;
             this.custNama = suggestion.item.name;
             this.custEmail = suggestion.item.email;
-            console.log(suggestion.item);
+            this.dataChild = suggestion.item;
+            this.proKat = ''; this.proNama = '';
+            this.dataPro = [];
+            this.filteredOptions2 = [];
             this.custCate = suggestion.item.category.name +" - "+ suggestion.item.priceCategory.name;
             return suggestion.item.name;
         },
@@ -1068,3 +1032,45 @@ export default {
     }
 };
 </script>
+
+<style>
+@media screen and (min-width: 350px) {
+  .suggest {width: 83%;}
+}
+@media screen and (min-width: 400px) {
+  .suggest {width: 86%;}
+}
+@media screen and (min-width: 450px) {
+  .suggest {width: 88%;}
+}
+@media screen and (min-width: 500px) {
+  .suggest {width: 89%;}
+}
+@media screen and (min-width: 550px) {
+  .suggest {width: 90%;}
+}
+/* Small devices (portrait tablets and large phones, 600px and up) */
+@media screen and (min-width: 600px) {
+  .suggest {width: 91%;}
+}
+
+/* Medium devices (landscape tablets, 768px and up) */
+@media screen and (min-width: 768px) {
+  .suggest {width: 91%;}
+} 
+
+/* Large devices (laptops/desktops, 992px and up) */
+@media screen and (min-width: 992px) {
+  .suggest {width: 94%;}
+} 
+
+/* Extra large devices (large laptops and desktops, 1200px and up) */
+@media only screen and (min-width: 1200px) {
+  .suggest {width: 82%;}
+}
+
+/* Extra large devices (large laptops and desktops, 1200px and up) */
+@media only screen and (min-width: 1300px) {
+  .suggest {width: 85%;}
+}
+</style>
