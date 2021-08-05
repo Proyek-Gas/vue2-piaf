@@ -304,10 +304,16 @@
 
 <script>
 import IconCard from '../../../../components/Cards/IconCard';
+import {mapGetters} from 'vuex'
 
 export default {
     components: {
         'icon-card': IconCard
+    },
+    computed :{
+      ...mapGetters({
+        currentUser: "currentUser",
+      })
     },
     data() {
         return {
@@ -338,6 +344,7 @@ export default {
                 method: 'POST',
                 headers: {
                 'Content-Type': 'application/json',
+                'Authorization' :'Bearer '+this.currentUser.jwt
                 },
                 body: JSON.stringify({
                     query: `
@@ -402,6 +409,7 @@ export default {
 			method: 'POST',
 			headers: {
 			'Content-Type': 'application/json',
+            'Authorization' :'Bearer '+this.currentUser.jwt
 			},
 			body: JSON.stringify({
 				query: `
@@ -610,6 +618,7 @@ export default {
 		method: 'POST',
 		headers: {
 		'Content-Type': 'application/json',
+        'Authorization' :'Bearer '+this.currentUser.jwt
 		},
 		body: JSON.stringify({
 			query: `
@@ -648,7 +657,7 @@ export default {
 		})
 		.then(resp => {
             this.detail = resp;
-            console.log(resp);
+            console.log(this.detail);
 			if(this.detail == null){
 				window.location = window.location.origin +"/error?id=404&name=project";
 			}else{

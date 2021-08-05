@@ -667,6 +667,7 @@ export default {
             return <b-card class="mb-0 d-flex flex-row" no-body><img src="/assets/img/profiles/l-1.jpg" alt="Card image cap" class="img-thumbnail list-thumbnail rounded-circle align-self-center m-2 small"/><div class="d-flex flex-grow-1 min-width-zero"><div class="pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero"><div class="min-width-zero"><h6 class="text-muted text-medium mb-1">{character.name}</h6><p class="text-muted text-small mb-2">{character.name}</p></div></div></div></b-card>
         },
         getSuggestionValue2(suggestion) {
+            console.log(suggestion.item);
             this.proNama = suggestion.item.name;
             this.proKat = suggestion.item.category;
             this.fetchCustomer(suggestion.item.customer_id);
@@ -944,6 +945,7 @@ export default {
                 method: 'POST',
                 headers: {
                 'Content-Type': 'application/json',
+                'Authorization' :'Bearer '+this.currentUser.jwt
                 },
                 body: JSON.stringify({
                     query: `
@@ -1084,7 +1086,7 @@ export default {
 			method: 'POST',
 			headers: {
 			'Content-Type': 'application/json',
-       'Authorization' :'Bearer '+this.currentUser.jwt
+            'Authorization' :'Bearer '+this.currentUser.jwt
 			},
 			body: JSON.stringify({
 				query: `
