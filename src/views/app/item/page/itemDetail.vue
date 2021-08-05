@@ -46,7 +46,7 @@
                                         <p class="text text-medium mb-2 mt-1 ml-1">-</p>
                                     </b-colxx>
                                     <b-colxx xxs="2" lg="2">
-                                        
+
                                     </b-colxx>
                                     <b-colxx xxs="6" lg="6">
                                         <h6>
@@ -59,7 +59,7 @@
                                         <p class="text text-medium mb-2 mt-1 ml-1">-</p>
                                     </b-colxx>
                                     <b-colxx xxs="2" lg="2">
-                                  
+
                                     </b-colxx>
                                     <b-colxx xxs="6" lg="6">
                                         <h6>
@@ -135,7 +135,7 @@
                                             <p class="text text-medium mb-2 mt-1 ml-1">-</p>
                                         </b-colxx>
                                         <b-colxx xxs="2" lg="2">
-                                            
+
                                         </b-colxx>
                                         <b-colxx xxs="6" lg="6">
                                             <h6>
@@ -148,7 +148,7 @@
                                             <p class="text text-medium mb-2 mt-1 ml-1">-</p>
                                         </b-colxx>
                                         <b-colxx xxs="2" lg="2">
-                                    
+
                                         </b-colxx>
                                         <b-colxx xxs="6" lg="6">
                                             <h6>
@@ -233,7 +233,7 @@
 
                         <b-row>
                             <b-colxx sm="12">
-                                <b-card-text> 
+                                <b-card-text>
                                 </b-card-text>
                             </b-colxx>
                         </b-row>
@@ -280,6 +280,7 @@
 
 <script>
 import IconCard from '../../../../components/Cards/IconCard';
+import {mapGetters} from 'vuex'
 
 export default {
     components: {
@@ -302,6 +303,12 @@ export default {
 			angkaPre:[],
 			arrow:[]
         }
+    },
+    computed : {
+        ...mapGetters({
+          currentUser: "currentUser",
+
+        })
     },
     methods: {
         movePageEdit(val){
@@ -334,6 +341,7 @@ export default {
 			method: 'POST',
 			headers: {
 			'Content-Type': 'application/json',
+       'Authorization' :'Bearer '+this.currentUser.jwt
 			},
 			body: JSON.stringify({
 				query: `
@@ -388,7 +396,7 @@ export default {
 								this.angkaRec.push(0);
 								this.angkaRec.push(this.recent[i].value);
 								this.angkaRec.push(this.recent[i].quote);
-							}	
+							}
 						}else{
 							if(this.recent[i].type == 3){
 								//Recent approve
@@ -398,19 +406,19 @@ export default {
 								//Recent So
 								this.angkaRec.push(this.recent[i].value);
 								this.angkaRec.push(this.recent[i].quote);
-							}	
+							}
 						}
 					}
-					
+
 					if(this.previous.length == 0){
                         if(this.recent[0].type == 7){
                             for (let i = 0; i < 2; i++) {
                                 this.arrow.push(0);
                                 this.angkaPre.push(0);
-                            }	
+                            }
                             for (let i = 0; i < this.recent.length; i++) {
-                                console.log(this.recent[i].value); 
-                                console.log(this.recent[i].quote); 
+                                console.log(this.recent[i].value);
+                                console.log(this.recent[i].quote);
                                 if(this.recent[i].value > 0 || this.recent[i].quote > 0){
                                     this.arrow.push(2);
                                 }else{
@@ -421,12 +429,12 @@ export default {
                                 }else{
                                     this.arrow.push(0);
                                 }
-                            } 
+                            }
                         }else{
                             let ctr = 0;
                             for (let i = 0; i < this.recent.length; i++) {
-                                console.log(this.recent[i].value); 
-                                console.log(this.recent[i].quote); 
+                                console.log(this.recent[i].value);
+                                console.log(this.recent[i].quote);
                                 if(this.recent[i].value > 0 ){
                                     this.arrow.push(2);
                                     ctr++;
@@ -439,11 +447,11 @@ export default {
                                 }else{
                                     this.arrow.push(0);
                                 }
-                            } 
+                            }
                             for (let i = 0; i < 4-ctr; i++) {
                                 this.arrow.push(0);
                                 this.angkaPre.push(0);
-                            }	
+                            }
                         }
 					}else{
 						for (let j = 0; j < this.previous.length; j++) {
@@ -460,7 +468,7 @@ export default {
                                     this.angkaPre.push(0);
                                     this.angkaPre.push(this.previous[j].value);
                                     this.angkaPre.push(this.previous[j].quote);
-                                }	
+                                }
                             }else{
                                 if(this.previous[j].type == 3){
                                     //Recent approve
@@ -470,7 +478,7 @@ export default {
                                     //Recent So
                                     this.angkaPre.push(this.previous[j].value);
                                     this.angkaPre.push(this.previous[j].quote);
-                                }	
+                                }
                             }
 						}
 						this.perbandingan(this.angkaRec, this.angkaPre);
@@ -480,7 +488,7 @@ export default {
                         for (let i = 0; i < 2; i++) {
                             this.arrow.push(0);
                             this.angkaRec.push(0);
-                        }	
+                        }
                         for (let i = 0; i < this.previous.length; i++) {
                             if(this.previous[i].value > 0){
                                 this.arrow.push(2);
@@ -492,7 +500,7 @@ export default {
                             }else{
                                 this.arrow.push(0);
                             }
-                        } 
+                        }
                     }else{
                         let ctr = 0;
                         for (let i = 0; i < this.previous.length; i++) {
@@ -508,11 +516,11 @@ export default {
                             }else{
                                 this.arrow.push(0);
                             }
-                        } 
+                        }
                         for (let i = 0; i < 4-ctr; i++) {
                             this.arrow.push(0);
                             this.angkaRec.push(0);
-                        }	
+                        }
                     }
 				}
                 }
@@ -539,6 +547,7 @@ export default {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json',
+             'Authorization' :'Bearer '+this.currentUser.jwt
             },
             body: JSON.stringify({
                 query: `
@@ -597,7 +606,7 @@ export default {
 			}else{
                 if(this.detail.packaging_name && this.detail.type){
                     console.log("aman");
-                    this.isLoad = true; 
+                    this.isLoad = true;
                     this.hex = this.detail.color.hex_code;
                     this.fetching();
                 }else{

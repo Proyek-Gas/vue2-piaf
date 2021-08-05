@@ -11,6 +11,7 @@ const routes = [
     path: "/",
     component: () => import(/* webpackChunkName: "home" */ "./views/home"),
     redirect: `${adminRoot}`,
+    //redirect : "/user"
   },
   {
     path: adminRoot,

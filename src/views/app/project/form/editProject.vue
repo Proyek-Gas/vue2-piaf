@@ -44,10 +44,10 @@
                 </b-form-group>
 
                 <b-form-group label-cols="3" horizontal label="Kategori">
-                    <v-select 
-                    v-model="katPro" 
-                    :options="katProOption" 
-                    label="name" @input="choose" 
+                    <v-select
+                    v-model="katPro"
+                    :options="katProOption"
+                    label="name" @input="choose"
                     placeholder="Pilih kategori"/>
                     <b-form-input type="text" v-model="$v.katPro.$model" :state="!$v.katPro.$error" style="display:none;" placeholder="Masukkan judul proyek"/>
                     <b-form-invalid-feedback v-if="!$v.katPro.required">Harap pilih kategori</b-form-invalid-feedback>
@@ -115,6 +115,7 @@ import "vue-select/dist/vue-select.css";
 import { getDirection, setThemeRadius } from "../../../../utils";
 import selectCategory from "../../../../components/selectCategory.vue";
 import Datepicker from "vuejs-datepicker";
+import {mapGetters} from 'vuex';
 
 import {
     validationMixin
@@ -135,6 +136,11 @@ const upperCase = helpers.regex('upperCase', /^[A-Z]*$/)
 const phone = helpers.regex('numeric', /^(09)[0-9]{9}/);
 
 export default {
+    computed : {
+      ...mapGetters ({
+        currentUser : "currentUser"
+      })
+    },
     components: {
         "v-select": vSelect,
         "vue-autosuggest": VueAutosuggest,
@@ -186,6 +192,7 @@ export default {
                 method: 'POST',
                 headers: {
                 'Content-Type': 'application/json',
+                 'Authorization' :'Bearer '+this.currentUser.jwt
                 },
                 body: JSON.stringify({
                     query: `
@@ -193,7 +200,7 @@ export default {
                             areaCategory(project_category:${val}) {
                                 id
                                 name
-                            }     
+                            }
                         }
                     `,
                 }),
@@ -214,7 +221,7 @@ export default {
             let mo = new Intl.DateTimeFormat('en', { month: 'short' }).format(d);
             let da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(d);
             return da + " "+ mo + " " +ye;
-        
+
         },
         clear(){
             this.tglPro = "";
@@ -237,6 +244,7 @@ export default {
                     method: 'POST',
                     headers: {
                     'Content-Type': 'application/json',
+                     'Authorization' :'Bearer '+this.currentUser.jwt
                 },
                     body: JSON.stringify({
                         query: `
@@ -296,7 +304,7 @@ export default {
         const filteredData = this.dataCust.customers.filter(option => {
             return option.name.toLowerCase().indexOf(text.toLowerCase()) > -1;
         });
-        
+
 
         // Store data in one property, and filtered in another
         this.filteredOptions = [
@@ -324,6 +332,7 @@ export default {
                 method: 'POST',
                 headers: {
                 'Content-Type': 'application/json',
+                 'Authorization' :'Bearer '+this.currentUser.jwt
                 },
                 body: JSON.stringify({
                     query: `
@@ -383,6 +392,7 @@ export default {
 			method: 'POST',
 			headers: {
 			'Content-Type': 'application/json',
+       'Authorization' :'Bearer '+this.currentUser.jwt
 			},
 			body: JSON.stringify({
 				query: `
@@ -408,6 +418,7 @@ export default {
 			method: 'POST',
 			headers: {
 			'Content-Type': 'application/json',
+       'Authorization' :'Bearer '+this.currentUser.jwt
 			},
 			body: JSON.stringify({
 				query: `
@@ -434,6 +445,6 @@ export default {
 			console.log(resp);
 		})
     }
-    
+
 };
 </script>

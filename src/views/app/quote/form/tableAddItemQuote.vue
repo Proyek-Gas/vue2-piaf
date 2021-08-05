@@ -1,4 +1,5 @@
 <template>
+<div>
   <div class="row">
       <div class="col-12">
              <vuetable
@@ -6,7 +7,8 @@
                           style="display:block; overflow-x:auto;width:auto"
                           :api-mode="false"
                           :fields="fields"
-                          :data="dataComponent"
+                          :data="dataComponent.selectedItem"
+                          @vuetable:row-changed="countVol"
 
               >
                 <template slot="name" slot-scope="props">
@@ -30,6 +32,7 @@
                       <b-form-input
                           type="number"
                           v-model="props.rowData.vol"
+                          @change="countVol"
                           class="mb-2 mr-sm-2 mb-sm-0"
                         />
                 </template>
@@ -68,6 +71,19 @@
                 </template>
             </vuetable>
       </div>
+
+  </div>
+   <b-row>
+          <b-colxx xxs = "4" xl="4">
+              Total Area : {{dataComponent.luas}}
+          </b-colxx>
+            <b-colxx xxs = "4" xl="4">
+              Total Volume : {{totalVol}}
+          </b-colxx>
+            <b-colxx xxs = "4" xl="4">
+              Total : {{totalHarga | currency}}
+          </b-colxx>
+  </b-row>
   </div>
 </template>
 <script>
@@ -99,8 +115,22 @@ export default{
         props.subtotal = props.price.price * props.vol
         return props.subtotal
       },
+      countVol(value){
+        let dttotal = this.dataComponent.selectedItem
+        let totalhrg = 0;
+        let total = 0
+        for(let i=0; i<dttotal.length; i++){
+          totalhrg = totalhrg+ parseInt(dttotal[i].vol )* parseInt(dttotal[i].price.price);
+           total = total+ parseInt(dttotal[i].vol);
+        }
+        this.dataComponent.total_harga = totalhrg;
+        this.dataComponent.volume_total = total
+        this.totalVol = total
+        this.totalHarga = totalhrg
+
+      },
        deleteItem(id){
-          let data = this.dataComponent;
+          let data = this.dataComponent.selectedItem;
           let index = -1;
           for(let i=0; i<data.length; i++){
             if(data[i].isItem){
@@ -116,15 +146,34 @@ export default{
           if(index != -1){
             data.splice (index,1)
           }
-          this.dataComponent = data
-          console.log(this.dataComponent.length)
+          this.dataComponent.selectedItem = data
+          console.log(this.dataComponent.selectedItem.length)
       },
       theory(data){
         return data.theory= Math.round((data.coat *10 /data.dft)*100)/100
-      }
+      },
+
+      //  countTotal(){
+      //       let data = this.dataComponent.selectedItem;
+      //       let total = 0
+      //       let volume = 0
+      //       console.log("dataTableItem" + data.length)
+      //       for(let i=0; i< data.length; i++){
+      //         console.log("ah")
+      //         total = total + parseInt(data[i].subtotal);
+      //         volume = volume + parseInt(data[i].vol);
+      //       }
+
+      //       this.dataComponent.total_harga = total;
+      //       this.dataComponent.volume_total = volume
+      //         console.log(this.dataComponent.volume_total)
+      //       return [this.dataComponent.total_harga,  this.dataComponent.volume_total]
+      //   },
   },
   data(){
     return {
+      totalVol : 0,
+      totalHarga : 0,
         fields : [
              {
              name : "__slot:name",
@@ -190,7 +239,7 @@ export default{
            },
             {
              name : "__slot:subtotal",
-             title : "Harga",
+             title : "Subtotal",
              dataClass : "text-muted",
              width : "10%"
            },

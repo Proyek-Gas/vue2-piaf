@@ -243,8 +243,8 @@
                 </b-form-group>
                 <b-form-group label-cols="3" horizontal>
                 </b-form-group>
-                <table-item :dataComponent="areas.selectedItem"></table-item>
-                <b-row>
+                <table-item :dataComponent="areas"></table-item>
+                <!-- <b-row>
                     <b-colxx xxs = "4" xl="4">
                         Total Area :
                     </b-colxx>
@@ -254,7 +254,7 @@
                      <b-colxx xxs = "4" xl="4">
                         Total : {{countTotal(index)[0]}}
                     </b-colxx>
-                </b-row>
+                </b-row> -->
          </b-card>
     </b-colxx>
     <b-colxx xxs="12" xl="4" class="col-right">
@@ -303,7 +303,19 @@
                 <p class="text-muted m-3" style="font-style: italic;">No customer selected</p>
             </b-card>
             <p class="text text-medium mb-2">Area</p>
-            <p class="text-muted m-3" style="font-style: italic;">No area selected</p>
+            <b-row v-if="arrKumpulanArea.length >0" class="text-left">
+                <b-colxx xxs="12">
+                  <b-row v-for="(areas) in arrKumpulanArea" v-bind:key="areas.id">
+                    <b-colxx  xxs="6"><p style="width:100%">{{areas.name}}</p></b-colxx>
+                    <b-colxx  xxs="6"><p style="width:100%">{{areas.total_harga | currency}}</p></b-colxx>
+                  </b-row>
+                  <b-row>
+                    <b-colxx xxs="6"><strong>Total:</strong></b-colxx>
+                      <b-colxx xxs="6"><strong>{{totalAll|currency}}</strong></b-colxx>
+                  </b-row>
+                </b-colxx>
+            </b-row>
+            <b-row v-else> <p class="text-muted m-3" style="font-style: italic;">No area selected</p></b-row>
             <b-row>
                 <b-colxx xxs="6" class="text-center">
                 <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip">
@@ -358,6 +370,7 @@ export default {
     },
     data() {
         return {
+
             isLoad: false,
             quote: "# 5037",
             status: "",
@@ -376,6 +389,7 @@ export default {
             arrKumpulanArea : [],
             area: "",
             kustId  : "",
+            totalAll : 0,
 ///ini nanti tak pakai
 
             luasArea : -1,
@@ -440,6 +454,9 @@ export default {
             }
           if(cek){
             this.arrKumpulanArea.push(this.area)
+            for(let i=0; i< this.arrKumpulanArea.length; i++){
+              this.totalAll += this.arrKumpulanArea[i].total_harga
+            }
           }
         },
         dateFormat(date){

@@ -5,7 +5,8 @@ import { setCurrentUser, getCurrentUser } from '../../utils'
 
 export default {
   state: {
-    currentUser: isAuthGuardActive ? getCurrentUser() : currentUser,
+ //   currentUser: isAuthGuardActive ? getCurrentUser() : currentUser,
+    currentUser : isAuthGuardActive ? getCurrentUser() : currentUser,
     loginError: null,
     processing: false,
     forgotMailSuccess: null,
@@ -20,7 +21,10 @@ export default {
   },
   mutations: {
     setUser(state, payload) {
+      console.log(state.currentUser)
+      console.log(payload)
       state.currentUser = payload
+      console.log(state.currentUser)
       state.processing = false
       state.loginError = null
     },
@@ -58,72 +62,70 @@ export default {
     login({ commit }, payload) {
       commit('clearError')
       commit('setProcessing', true)
-      firebase
-        .auth()
-        .signInWithEmailAndPassword(payload.email, payload.password)
-        .then(
-          user => {
-            const item = { uid: user.user.uid, ...currentUser }
-            setCurrentUser(item)
-            commit('setUser', item)
-          },
-          err => {
-            setCurrentUser(null);
-            commit('setError', err.message)
-            setTimeout(() => {
-              commit('clearError')
-            }, 3000)
+
+      fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+
+        },
+        body: JSON.stringify({
+          query: `
+
+          query{
+            login(phone:"${payload.email}" password:"${payload.password}"){
+              user{
+                name
+                id
+                phone
+                photo
+                email
+                role{
+                  id
+                  name
+                }
+              }
+              token
+              refreshToken
+            }
           }
-        )
-    },
-    forgotPassword({ commit }, payload) {
-      commit('clearError')
-      commit('setProcessing', true)
-      firebase
-        .auth()
-        .sendPasswordResetEmail(payload.email)
-        .then(
-          user => {
+      `
+      }),
+    }).then(function(response) {
+        return response.json()
+    }).then(function(text) {
+        return text.data.login;
+    })
+    .then(resp => {
+        if(resp == null){
+          setCurrentUser(null);
+          commit('setError', 'Username / password tidak valid')
+          setTimeout(() => {
             commit('clearError')
-            commit('setForgotMailSuccess')
-          },
-          err => {
-            commit('setError', err.message)
-            setTimeout(() => {
-              commit('clearError')
-            }, 3000)
-          }
-        )
-    },
-    resetPassword({ commit }, payload) {
-      commit('clearError')
-      commit('setProcessing', true)
-      firebase
-        .auth()
-        .confirmPasswordReset(payload.resetPasswordCode, payload.newPassword)
-        .then(
-          user => {
-            commit('clearError')
-            commit('setResetPasswordSuccess')
-          },
-          err => {
-            commit('setError', err.message)
-            setTimeout(() => {
-              commit('clearError')
-            }, 3000)
-          }
-        )
+          }, 3000)
+        }else{
+          const currentUser ={
+              id: resp.user.id,
+              title: resp.user.name,
+              img: '/assets/img/profiles/l-1.jpg',
+              date: 'Last seen today '+ new Date().getHours+":"+new Date().getMinutes,
+              role: resp.user.role.id,
+              jwt : resp.token,
+              refreshtoken : resp.refreshToken
+            };
+          const item = {token:resp.token,...currentUser } //2 jam untuk ... :v
+          setCurrentUser(item)
+          console.log(item)
+          commit('setUser', item)
+        }
+      });
+
     },
 
 
     signOut({ commit }) {
-      firebase
-        .auth()
-        .signOut()
-        .then(() => {
-          setCurrentUser(null);
-          commit('setLogout')
-        }, _error => { })
+      setCurrentUser(null);
+      commit('setLogout')
     }
   }
 }

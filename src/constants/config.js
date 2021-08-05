@@ -30,7 +30,7 @@ export const firebaseConfig = {
 
 
 
-export const currentUser = {
+export let currentUser = {
   id: 1,
   title: 'Sarah Kortney',
   img: '/assets/img/profiles/l-1.jpg',
@@ -38,7 +38,7 @@ export const currentUser = {
   role: UserRole.Admin
 }
 
-export const isAuthGuardActive = false;
+export const isAuthGuardActive = true; //okeh
 export const themeRadiusStorageKey = 'theme_radius'
 export const themeSelectedColorStorageKey = 'theme_selected_color'
 export const defaultColor = 'light.blueolympic'

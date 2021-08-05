@@ -128,6 +128,7 @@
 
 <script>
 import { VueAutosuggest } from "vue-autosuggest";
+import {mapGetters} from 'vuex'
 import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
 import { getDirection, setThemeRadius } from "../../../../utils";
@@ -138,6 +139,7 @@ import mAddCustomer from "../../customer/form/modalAddCustomer.vue";
 import {
     validationMixin
 } from "vuelidate";
+
 const {
     required,
     maxLength,
@@ -212,6 +214,7 @@ export default {
                 method: 'POST',
                 headers: {
                 'Content-Type': 'application/json',
+                 'Authorization' :'Bearer '+this.currentUser.jwt
                 },
                 body: JSON.stringify({
                     query: `
@@ -262,6 +265,7 @@ export default {
                 method: 'POST',
                 headers: {
                 'Content-Type': 'application/json',
+                 'Authorization' :'Bearer '+this.currentUser.jwt
                 },
                 body: JSON.stringify({
                     query: `
@@ -347,11 +351,17 @@ export default {
             return suggestion.item.name;
         }
     },
+    computed : {
+        ...mapGetters({
+          currentUser : "currentUsers"
+        })
+    },
     async mounted(){
         fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
         method: 'POST',
         headers: {
         'Content-Type': 'application/json',
+         'Authorization' :'Bearer '+this.currentUser.jwt
         },
         body: JSON.stringify({
           query: `

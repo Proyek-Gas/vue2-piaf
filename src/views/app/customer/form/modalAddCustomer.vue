@@ -46,6 +46,7 @@
 import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
 import { getDirection, setThemeRadius } from "../../../../utils";
+import {mapGetters} from 'vuex'
 
 import {
     validationMixin
@@ -65,6 +66,11 @@ const {
 export default {
     components: {
         "v-select": vSelect,
+    },
+    computed : {
+      ...mapGetters({
+        currentUser : 'currentUser'
+      })
     },
     data() {
         return {
@@ -124,6 +130,7 @@ export default {
                     method: 'POST',
                     headers: {
                     'Content-Type': 'application/json',
+                     'Authorization' :'Bearer '+this.currentUser.jwt
                     },
                     body: JSON.stringify({
                         query: `
@@ -148,7 +155,7 @@ export default {
                 .then(function(text) {
                     console.log(text.data);
                     return text.data.addCustomerDB;
-                    
+
                 })
                 .then(resp => {
                     if(resp.status.toLowerCase() == "success"){
@@ -182,11 +189,12 @@ export default {
 			method: 'POST',
 			headers: {
 			'Content-Type': 'application/json',
+       'Authorization' :'Bearer '+this.currentUser.jwt
 			},
 			body: JSON.stringify({
 				query: `
-					query{ customerCategory { 
-						name    
+					query{ customerCategory {
+						name
 					}}
 				`,
 			}),
@@ -205,11 +213,12 @@ export default {
 			method: 'POST',
 			headers: {
 			'Content-Type': 'application/json',
+       'Authorization' :'Bearer '+this.currentUser.jwt
 			},
 			body: JSON.stringify({
 				query: `
-					query{ priceCategory {    
-						name	
+					query{ priceCategory {
+						name
 					}}
 				`,
 			}),

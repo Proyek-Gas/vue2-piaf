@@ -93,6 +93,7 @@ import _ from "lodash";
 import MyDetailRow from "./MyDetailRow";
 import filterItem from "./filterItem"
 
+import { mapGetters } from "vuex";
 
 export default {
   props: ["title"],
@@ -102,6 +103,8 @@ export default {
     "datatable-heading": DatatableHeading,
     "filter-item" : filterItem,
    //"my-detail-row" : MyDetailRow //->ini ga error namun ga ada datanya
+
+
   },
   data() {
     return {
@@ -191,6 +194,7 @@ export default {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization' : 'Bearer ' + this.currentUser.jwt
         },
         body: JSON.stringify({
           query: `
@@ -407,7 +411,10 @@ export default {
         this.selectedItems.length > 0 &&
         this.selectedItems.length < this.items.length
       );
-    }
+    },
+     ...mapGetters({
+      currentUser: "currentUser",
+    })
   },
 };
 </script>

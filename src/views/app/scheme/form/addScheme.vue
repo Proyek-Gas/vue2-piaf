@@ -25,7 +25,7 @@
                         @selected="onAutosuggestSelected"
                         @input="onAutoSuggestInputChange"
                     >
-                    <template slot="before-section-default"> 
+                    <template slot="before-section-default">
                         <div class="p-1">
                             <b-button
                                 class="glyph-icon simple-icon-plus"
@@ -39,23 +39,23 @@
                                 <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip tooltip-label-right">
                                         <b-card class="mb-4" title="Profil Customer">
                                             <b-form-group label-cols="3" horizontal label="Kode">
-                                                
+
                                             </b-form-group>
 
                                             <b-form-group label-cols="3" horizontal label="Nama">
-                                                
+
                                             </b-form-group>
 
                                             <b-form-group label-cols="3" horizontal label="Kategori">
-                                                
+
                                             </b-form-group>
 
                                             <b-form-group label-cols="3" horizontal label="Kategori Harga">
-                                                
+
                                             </b-form-group>
 
                                             <b-form-group label-cols="3" horizontal label="Limit Piutang" >
-                                                
+
                                             </b-form-group>
                                         </b-card>
                                 </b-form>
@@ -286,11 +286,17 @@ export default {
             }
 
         },
-        checkIsian(value, type){
+        checkIsian(value, type,item){
             let cek = true;
             let cek2 = true;
+
                 if(!value){
                     cek = false;
+                     this.$toast(item+" tidak boleh kosong", {
+                        type: "warning",
+                        hideProgressBar: true,
+                        timeout: 2000
+                    });
                 }else{
                     if(type == 1){
                         if(value < 0 || value > 100){
@@ -317,10 +323,10 @@ export default {
                 let ctr = 0;
                 let ctr2 = 0;
                 let ctr3 = 0;
-                for (let i = 0; i < this.bigData.length; i++) { 
-                    let arr = this.checkIsian(this.bigData[i].coat,1);
-                    let arr2 = this.checkIsian(this.bigData[i].dft,2);
-                    let arr3 = this.checkIsian(this.bigData[i].loss,1);
+                for (let i = 0; i < this.bigData.length; i++) {
+                    let arr = this.checkIsian(this.bigData[i].coat,1,"Coat");
+                    let arr2 = this.checkIsian(this.bigData[i].dft,2,"DFT");
+                    let arr3 = this.checkIsian(this.bigData[i].loss,1,"Loss");
                     if(arr[0] == true && arr[1] == true){
                         ctr = ctr + 1;
                     }
@@ -335,21 +341,21 @@ export default {
                 console.log(ctr);
                 if(ctr < this.bigData.length){
                     sukses = false;
-                    this.$toast("Coat tidak valid", {
+                   this.$toast("Range Coat tidak valid! (1-100)", {
                         type: "warning",
                         hideProgressBar: true,
                         timeout: 2000
                     });
                 }else if (ctr2 < this.bigData.length){
                     sukses2 = false;
-                    this.$toast("Dft tidak valid", {
+                    this.$toast("Range DFT tidak valid! (1-1000)", {
                         type: "warning",
                         hideProgressBar: true,
                         timeout: 2000
                     });
                 }else if (ctr3 < this.bigData.length){
                     sukses3 = false;
-                    this.$toast("Loss tidak valid", {
+                    this.$toast("Range Loss tidak valid! (1-100)", {
                         type: "warning",
                         hideProgressBar: true,
                         timeout: 2000
@@ -365,7 +371,7 @@ export default {
                         dry_film_thickness:${this.bigData[i].dft},
                         loss:${this.bigData[i].loss}
                     }`
-                    this.itemToAdd.push(data);
+                       this.itemToAdd.push(data);
                 }
                 // console.log(this.itemToAdd);
                 fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
