@@ -45,7 +45,7 @@
                                 class="glyph-icon simple-icon-plus"
                                 variant="success"
                                 size="sm"
-                                v-b-modal.modalright 
+                                v-b-modal.modalright
                                 >
                             </b-button>
                             <mAddCustomer v-on:answers="onUpdateAnswer"></mAddCustomer>
@@ -91,7 +91,7 @@
                                 class="glyph-icon simple-icon-plus"
                                 variant="success"
                                 size="sm"
-                                v-b-modal.modalright2 
+                                v-b-modal.modalright2
                                 >
                             </b-button>
                             <mAddProject v-on:answers="onUpdateAnswer" :dataChild="dataChild"></mAddProject>
@@ -293,6 +293,8 @@ import Switches from "vue-switches";
 import TableItem from "./tableAddItemQuote.vue"
 import mAddCustomer from "../../customer/form/modalAddCustomer.vue";
 import mAddProject from "../../project/form/modalAddProject.vue";
+import {mapGetters} from 'vuex'
+
 
 import {
     validationMixin
@@ -313,6 +315,11 @@ const upperCase = helpers.regex('upperCase', /^[A-Z]*$/)
 const phone = helpers.regex('numeric', /^(09)[0-9]{9}/);
 
 export default {
+   computed : {
+      ...mapGetters ({
+        currentUser : "currentUser"
+      })
+    },
     components: {
         "v-select": vSelect,
         "table-item" : TableItem,
@@ -435,6 +442,7 @@ export default {
                 method: 'POST',
                 headers: {
                 'Content-Type': 'application/json',
+                 'Authorization' :'Bearer '+this.currentUser.jwt
                 },
                 body: JSON.stringify({
                     query: `
@@ -465,6 +473,7 @@ export default {
                 method: 'POST',
                 headers: {
                 'Content-Type': 'application/json',
+                 'Authorization' :'Bearer '+this.currentUser.jwt
                 },
                 body: JSON.stringify({
                     query: `
@@ -799,6 +808,7 @@ export default {
                 method: 'POST',
                 headers: {
                 'Content-Type': 'application/json',
+                 'Authorization' :'Bearer '+this.currentUser.jwt
                 },
                 body: JSON.stringify({
                     query: querystring,
@@ -875,6 +885,7 @@ export default {
                 method: 'POST',
                 headers: {
                 'Content-Type': 'application/json',
+                 'Authorization' :'Bearer '+this.currentUser.jwt
                 },
                 body: JSON.stringify({
                     query: querystring,
@@ -984,6 +995,7 @@ export default {
                 method: 'POST',
                 headers: {
                 'Content-Type': 'application/json',
+                 'Authorization' :'Bearer '+this.currentUser.jwt
                 },
                 body: JSON.stringify({
                     query: `
@@ -1021,6 +1033,7 @@ export default {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                     'Authorization' :'Bearer '+this.currentUser.jwt
                 },
                 body: JSON.stringify({
                     query: `
@@ -1071,6 +1084,7 @@ export default {
 			method: 'POST',
 			headers: {
 			'Content-Type': 'application/json',
+       'Authorization' :'Bearer '+this.currentUser.jwt
 			},
 			body: JSON.stringify({
 				query: `
@@ -1131,12 +1145,12 @@ export default {
 /* Medium devices (landscape tablets, 768px and up) */
 @media screen and (min-width: 768px) {
   .suggest {width: 91%;}
-} 
+}
 
 /* Large devices (laptops/desktops, 992px and up) */
 @media screen and (min-width: 992px) {
   .suggest {width: 94%;}
-} 
+}
 
 /* Extra large devices (large laptops and desktops, 1200px and up) */
 @media only screen and (min-width: 1200px) {
