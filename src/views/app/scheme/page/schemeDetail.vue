@@ -143,6 +143,7 @@
 import IconCard from '../../../../components/Cards/IconCard';
 import vTableProject from '../../project/datatable/projectTable'
 import vTableQuote from '../../quote/datatable/quoteTable'
+import { mapGetters } from "vuex";
 
 export default {
     components: {
@@ -171,6 +172,7 @@ export default {
                 method: 'POST',
                 headers: {
                 'Content-Type': 'application/json',
+                'Authorization' :'Bearer '+this.currentUser.jwt
                 },
                 body: JSON.stringify({
                     query: `
@@ -229,6 +231,7 @@ export default {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json',
+            'Authorization' :'Bearer '+this.currentUser.jwt
             },
             body: JSON.stringify({
                 query: `
@@ -292,6 +295,11 @@ export default {
         }else{
             window.location = window.location.origin +"/error?id=404&name=scheme";
         }
-    }
+    },
+    computed:{
+        ...mapGetters({
+        currentUser: "currentUser",
+    })
+    } 
 }
 </script>

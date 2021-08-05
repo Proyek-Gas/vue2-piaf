@@ -161,6 +161,7 @@ import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
 import { getDirection } from "../../../../utils";
 import selectCategory from "../../../../components/selectCategory.vue";
+import { mapGetters } from "vuex";
 
 import {
     validationMixin
@@ -270,6 +271,7 @@ export default {
                     method: 'POST',
                     headers: {
                     'Content-Type': 'application/json',
+                    'Authorization' :'Bearer '+this.currentUser.jwt
                     },
                     body: JSON.stringify({
                         query: `
@@ -512,6 +514,7 @@ export default {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json',
+            'Authorization' :'Bearer '+this.currentUser.jwt
             },
             body: JSON.stringify({
                 query: `
@@ -618,6 +621,7 @@ export default {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json',
+            'Authorization' :'Bearer '+this.currentUser.jwt
             },
             body: JSON.stringify({
                 query: `
@@ -645,6 +649,7 @@ export default {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json',
+            'Authorization' :'Bearer '+this.currentUser.jwt
             },
             body: JSON.stringify({
                 query: `
@@ -671,6 +676,7 @@ export default {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json',
+            'Authorization' :'Bearer '+this.currentUser.jwt
             },
             body: JSON.stringify({
                 query: `
@@ -697,6 +703,7 @@ export default {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json',
+            'Authorization' :'Bearer '+this.currentUser.jwt
             },
             body: JSON.stringify({
                 query: `
@@ -743,6 +750,12 @@ export default {
                 }
             }
         })
+    },
+    computed:{
+    ...mapGetters({
+    currentUser: "currentUser",
+
+    })
     }
 };
 </script>

@@ -41,6 +41,7 @@ import { VueAutosuggest } from "vue-autosuggest";
 import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
 import { getDirection, setThemeRadius } from "../../../../utils";
+import { mapGetters } from "vuex";
 
 import {
     validationMixin
@@ -111,6 +112,7 @@ export default {
                 method: 'POST',
                 headers: {
                 'Content-Type': 'application/json',
+                'Authorization' :'Bearer '+this.currentUser.jwt
                 },
                 body: JSON.stringify({
                     query: `
@@ -143,6 +145,7 @@ export default {
                 method: 'POST',
                 headers: {
                 'Content-Type': 'application/json',
+                'Authorization' :'Bearer '+this.currentUser.jwt
                 },
                 body: JSON.stringify({
                     query: `
@@ -229,6 +232,7 @@ export default {
         method: 'POST',
         headers: {
         'Content-Type': 'application/json',
+        'Authorization' :'Bearer '+this.currentUser.jwt
         },
         body: JSON.stringify({
           query: `
@@ -254,6 +258,7 @@ export default {
 			method: 'POST',
 			headers: {
 			'Content-Type': 'application/json',
+            'Authorization' :'Bearer '+this.currentUser.jwt
 			},
 			body: JSON.stringify({
 				query: `
@@ -284,7 +289,12 @@ export default {
             this.isLoad = true;
             this.dataCust = resp;
 		})
-    }
+    },
+    computed:{
+        ...mapGetters({
+        currentUser: "currentUser",
+    })
+    } 
 
 };
 </script>

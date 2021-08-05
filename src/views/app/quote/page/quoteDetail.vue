@@ -196,6 +196,7 @@ import selectCategory from "../../../../components/selectCategory.vue";
 import Datepicker from "vuejs-datepicker";
 import Switches from "vue-switches";
 import TableItem from "./tableItemQuote.vue"
+import { mapGetters } from "vuex";
 
 import {
     validationMixin
@@ -331,6 +332,7 @@ export default {
                 method: 'POST',
                 headers: {
                 'Content-Type': 'application/json',
+                'Authorization' :'Bearer '+this.currentUser.jwt
                 },
                 body: JSON.stringify({
                     query: `
@@ -361,6 +363,7 @@ export default {
                 method: 'POST',
                 headers: {
                 'Content-Type': 'application/json',
+                'Authorization' :'Bearer '+this.currentUser.jwt
                 },
                 body: JSON.stringify({
                     query: `
@@ -409,6 +412,7 @@ export default {
                 // method: 'POST',
                 // headers: {
                 // 'Content-Type': 'application/json',
+                // 'Authorization' :'Bearer '+this.currentUser.jwt
                 // },
                 // body: JSON.stringify({
                 //     query: `
@@ -654,6 +658,7 @@ export default {
                 method: 'POST',
                 headers: {
                 'Content-Type': 'application/json',
+                'Authorization' :'Bearer '+this.currentUser.jwt
                 },
                 body: JSON.stringify({
                     query: `
@@ -705,6 +710,7 @@ export default {
                 method: 'POST',
                 headers: {
                 'Content-Type': 'application/json',
+                'Authorization' :'Bearer '+this.currentUser.jwt
                 },
                 body: JSON.stringify({
                     query: `
@@ -742,6 +748,7 @@ export default {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization' :'Bearer '+this.currentUser.jwt
                 },
                 body: JSON.stringify({
                     query: `
@@ -785,6 +792,7 @@ export default {
 			method: 'POST',
 			headers: {
 			'Content-Type': 'application/json',
+            'Authorization' :'Bearer '+this.currentUser.jwt
 			},
 			body: JSON.stringify({
 				query: `
@@ -900,6 +908,11 @@ export default {
         }else{
             window.location = window.location.origin +"/error?id=404&name=quote";
         }
-    }
+    },
+    computed:{
+        ...mapGetters({
+        currentUser: "currentUser",
+    })
+    } 
 };
 </script>

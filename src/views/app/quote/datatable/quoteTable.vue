@@ -170,7 +170,7 @@ import DatatableHeading from "../../../../containers/datatable/DatatableHeading"
 import _ from "lodash";
 import MyDetailRow from "./MyDetailRow";
 import filterQuote from "./filterQuote"
-
+import { mapGetters } from "vuex";
 
 export default {
   props: ["title"],
@@ -318,6 +318,7 @@ export default {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization' :'Bearer '+this.currentUser.jwt
         },
         body: JSON.stringify({
           query: querystring
@@ -434,6 +435,7 @@ export default {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization' :'Bearer '+this.currentUser.jwt
         },
         body: JSON.stringify({
           query: `
@@ -648,6 +650,7 @@ export default {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization' :'Bearer '+this.currentUser.jwt
         },
         body: JSON.stringify({
           query: querystring
@@ -674,7 +677,12 @@ export default {
         this.selectedItems.length > 0 &&
         this.selectedItems.length < this.items.length
       );
-    }
+    },
+    computed:{
+        ...mapGetters({
+        currentUser: "currentUser",
+    })
+    } 
   },
 
 };

@@ -189,8 +189,8 @@ export default {
         fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
 			method: 'POST',
 			headers: {
-			'Content-Type': 'application/json',
-       'Authorization' :'Bearer '+this.currentUser.jwt
+            'Content-Type': 'application/json',
+            'Authorization' :'Bearer '+this.currentUser.jwt
 			},
 			body: JSON.stringify({
 				query: `
@@ -214,7 +214,7 @@ export default {
 			method: 'POST',
 			headers: {
 			'Content-Type': 'application/json',
-       'Authorization' :'Bearer '+this.currentUser.jwt
+            'Authorization' :'Bearer '+this.currentUser.jwt
 			},
 			body: JSON.stringify({
 				query: `

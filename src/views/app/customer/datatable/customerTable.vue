@@ -498,7 +498,7 @@ export default {
         this.selectedItems.length < this.items.length
       );
     },
-     ...mapGetters({
+    ...mapGetters({
       currentUser: "currentUser",
 
     })

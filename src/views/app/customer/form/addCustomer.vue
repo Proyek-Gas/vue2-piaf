@@ -134,6 +134,8 @@ import selectCategory from "../../../../components/selectCategory.vue";
 import jsonCity from './json/cities.json'
 import jsonProvince from './json/provinces.json';
 import jsonCountry from './json/countries.json';
+import { mapGetters } from "vuex";
+
 
 import {
     validationMixin
@@ -231,6 +233,7 @@ export default {
                     method: 'POST',
                     headers: {
                     'Content-Type': 'application/json',
+                    'Authorization' :'Bearer '+this.currentUser.jwt
                     },
                     body: JSON.stringify({
                         query: `
@@ -341,6 +344,7 @@ export default {
 			method: 'POST',
 			headers: {
 			'Content-Type': 'application/json',
+            'Authorization' :'Bearer '+this.currentUser.jwt
 			},
 			body: JSON.stringify({
 				query: `
@@ -363,6 +367,7 @@ export default {
 			method: 'POST',
 			headers: {
 			'Content-Type': 'application/json',
+            'Authorization' :'Bearer '+this.currentUser.jwt
 			},
 			body: JSON.stringify({
 				query: `
@@ -382,6 +387,13 @@ export default {
             this.katHargaOption = resp
             this.katHarga = this.katHargaOption[10].name;
 		})
+    },
+    computed:{
+    ...mapGetters({
+      currentUser: "currentUser",
+
+    })
     }
+  
 };
 </script>
