@@ -26,7 +26,6 @@
                     <b-form-group :label="$t('user.password')" class="has-float-label mb-4">
                         <b-form-input type="password" v-model="$v.form.password.$model" :state="!$v.form.password.$error" />
                         <b-form-invalid-feedback v-if="!$v.form.password.required">Please enter your password</b-form-invalid-feedback>
-
                     </b-form-group>
                     <div class="d-flex justify-content-between align-items-center">
 
@@ -105,11 +104,10 @@ export default {
     methods: {
         ...mapActions(["login"]),
         formSubmit() {
-            this.$v.$touch();
+
               this.$v.$touch();
         //    this.form.phone= "piaf-vue@coloredstrategies.com";
          //   this.form.password = "piaf123";
-            this.$v.form.$touch();
             this.$v.form.$touch();
             if (!this.$v.form.$anyError) {
                 this.login({

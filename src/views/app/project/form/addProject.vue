@@ -9,6 +9,7 @@
         <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip tooltip-label-right">
             <b-card class="mb-4" title="Profil Project">
                 <b-form-group label-cols="3" horizontal label="Customer">
+                    <div xxs="12">
                     <b-input-group>
                         <b-input-group-prepend>
                             <b-button
@@ -39,6 +40,7 @@
                         </template> -->
                         </vue-autosuggest>
                     </b-input-group>
+                    </div>
                     <b-form-input type="text" v-model="$v.custNama.$model" :state="!$v.custNama.$error" style="display:none;" placeholder="Masukkan judul proyek"/>
                     <b-form-invalid-feedback v-if="!$v.custNama.required">Harap pilih customer</b-form-invalid-feedback>
                 </b-form-group>
@@ -357,6 +359,7 @@ export default {
         })
     },
     async mounted(){
+        console.log(window.innerWidth);
         fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
         method: 'POST',
         headers: {
@@ -449,7 +452,11 @@ export default {
 
 /* Extra large devices (large laptops and desktops, 1200px and up) */
 @media only screen and (min-width: 1200px) {
-  .suggest {width: 91%;}
+  .suggest {width: 89%;}
 }
 
-</style>>
+/* Extra large devices (large laptops and desktops, 1200px and up) */
+@media only screen and (min-width: 1300px) {
+  .suggest {width: 91%;}
+}
+</style>

@@ -142,6 +142,7 @@ export default {
                                     priceCategoryName:"${this.katHarga}"
                                     categoryName:"${this.kategori}"
                                 }){
+                                    id
                                     status
                                     message
                                 }
