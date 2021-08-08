@@ -207,10 +207,6 @@ export default {
   //   },
   // },
   mounted() {
-
-
-
-
     fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
         method: 'POST',
         headers: {
@@ -498,7 +494,7 @@ export default {
         this.selectedItems.length < this.items.length
       );
     },
-     ...mapGetters({
+    ...mapGetters({
       currentUser: "currentUser",
 
     })

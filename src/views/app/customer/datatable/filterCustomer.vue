@@ -71,6 +71,8 @@ import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
 import Datepicker from "vuejs-datepicker";
 
+import { mapGetters } from "vuex";
+
 export default {
   components: {
     "v-select": vSelect,
@@ -178,6 +180,7 @@ export default {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization' :'Bearer '+this.currentUser.jwt
       },
       body: JSON.stringify({
         query: `
@@ -205,6 +208,7 @@ export default {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization' :'Bearer '+this.currentUser.jwt
       },
       body: JSON.stringify({
         query: `
@@ -227,6 +231,12 @@ export default {
         this.ListKategoriKustomer = resp
       });
 
+  },
+  computed:{
+    ...mapGetters({
+      currentUser: "currentUser",
+
+    })
   }
 };
 </script>

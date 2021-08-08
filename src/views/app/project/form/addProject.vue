@@ -130,13 +130,13 @@
 
 <script>
 import { VueAutosuggest } from "vue-autosuggest";
-import {mapGetters} from 'vuex'
 import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
 import { getDirection, setThemeRadius } from "../../../../utils";
 import selectCategory from "../../../../components/selectCategory.vue";
 import Datepicker from "vuejs-datepicker";
 import mAddCustomer from "../../customer/form/modalAddCustomer.vue";
+import {mapGetters} from 'vuex';
 
 import {
     validationMixin
@@ -178,6 +178,8 @@ export default {
             katProId: 0,
             katProOption: [],
             katArea: [],
+            arrTmp: [],
+            arrFilter: "",
 
             filteredOptions: [],
             selected: {},
@@ -208,7 +210,7 @@ export default {
             if(newAnswer){
                 console.log(newAnswer);
                 this.custNama = newAnswer.tmpNama;
-
+                this.filterCust(this.custNama);
             }
         },
         fetchArea(val){
@@ -249,6 +251,43 @@ export default {
         clear(){
             this.tglPro = "";
         },
+        filterCust(nama){
+            fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                'Authorization' :'Bearer '+this.currentUser.jwt
+                },
+                body: JSON.stringify({
+                    query: `
+                        query{
+                        customers(filter:{
+                            search:"${nama}"
+                        }){
+                            count
+                            customers{
+                                id
+                                name
+                            }
+                        }
+                        }
+                    `,
+                }),
+            })
+            .then(function(response) {
+                return response.json()
+            })
+            .then(function(text) {
+                return text.data.customers;
+            })
+            .then(resp => {
+                this.arrTmp = resp;
+                var parsedyourElement = JSON.parse(JSON.stringify(this.arrTmp));
+                this.arrFilter = parsedyourElement;
+                this.custId = this.arrFilter.customers[this.arrFilter.count-1].id;
+                console.log(this.custId);
+            });
+        },
         onValitadeFormSubmit() {
             this.$v.$touch();
             if(!this.$v.$invalid){
@@ -267,7 +306,7 @@ export default {
                 method: 'POST',
                 headers: {
                 'Content-Type': 'application/json',
-                 'Authorization' :'Bearer '+this.currentUser.jwt
+                'Authorization' :'Bearer '+this.currentUser.jwt
                 },
                 body: JSON.stringify({
                     query: `
@@ -349,22 +388,15 @@ export default {
             this.custId = suggestion.item.id;
             this.custNama = suggestion.item.name;
             this.custPhone = suggestion.item.workPhone;
-            console.log(this.custPhone);
             return suggestion.item.name;
         }
     },
-    computed : {
-        ...mapGetters({
-          currentUser : "currentUsers"
-        })
-    },
-    async mounted(){
-        console.log(window.innerWidth);
+    mounted(){
         fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
         method: 'POST',
         headers: {
         'Content-Type': 'application/json',
-         'Authorization' :'Bearer '+this.currentUser.jwt
+        'Authorization' :'Bearer '+this.currentUser.jwt
         },
         body: JSON.stringify({
           query: `
@@ -390,6 +422,7 @@ export default {
 			method: 'POST',
 			headers: {
 			'Content-Type': 'application/json',
+            'Authorization' :'Bearer '+this.currentUser.jwt
 			},
 			body: JSON.stringify({
 				query: `
@@ -414,7 +447,12 @@ export default {
             this.isLoad = true;
             this.dataCust = resp;
 		})
-    }
+    },
+    computed: {
+        ...mapGetters({
+          currentUser : "currentUser"
+        })
+    },
 
 };
 </script>

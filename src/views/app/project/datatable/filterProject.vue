@@ -117,7 +117,7 @@ import DateRangePicker from 'vue2-daterange-picker'
 //you need to import the CSS manually
 import 'vue2-daterange-picker/dist/vue2-daterange-picker.css'
 import { VueAutosuggest } from "vue-autosuggest";
-
+import { mapGetters } from "vuex";
 
 export default {
   components: {
@@ -248,6 +248,7 @@ export default {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization' :'Bearer '+this.currentUser.jwt
       },
       body: JSON.stringify({
         query: `
@@ -276,6 +277,7 @@ export default {
           method: 'POST',
           headers: {
           'Content-Type': 'application/json',
+          'Authorization' :'Bearer '+this.currentUser.jwt
           },
           body: JSON.stringify({
             query: `
@@ -301,10 +303,13 @@ export default {
             this.customerSelection = resp
             this.customerSelectionClone = resp
         })
-
- }
-
-  }
+    }
+  },
+  computed:{
+        ...mapGetters({
+        currentUser: "currentUser",
+    })
+  } 
 };
 </script>
 

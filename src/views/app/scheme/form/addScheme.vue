@@ -190,6 +190,7 @@ import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
 import { getDirection } from "../../../../utils";
 import selectCategory from "../../../../components/selectCategory.vue";
+import { mapGetters } from "vuex";
 
 import {
     validationMixin
@@ -378,6 +379,7 @@ export default {
                     method: 'POST',
                     headers: {
                     'Content-Type': 'application/json',
+                    'Authorization' :'Bearer '+this.currentUser.jwt
                     },
                     body: JSON.stringify({
                         query: `
@@ -609,6 +611,7 @@ export default {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json',
+            'Authorization' :'Bearer '+this.currentUser.jwt
             },
             body: JSON.stringify({
                 query: queryString,
@@ -645,10 +648,12 @@ export default {
         }
     },
     async mounted(){
+        console.log(this.currentUser);
         fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json',
+            'Authorization' :'Bearer '+this.currentUser.jwt
             },
             body: JSON.stringify({
                 query: `
@@ -695,6 +700,12 @@ export default {
         .then(resp => {
             this.isLoad = true;
             this.dataItem = resp;
+        })
+    },
+    computed:{
+        ...mapGetters({
+          currentUser: "currentUser",
+    
         })
     }
 };

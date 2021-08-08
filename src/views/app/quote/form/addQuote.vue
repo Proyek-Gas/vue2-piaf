@@ -94,7 +94,7 @@
                                 v-b-modal.modalright2
                                 >
                             </b-button>
-                            <mAddProject v-on:answers="onUpdateAnswer" :dataChild="dataChild"></mAddProject>
+                            <mAddProject v-on:answerss="onUpdateAnswer2" :dataPassing="dataPassing" ref="dataPassing"></mAddProject>
                         </b-input-group-prepend>
                         <vue-autosuggest
                             class="autosuggest suggest"
@@ -124,8 +124,6 @@
             </b-form>
             </b-colxx>
         </b-row>
-        {{area}}
-        {{custId}}
         <b-form-group label-cols="3" horizontal label="Pilih Area">
           <v-select
           v-model="area"
@@ -280,6 +278,9 @@
     </b-colxx>
 </b-row>
 </div>
+<div v-else>
+    <div class="loading"></div>
+</div>
 </template>
 
 <script>
@@ -335,15 +336,16 @@ export default {
             isLoad: false,
             quote: "# 5037",
             status: "",
+            dataPassing:"",
             custEmail: "",
             custId: "",
             custNama: "",
             custCate: "",
+            proId:"",
             proNama: "",
             proKat: "",
             tglQuote: "",
             tglUntil: "",
-            dataChild: "",
             arrDetailProject : [],
 
 /////
@@ -386,12 +388,129 @@ export default {
         },
     },
     methods: {
+        // passingData(){
+        //     console.log(this.dataPassing)
+        //     this.dataPassing.tmpId = this.custId;
+        //     this.dataPassing.tmpNama = this.custNama;
+        // },
         onUpdateAnswer: function(newAnswer){
             if(newAnswer){
                 console.log(newAnswer);
                 this.custNama = newAnswer.tmpNama;
-
+                this.filterCust(this.custNama);
             }
+        },
+        onUpdateAnswer2: function(newAnswer){
+            if(newAnswer){
+                console.log(newAnswer);
+                this.proNama = newAnswer.tmpNama;
+                this.filterPro(this.proNama);
+            }
+        },
+        filterCust(nama){
+            fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                'Authorization' :'Bearer '+this.currentUser.jwt
+                },
+                body: JSON.stringify({
+                    query: `
+                        query{
+                        customers(filter:{
+                            search:"${nama}"
+                        }){
+                            count
+                            customers{
+                                id
+                                name
+                                email
+                                category{
+                                    name
+                                }
+                                priceCategory{
+                                    name
+                                }
+                            }
+                        }
+                        }
+                    `,
+                }),
+            })
+            .then(function(response) {
+                return response.json()
+            })
+            .then(function(text) {
+                return text.data.customers;
+            })
+            .then(resp => {
+                this.arrTmp = resp;
+                var parsedyourElement = JSON.parse(JSON.stringify(this.arrTmp));
+                this.arrFilter = parsedyourElement;
+                this.custId = this.arrFilter.customers[this.arrFilter.count-1].id;
+                this.custEmail = this.arrFilter.customers[this.arrFilter.count-1].email;
+                this.custCate = this.arrFilter.customers[this.arrFilter.count-1].category.name +" - " + this.arrFilter.customers[this.arrFilter.count-1].priceCategory.name;
+                console.log(this.custId);
+            });
+        },
+        filterPro(nama){
+            console.log(`
+                        query{
+                            projects(filter:{
+                                search:"${nama}"
+                            }){
+                                count
+                                projects{
+                                    id
+                                    name
+                                    category{
+                                        name
+                                    }
+                                }
+                            }
+                        }
+                    `);
+            fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                'Authorization' :'Bearer '+this.currentUser.jwt
+                },
+                body: JSON.stringify({
+                    query: `
+                        query{
+                            projects(filter:{
+                                search:"${nama}"
+                            }){
+                                count
+                                projects{
+                                    id
+                                    name
+                                    category{
+                                        name
+                                    }
+                                }
+                            }
+                        }
+                    `,
+                }),
+            })
+            .then(function(response) {
+                return response.json()
+            })
+            .then(function(text) {
+                console.log(text.data);
+                return text.data.projects;
+            })
+            .then(resp => {
+                console.log(resp);
+                this.arrTmp = resp;
+                var parsedyourElement = JSON.parse(JSON.stringify(this.arrTmp));
+                this.arrFilter = parsedyourElement;
+                //this.proNama = this.arrFilter.projects[this.arrFilter.count-1].name;
+                //this.proKat = this.arrFilter.projects[this.arrFilter.count-1].category.name;
+                //console.log(this.proNama);
+            });
         },
         movePageDetail(val){
             return "/app/datatable/customerTable/cDetail?id="+val
@@ -570,7 +689,7 @@ export default {
             }
         },
         onFormReset(){
-            this.custNama=""; this.custEmail="";this.namaPro = "";this.tglQuote = "";this.katPro = "";
+            this.custNama=""; this.custEmail="";this.custCate="";this.namaPro = "";this.tglQuote = "";this.katPro = "";
             this.$v.$reset();
         },
         //autoSuggest customer
@@ -608,10 +727,12 @@ export default {
             this.custNama = suggestion.item.name;
             this.custEmail = suggestion.item.email;
             this.dataChild = suggestion.item;
-            this.proKat = ''; this.proNama = '';
+            this.proKat = ''; this.proNama = '';this.proId = '';
             this.dataPro = [];
             this.filteredOptions2 = [];
             this.custCate = suggestion.item.category.name +" - "+ suggestion.item.priceCategory.name;
+            this.dataPassing = suggestion.item;
+            console.log(this.dataPassing);
             return suggestion.item.name;
         },
 
@@ -667,6 +788,8 @@ export default {
             return <b-card class="mb-0 d-flex flex-row" no-body><img src="/assets/img/profiles/l-1.jpg" alt="Card image cap" class="img-thumbnail list-thumbnail rounded-circle align-self-center m-2 small"/><div class="d-flex flex-grow-1 min-width-zero"><div class="pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero"><div class="min-width-zero"><h6 class="text-muted text-medium mb-1">{character.name}</h6><p class="text-muted text-small mb-2">{character.name}</p></div></div></div></b-card>
         },
         getSuggestionValue2(suggestion) {
+            console.log(suggestion.item);
+            this.proId = suggestion.item.id;
             this.proNama = suggestion.item.name;
             this.proKat = suggestion.item.category;
             this.fetchCustomer(suggestion.item.customer_id);
@@ -957,6 +1080,7 @@ export default {
                 method: 'POST',
                 headers: {
                 'Content-Type': 'application/json',
+                'Authorization' :'Bearer '+this.currentUser.jwt
                 },
                 body: JSON.stringify({
                     query: `
@@ -1084,6 +1208,7 @@ export default {
         },
     },
     async mounted(){
+        console.log(this.currentUser.role);
         this.status = this.$route.query.status;
         if(this.status){
             if(this.status == 1){
@@ -1098,7 +1223,7 @@ export default {
 			method: 'POST',
 			headers: {
 			'Content-Type': 'application/json',
-       'Authorization' :'Bearer '+this.currentUser.jwt
+            'Authorization' :'Bearer '+this.currentUser.jwt
 			},
 			body: JSON.stringify({
 				query: `

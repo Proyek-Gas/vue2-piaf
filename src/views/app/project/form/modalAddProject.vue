@@ -2,8 +2,7 @@
     <b-modal id="modalright2" ref="modalright" title="Add Project" modal-class="modal-right">
         <b-form @submit.prevent="onValitadeFormSubmit2" class="av-tooltip tooltip-label-right">
             <b-form-group label-cols="3" horizontal label="Customer">
-                <b-form-input type="text" v-model="$v.custNama.$model" :state="!$v.custNama.$error" disabled placeholder="Harap pilih customer"/>
-                <b-form-invalid-feedback v-if="!$v.custNama.required">Harap pilih customer</b-form-invalid-feedback>        
+                <b-form-input type="text" v-model="dataPassing.name" :state="!$v.custNama.$error" disabled placeholder="Harap pilih customer"/>
             </b-form-group>
             <b-form-group label-cols="3" horizontal label="Nama" >
                 <b-form-input type="text" v-model="$v.namaPro.$model" :state="!$v.namaPro.$error" placeholder="Masukkan judul proyek"/>
@@ -25,11 +24,11 @@
         <b-row>
             <b-colxx xxs="6" class="text-center">
                 <b-form @submit.prevent="onValitadeFormSubmit2('modalright');" class="av-tooltip">
-                    <b-button @click="passingData();$emit('answers', dataReturn);" type="submit" variant="primary" style="width: 100%">Add</b-button>
+                    <b-button @click="passingData();$emit('answerss', dataReturn);" type="submit" variant="primary" style="width: 100%">Add</b-button>
                 </b-form>
             </b-colxx>
             <b-colxx xxs="6" class="text-center">
-                <b-button @click="$emit('answers',null);onFormReset2()" type="submit" variant="danger" style="width: 100%">Reset</b-button>
+                <b-button @click="$emit('answerss',null);onFormReset2()" type="submit" variant="danger" style="width: 100%">Reset</b-button>
             </b-colxx>
             </b-row>
         </template>
@@ -41,6 +40,7 @@ import { VueAutosuggest } from "vue-autosuggest";
 import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
 import { getDirection, setThemeRadius } from "../../../../utils";
+import { mapGetters } from "vuex";
 
 import {
     validationMixin
@@ -62,19 +62,22 @@ export default {
         "v-select": vSelect,
         "vue-autosuggest": VueAutosuggest
     },
+    props:['dataPassing'],
     data() {
         return {
             isLoad: false,
             custPhone: "",
             custId: "",
             custNama: "",
-            customer: "",
             namaPro: "",
             tglPro: "",
             katPro: "",
             katProId: 0,
             katProOption: [],
             katArea: [],
+            dataReturn:{
+                tmpNama: ""
+            },
 
             filteredOptions: [],
             selected: {},
@@ -102,7 +105,7 @@ export default {
             this.fetchArea(value.id);
         },
         passingData(){
-            if(!this.$v.custNama.$invalid && !this.$v.namaPro.$invalid && !this.$v.katro.$invalid){
+            if(!this.$v.namaPro.$invalid && !this.$v.katPro.$invalid){
                 this.dataReturn.tmpNama = this.namaPro;
             }
         },
@@ -111,6 +114,7 @@ export default {
                 method: 'POST',
                 headers: {
                 'Content-Type': 'application/json',
+                'Authorization' :'Bearer '+this.currentUser.jwt
                 },
                 body: JSON.stringify({
                     query: `
@@ -133,25 +137,27 @@ export default {
                 this.katArea = resp;
             })
         },
-        onValitadeFormSubmit2() {
+        onValitadeFormSubmit2(refname) {
             this.$v.custNama.$touch();
             this.$v.namaPro.$touch();
             this.$v.katPro.$touch();
-            if(!this.$v.custNama.$invalid && !this.$v.namaPro.$invalid && !this.$v.katPro.$invalid){
+            if(!this.$v.namaPro.$invalid && !this.$v.katPro.$invalid){
                 console.log("valid");
                 fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
                 method: 'POST',
                 headers: {
                 'Content-Type': 'application/json',
+                'Authorization' :'Bearer '+this.currentUser.jwt
                 },
                 body: JSON.stringify({
                     query: `
                         mutation{
                             addProject(params:{
-                                customer_id:"${this.custId}"
+                                customer_id:"${this.dataPassing.id}"
                                 name:"${this.namaPro}"
                                 project_category:${this.katProId}
                             }){
+                                id
                                 status
                                 message
                             }
@@ -167,13 +173,15 @@ export default {
 					return text.data.addProject;
 				})
 				.then(resp => {
-					console.log(resp.message);
+					console.log(resp.id);
 					if(resp.status.toLowerCase() == "success"){
                         this.$toast(resp.message, {
                             type: "success",
                             hideProgressBar: true,
                             timeout: 2000
                         });
+                        this.$refs[refname].hide();
+                        this.onFormReset2();
                     }else{
                         this.$toast(resp.message, {
                             type: "error",
@@ -186,7 +194,7 @@ export default {
                 console.log("error");
             }
         },
-        onFormReset(){
+        onFormReset2(){
             this.custNama=""; this.custPhone="";this.namaPro = "";this.tglPro = "";this.katPro = "";
             this.$v.$reset();
         },
@@ -225,19 +233,21 @@ export default {
         }
     },
     async mounted(){
+        this.custNama = this.dataPassing.name;
         fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
         method: 'POST',
         headers: {
         'Content-Type': 'application/json',
+        'Authorization' :'Bearer '+this.currentUser.jwt
         },
         body: JSON.stringify({
           query: `
             query{
-                          projectCategory{
-                              id
-                              name
-                          }
-                      }
+                projectCategory{
+                    id
+                    name
+                }
+            }
           `,
         }),
       })
@@ -254,6 +264,7 @@ export default {
 			method: 'POST',
 			headers: {
 			'Content-Type': 'application/json',
+            'Authorization' :'Bearer '+this.currentUser.jwt
 			},
 			body: JSON.stringify({
 				query: `
@@ -284,7 +295,12 @@ export default {
             this.isLoad = true;
             this.dataCust = resp;
 		})
-    }
+    },
+    computed:{
+        ...mapGetters({
+        currentUser: "currentUser",
+    })
+    } 
 
 };
 </script>

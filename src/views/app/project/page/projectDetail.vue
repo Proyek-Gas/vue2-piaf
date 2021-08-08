@@ -23,8 +23,8 @@
                         <p v-if="hpCust != ''" class="text-muted text-small mb-2">{{ hpCust }}</p>
                         <p v-else class="text-muted text-small mb-3" style="font-style: italic;">(Handphone)</p>
                     <h6>
-                        <b-badge class="mb-4" pill variant="warning">{{ katCust }}</b-badge>
-                        <b-badge class="mb-4" pill variant="secondary">{{ katHargaCust }}</b-badge>
+                        <b-badge class="mb-4" pill variant="warning">{{ katCust.name }}</b-badge>
+                        <b-badge class="mb-4" pill variant="secondary">{{ katHargaCust.name }}</b-badge>
                     </h6>
                 </b-card>
                 </b-colxx>
@@ -304,10 +304,16 @@
 
 <script>
 import IconCard from '../../../../components/Cards/IconCard';
+import {mapGetters} from 'vuex'
 
 export default {
     components: {
         'icon-card': IconCard
+    },
+    computed :{
+      ...mapGetters({
+        currentUser: "currentUser",
+      })
     },
     data() {
         return {
@@ -317,6 +323,8 @@ export default {
 			period: '',
 			detail: [],
             katArea: [],
+            katCust: "",
+            katHargaCust: "",
             namaCust: '',
             tlpCust: '',
             hpCust: '',
@@ -338,6 +346,7 @@ export default {
                 method: 'POST',
                 headers: {
                 'Content-Type': 'application/json',
+                'Authorization' :'Bearer '+this.currentUser.jwt
                 },
                 body: JSON.stringify({
                     query: `
@@ -402,6 +411,7 @@ export default {
 			method: 'POST',
 			headers: {
 			'Content-Type': 'application/json',
+            'Authorization' :'Bearer '+this.currentUser.jwt
 			},
 			body: JSON.stringify({
 				query: `
@@ -603,13 +613,13 @@ export default {
     },
     async mounted() {
         this.proId = this.$route.query.id;
-        console.log(this.proId);
         if(this.proId){
         this.period = 'M';
 		fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
 		method: 'POST',
 		headers: {
 		'Content-Type': 'application/json',
+        'Authorization' :'Bearer '+this.currentUser.jwt
 		},
 		body: JSON.stringify({
 			query: `
@@ -648,13 +658,11 @@ export default {
 		})
 		.then(resp => {
             this.detail = resp;
-            console.log(resp);
+            console.log(this.detail);
 			if(this.detail == null){
 				window.location = window.location.origin +"/error?id=404&name=project";
 			}else{
                 this.isLoad = true;
-				this.katCust = this.detail.customer.category.name;
-				this.katHargaCust = this.detail.customer.priceCategory.name;
 				this.custId = this.detail.customer.id;
 				this.namaCust = this.detail.customer.name;
                 this.katPro = this.detail.category.name;
@@ -667,6 +675,13 @@ export default {
                     this.tlpCust = this.detail.customer.workPhone;
                     this.hpCust = this.detail.customer.mobilePhone;
                 }
+                if(!this.detail.customer.category){
+                    this.katCust = '';
+                }else{
+                    this.katCust = this.detail.customer.category;
+                }
+                this.katHargaCust = this.detail.customer.priceCategory;
+                console.log(this.detail);
                 this.fetching();
 			}
 		})

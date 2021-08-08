@@ -145,6 +145,7 @@
 import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
 import Datepicker from "vuejs-datepicker";
+import { mapGetters } from "vuex";
 
 export default {
   components: {
@@ -302,6 +303,7 @@ export default {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json',
+            'Authorization' :'Bearer '+this.currentUser.jwt
             },
             body: JSON.stringify({
               query: querystring,
@@ -324,6 +326,7 @@ export default {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization' :'Bearer '+this.currentUser.jwt
       },
       body: JSON.stringify({
         query: `
@@ -340,7 +343,6 @@ export default {
       }).then(function(response) {
           return response.json()
       }).then(function(text) {
-        console.log(text.data)
           return text.data.quoteStatuses;
       })
       .then(resp => {
@@ -353,6 +355,7 @@ export default {
           method: 'POST',
           headers: {
           'Content-Type': 'application/json',
+          'Authorization' :'Bearer '+this.currentUser.jwt
           },
           body: JSON.stringify({
             query: `
@@ -371,7 +374,6 @@ export default {
           return response.json()
         })
         .then(function(text) {
-          console.log(text)
           return text.data.customers.customers;
         })
         .then(resp => {
@@ -384,6 +386,7 @@ export default {
           method: 'POST',
           headers: {
           'Content-Type': 'application/json',
+          'Authorization' :'Bearer '+this.currentUser.jwt
           },
           body: JSON.stringify({
             query: `
@@ -401,7 +404,6 @@ export default {
           return response.json()
         })
         .then(function(text) {
-          console.log(text)
           return text.data.projects.projects;
         })
         .then(resp => {
@@ -413,6 +415,7 @@ export default {
           method: 'POST',
           headers: {
           'Content-Type': 'application/json',
+          'Authorization' :'Bearer '+this.currentUser.jwt
           },
           body: JSON.stringify({
             query: `
@@ -435,7 +438,6 @@ export default {
           return response.json()
         })
         .then(function(text) {
-          console.log(text)
           return text.data.users.users;
         })
         .then(resp => {
@@ -443,6 +445,11 @@ export default {
             this.listUserClone = resp
         })
 
-  }
+  },
+  computed:{
+        ...mapGetters({
+        currentUser: "currentUser",
+    })
+  } 
 };
 </script>

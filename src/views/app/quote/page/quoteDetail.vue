@@ -113,9 +113,9 @@
                     <b-colxx xxs="12" xl="6">
                         <b-row>
                             <b-colxx xxs="6" xl="6" class="text-right">
-                            <p class="text text-medium mt-1">
-                                Luas Area :
-                            </p>
+                                <p class="text text-medium mt-1">
+                                    Luas Area :
+                                </p>
                             </b-colxx>
                             <b-colxx xxs="6" xl="6" class="text-left">
                             <p class="text text-medium mt-1">
@@ -123,7 +123,6 @@
                             </p>
                             </b-colxx>
                         </b-row>
-
                     </b-colxx>
                 </b-row>
                 <b-row>
@@ -138,10 +137,178 @@
                 </b-row>
                 <b-row>
                    <b-colxx xxs="12" xl="12">
-                      <table-item :dataComponent="area.items"></table-item>
+                    <p class="text text-medium mt-3">
+                        Item
+                    </p>
+                    <table-item :dataComponent="area.items"></table-item>
                    </b-colxx>
                 </b-row>
          </b-card>
+        <h4>Other Version</h4>
+        <div v-if="arrVersi == ''">
+            <b-card class="mb-4 text-center">
+                <p class="text-muted text-medium mt-1" style="font-style: italic;">
+                    This is the latest version
+                </p>
+            </b-card>
+        </div>
+        <div v-else>
+            <b-row class="mb-3">
+                <b-colxx xxs="6" class="text-center">
+                    <b-button @click="previous" variant="primary" style="width: 50%">Previous</b-button>
+                </b-colxx>
+                <b-colxx xxs="6" class="text-center">
+                <b-button @click="next" variant="danger" style="width: 50%">Next</b-button>
+                </b-colxx>
+            </b-row>
+            <h4>Version {{ versi }}</h4>
+            <div class="separator mb-5"></div> 
+            <b-colxx xxs="12" xl="12">
+                <b-row>
+                    <b-colxx xxs="6" xl="6">
+                        <h1>Logo dan <br> profil perusahaan</h1>
+                    </b-colxx>
+                    <b-colxx xxs="6" xl="6" class="mb-3">
+                        <b-row>
+                            <b-colxx xxs="6" xl="6" class="text-left">
+                            <p class="text text-medium mt-1">
+                                Quote
+                            </p>
+                            </b-colxx>
+                            <b-colxx xxs="6" xl="6" class="text-left">
+                            <p class="text text-medium mt-1">
+                                {{ quote }}
+                            </p>
+                            </b-colxx>
+                            <b-colxx xxs="6" xl="6" class="text-left">
+                            <p class="text text-medium mt-1">
+                                Tanggal
+                            </p>
+                            </b-colxx>
+                            <b-colxx xxs="6" xl="6" class="text-left">
+                            <p class="text text-medium mt-1">
+                                {{ dateFormat(new Date(arrVersi.created_at)) }}
+                            </p>
+                            </b-colxx>
+                            <b-colxx xxs="6" xl="6" class="text-left">
+                            <p class="text text-medium mt-1" :style="returnColor(new Date(tglUntil),new Date(new Date(arrVersi.created_at).getTime()+(31*24*60*60*1000)))">
+                                Berlaku sampai
+                            </p>
+                            </b-colxx>
+                            <b-colxx xxs="6" xl="6" class="text-left">
+                            <p class="text text-medium mt-1">
+                                {{ dateFormat(new Date(new Date(arrVersi.created_at).getTime()+(31*24*60*60*1000))) }}
+                            </p>
+                            </b-colxx>
+                        </b-row>
+                    </b-colxx>
+                </b-row>
+                <div class="separator mb-5"></div>
+                <b-row>
+                    <b-colxx xxs="12" xl="6">
+                    <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip tooltip-label-right">
+                        <b-card class="mb-4" title="Customer">
+                            <b-card class="mb-0" title="Data Customer" :style="returnColor(custNama, arrVersi.project.customer.name)">
+                                <h6 class="text-muted text-medium mb-1">
+                                    {{ arrVersi.project.customer.name }}
+                                </h6>
+                                <p class="text-muted text-small mb-2">
+                                    {{ arrVersi.project.customer.email }}
+                                </p>
+                                <p class="text-muted text-small mb-2">
+                                    {{ arrVersi.project.customer.category.name + " - " + arrVersi.project.customer.priceCategory.name }}
+                                </p>
+                            </b-card>
+                        </b-card>
+                    </b-form>
+                    </b-colxx>
+                    <b-colxx xxs="12" xl="6">
+                        <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip tooltip-label-right">
+                        <b-card class="mb-4" title="Project">
+                            <b-card class="mb-0" title="Data Project">
+                                <h6 class="text-muted text-medium mb-1" :style="returnColor(proNama, arrVersi.project.name)">
+                                    {{ arrVersi.project.name }}
+                                </h6>
+                                <p class="text-muted text-small mb-2">
+                                    {{ arrVersi.project.category.name }}
+                                </p>
+                            </b-card>
+                        </b-card>
+                    </b-form>
+                    </b-colxx>
+                </b-row>
+                <div class="separator mb-2"></div>
+                <b-card class="mb-4" v-for="area in arrVersi.areaItems" :key="area.category.id" >
+                        <b-row style="margin-bottom: 2vh">
+                            <b-colxx xxs="6" xl="6"><h2>{{area.category.name}}</h2></b-colxx>
+                        </b-row>
+                        <b-row>
+                            <b-colxx xxs="12" xl="6">
+                                <b-row>
+                                    <b-colxx xxs="6" xl="6" class="text-left">
+                                    <p class="text text-medium mt-1" :style="returnColor(arrKumpulanArea.surface_preparation,area.surface_preparation)">
+                                        Section Area :
+                                    </p>
+                                    </b-colxx>
+                                    <b-colxx xxs="6" xl="6" class="text-left">
+                                        <div v-if="area.surface_preparation != null" >
+                                            <div v-for="item in splitSurface(area.surface_preparation)" :key="item">
+                                                <h6>
+                                                    <b-badge class="mb-0" pill variant="secondary" style="width: 100%;">{{ item }}</b-badge>
+                                                </h6>
+                                            </div>
+                                        </div>
+                                        <div v-else>
+                                            <p class="text-muted text-medium mt-1" style="font-style: italic;">No surface selected</p>
+                                        </div>
+                                    </b-colxx>
+                                </b-row>
+                            </b-colxx>
+                            <b-colxx xxs="12" xl="6">
+                                <b-row>
+                                    <b-colxx xxs="6" xl="6" class="text-right">
+                                    <p class="text text-medium mt-1" :style="returnColor(arrKumpulanArea.surface_area,area.surface_area)">
+                                        Luas Area :
+                                    </p>
+                                    </b-colxx>
+                                    <b-colxx xxs="6" xl="6" class="text-left">
+                                    <p class="text text-medium mt-1">
+                                        {{ area.surface_area }}
+                                    </p>
+                                    </b-colxx>
+                                </b-row>
+
+                            </b-colxx>
+                        </b-row>
+                        <b-row>
+
+                        <b-colxx xxs="12" xl="12" class="text-left">
+                            <p class="mb-2">
+                                HPP/Total
+                                <span class="float-right text-muted">  {{area.total_hpp |currency}}/  {{area.total | currency}}</span>
+                            </p>
+                                <b-progress :value="(area.total_hpp / area.total) * 100"></b-progress>
+                        </b-colxx>
+                        </b-row>
+                        <b-row>
+                        <b-colxx xxs="12" xl="12">
+                            <p class="text text-medium mt-3" :style="returnColor(arrKumpulanArea.length,area.items.length)">
+                                Item
+                            </p>
+                            <table-item :dataComponent="area.items"></table-item>
+                        </b-colxx>
+                        </b-row>
+                </b-card>
+            </b-colxx>
+        </div>
+        <!-- <glide-component :settings="glideSingleOption">
+            <div class="glide__slide" v-for="i in 2" :key="i">
+                <h6>
+                    <b-badge class="mb-0" pill variant="secondary" style="width: 50%;">{{ arrVersi.created_at  }}</b-badge> 
+                </h6>
+            </div>
+        </glide-component> -->
+        
     </b-colxx>
     <b-colxx xxs="12" xl="4" class="col-right">
         <div class="mb-4" style="position: sticky; top: 20vh">
@@ -196,6 +363,8 @@ import selectCategory from "../../../../components/selectCategory.vue";
 import Datepicker from "vuejs-datepicker";
 import Switches from "vue-switches";
 import TableItem from "./tableItemQuote.vue"
+import { mapGetters } from "vuex";
+import GlideComponent from '../../../../components/Carousel/GlideComponent'
 
 import {
     validationMixin
@@ -222,6 +391,7 @@ export default {
         "vue-autosuggest": VueAutosuggest,
         "selectCategory": selectCategory,
         datepicker: Datepicker,
+        'glide-component': GlideComponent,
         "table-item" : TableItem
     },
     data() {
@@ -239,33 +409,21 @@ export default {
             tglUntil: "",
             detail: [],
             arrDetailProject : [],
-/////
             arrKumpulanArea : [],
-            area: "",
-///ini nanti tak pakai
-
-            luasArea : -1,
-            arrSelectedItem : [],
-
-
-            surface: [],
-            surfaceOptions: [],
+            arrTmp: [],
+            arrVersi: "",
+            versi: 1,
           //  schItem: "",
             primarySmall: false,
             btn1: "",
             btn2: "",
             btn3: "",
 
-            areaOptions: [],
-            filteredOptions: [],
-            selected: {},
-            dataCust: [],
-            filteredOptions2: [],
-            selected2: {},
-            dataPro: [],
-            filteredOptions3: [],
-            selected3: {},
-            dataSchItem: []
+            glideSingleOption: {
+                gap: 5,
+                perView: 1,
+                type: "carousel"
+            },
         };
     },
     mixins: [validationMixin],
@@ -275,6 +433,40 @@ export default {
         },
     },
     methods: {
+        returnColor(a,b){
+            if(a != b){
+                const style = {
+                    color: "yellow",
+                }
+                return style
+            }
+        },
+        // returnStyle(a,b){
+        //     const style = {};
+        //     console.log(a)
+        //     if(a != b){
+        //         style = {
+        //             color: "yellow",
+        //         }
+        //     }
+        //     return style;
+        // },
+        previous(){
+            if(this.versi > 1){
+                if(this.versi == this.qVer){
+                    this.versi = this.versi - 1;
+                }
+                this.fetchVersion(this.versi);
+            }
+        },
+        next(){
+            if(this.versi < this.qVer){
+                if(this.versi == this.qVer){
+                    this.versi = this.versi + 1;
+                }
+                this.fetchVersion(this.versi);
+            }
+        },
         movePageDetail(val){
             return "/app/datatable/customerTable/cDetail?id="+val
 		},
@@ -292,7 +484,6 @@ export default {
         splitSurface(arr){
             let adaKoma = false;
             let tmp = [];
-            console.log(arr);
             if(arr != null){
             for (let i = 0; i < arr.length; i++) {
                 if(arr.charAt(i) == ','){
@@ -301,10 +492,12 @@ export default {
             }
             console.log(adaKoma);
             if(adaKoma){
-                let arrTmp = arr.split(",");
-                for (let i = 0; i < arrTmp.length; i++) {
+                let arrTmp = arr.split(',');
+                console.log(arrTmp.length);
+                for (let i = 0; i < 3; i++) {
+                
                     for (let j = 0; j < this.surfaceOptions.length; j++) {
-                        if(parseInt(arrTmp[i]) == this.surfaceOptions[j].id){
+                        if(arrTmp[i] == this.surfaceOptions[j].id){
                             console.log(this.surfaceOptions[j].name);
                             tmp.push(this.surfaceOptions[j].name);
                         }
@@ -331,6 +524,7 @@ export default {
                 method: 'POST',
                 headers: {
                 'Content-Type': 'application/json',
+                'Authorization' :'Bearer '+this.currentUser.jwt
                 },
                 body: JSON.stringify({
                     query: `
@@ -361,6 +555,7 @@ export default {
                 method: 'POST',
                 headers: {
                 'Content-Type': 'application/json',
+                'Authorization' :'Bearer '+this.currentUser.jwt
                 },
                 body: JSON.stringify({
                     query: `
@@ -381,6 +576,7 @@ export default {
             })
             .then(resp => {
                 this.surfaceOptions = resp;
+                console.log(this.surfaceOptions);
             })
         },
         onValitadeFormSubmit() {
@@ -409,6 +605,7 @@ export default {
                 // method: 'POST',
                 // headers: {
                 // 'Content-Type': 'application/json',
+                // 'Authorization' :'Bearer '+this.currentUser.jwt
                 // },
                 // body: JSON.stringify({
                 //     query: `
@@ -460,307 +657,71 @@ export default {
             this.custNama=""; this.custEmail="";this.namaPro = "";this.tglQuote = "";this.katPro = "";
             this.$v.$reset();
         },
-        //autoSuggest customer
-        onAutoSuggestInputChange(text, oldText) {
-        if (text === "") {
-            /* Maybe the text is null but you wanna do
-            *  something else, but don't filter by null.
-            */
-            this.custEmail = '';
-            this.custCate = '';this.custId = '';
-            this.proNama = '';this.proKat = '';
-        }
-        const filteredData = this.dataCust.customers.filter(option => {
-            return option.name.toLowerCase().indexOf(text.toLowerCase()) > -1;
-        });
-
-        // Store data in one property, and filtered in another
-        this.filteredOptions = [
-            {
-            data: filteredData
-            }
-        ];
-        },
-
-        onAutosuggestSelected(item) {
-            this.selected = item;
-        },
-        renderSuggestion(suggestion) {
-            const character = suggestion.item;
-            return <b-card class="mb-0 d-flex flex-row" no-body><img src="/assets/img/profiles/l-1.jpg" alt="Card image cap" class="img-thumbnail list-thumbnail rounded-circle align-self-center m-2 small"/><div class="d-flex flex-grow-1 min-width-zero"><div class="pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero"><div class="min-width-zero"><h6 class="text-muted text-medium mb-1">{character.name}</h6><p class="text-muted text-small mb-2">{character.workPhone}</p></div></div></div></b-card>
-        },
-        getSuggestionValue(suggestion) {
-            this.custId = suggestion.item.id;
-            this.custNama = suggestion.item.name;
-            this.custEmail = suggestion.item.email;
-            console.log(suggestion.item);
-            this.custCate = suggestion.item.category.name +" - "+ suggestion.item.priceCategory.name;
-            return suggestion.item.name;
-        },
-
-        //autoSuggest project
-        onAutoSuggestInputChange2(text, oldText) {
-        if (text === "") {
-            /* Maybe the text is null but you wanna do
-            *  something else, but don't filter by null.
-            */
-            console.log("masuk");
-            this.proKat = '';
-            this.dataPro = [];
-            this.filteredOptions2 = [];
-        }
-        console.log("data:"+this.filteredOptions2);
-        if(this.custId == ""){
-            if(text !== "" && text.length >= 2){
-                this.fetchProject("",text);
-                setTimeout(() => {
-                    const filteredData = this.dataPro.projects.filter(option => {
-                        return option.name.toLowerCase().indexOf(text.toLowerCase()) > -1;
-                });
-                this.filteredOptions2 = [
-                    {
-                        data: filteredData
-                    }
-                ];
-                }, 500);
-            }
-        // Store data in one property, and filtered in another
-        }else{
-            if(text !== "" && text.length >= 2){
-                this.fetchProject(this.custId,text);
-                setTimeout(() => {
-                    const filteredData = this.dataPro.projects.filter(option => {
-                        return option.name.toLowerCase().indexOf(text.toLowerCase()) > -1;
-                });
-                this.filteredOptions2 = [
-                    {
-                        data: filteredData
-                    }
-                ];
-                }, 500);
-            }
-        }
-        },
-
-        onAutosuggestSelected2(item) {
-            this.selected2 = item;
-        },
-        renderSuggestion2(suggestion) {
-            const character = suggestion.item;
-            return <b-card class="mb-0 d-flex flex-row" no-body><img src="/assets/img/profiles/l-1.jpg" alt="Card image cap" class="img-thumbnail list-thumbnail rounded-circle align-self-center m-2 small"/><div class="d-flex flex-grow-1 min-width-zero"><div class="pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero"><div class="min-width-zero"><h6 class="text-muted text-medium mb-1">{character.name}</h6><p class="text-muted text-small mb-2">{character.name}</p></div></div></div></b-card>
-        },
-        getSuggestionValue2(suggestion) {
-            this.proNama = suggestion.item.name;
-            this.proKat = suggestion.item.category;
-            this.fetchCustomer(suggestion.item.customer_id);
-            this.fetchArea(this.proKat.id);
-            this.fetchSurface();
-            return suggestion.item.name;
-        },
-        deleteProject(index){
-            this.arrKumpulanArea.splice(index,1)
-        },
-
-        //autoSuggest item
-        onAutoSuggestInputChange3(text, oldText) {
-        if (text === "") {
-            /* Maybe the text is null but you wanna do
-            *  something else, but don't filter by null.
-            */
-            //this.item = '';
-            this.dataSchItem = [];
-            this.filteredOptions3 = [];
-        }
-        console.log(this.primarySmall);
-            if(text !== "" && text.length >= 2){
-                this.fetchSchItem(text);
-                console.log("masuk1");
-                    const filteredData = this.dataSchItem.filter(option => {
-                        return option.name.toLowerCase().indexOf(text.toLowerCase()) > -1;
-                    });
-                    this.filteredOptions3 = [
-                        {
-                            data: filteredData
-                        }
-                    ];
-            }
-            console.log(this.filteredOptions3);
-        },
-
-        onAutosuggestSelected3($event,a) {
-          console.log(a)
-          console.log($event.item)
-          let cek = true
-          for(let i=0; i<this.arrKumpulanArea[a].selectedItem.length; i++){
-              if(this.arrKumpulanArea[a].selectedItem[i].id == $event.item.id){
-                cek = false
-              }
-          }
-          if(cek){
-             this.arrKumpulanArea[a].selectedItem.push($event.item)
-          }
-          console.log(this.arrKumpulanArea[a].selectedItem)
-        },
-        renderSuggestion3(suggestion) {
-            const character = suggestion.item;
-            console.log(character.isItem);
-            if(character.isItem == true){
-                return <b-card class="mb-0 d-flex flex-row" no-body>
-                            <div src="/assets/img/profiles/l-1.jpg"
-                                alt="Card image cap"
-                                class="align-self-center list-thumbnail-letters rounded-circle small mr-2"
-                                style={{ background: `#${character.color.hex_code}` }}>
-                            </div>
-                            <div class="d-flex flex-grow-1 min-width-zero">
-                                <div class="pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero">
-                                    <div class="min-width-zero">
-                                        <h6 class="text-muted text-medium mb-1">{character.name}</h6>
-                                        <p class="text-muted text-small mb-2">{character.item_code} - {character.itemCategory.name}</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <h6 class="mr-1 text-muted text-medium mt-3">
-                                ITEM
-                            </h6>
-                        </b-card>
-
-            }else{
-                return <b-card class="mb-0 d-flex flex-row" no-body>
-                            <div src="/assets/img/profiles/l-1.jpg"
-                                alt="Card image cap"
-                                class="align-self-center list-thumbnail-letters small mr-2"
-                                style={{ background: `#${character.color.hex_code}` }}>
-                            </div>
-                            <div class="d-flex flex-grow-1 min-width-zero">
-                                <div class="pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero">
-                                    <div class="min-width-zero">
-                                        <h6 class="text-muted text-medium mb-1">{character.name}</h6>
-                                        <p class="text-muted text-small mb-2">{character.color.ind_name}</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <h6 class="mr-1 text-muted text-medium mt-3">
-                                SCHEME
-                            </h6>
-                        </b-card>
-            }
-        },
-        getSuggestionValue3(suggestion) {
-
-            return suggestion.item.name;
-        },
-        fetchCustomer(val){
+        fetchVersion(ver){
             fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
                 method: 'POST',
                 headers: {
                 'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    query: `
-                        query{ customerDetail(customer_id:"${val}") {
-                            name
-                            email
-                            category{
-                                name
-                            }
-                            priceCategory{
-                                name
-                            }
-                        }
-                        }
-                    `,
-                }),
-            })
-            .then(function(response) {
-                return response.json()
-            })
-            .then(function(text) {
-                console.log(text.data.customerDetail);
-                return text.data.customerDetail;
-            })
-            .then(resp => {
-                console.log(resp)
-                if(resp != null){
-                    this.custNama = resp.name;
-                    this.custEmail = resp.email;
-                    this.custCate = resp.category.name +" - "+ resp.priceCategory.name;
-                }
-            })
-        },
-        fetchProject(custId,proName){
-            let str = "";
-            let filter = "";
-            let search = "";
-            if(custId != "" || proName != ""){
-                if(custId != ""){
-                    filter = `customer_id: "${custId}"`;
-                }
-                if(proName != ""){
-                    search = `search:"${proName}"`;
-                }
-                str = "(filter: {"+filter+" "+search+"})";
-                console.log(str);
-            }
-            fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
-                method: 'POST',
-                headers: {
-                'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    query: `
-                        query {projects ${str}{
-                        count
-                        projects{
-                            name
-                            id
-                            status
-                            customer_id
-                            category {
-                                id
-                                name
-                            }
-                        }
-                        }
-                        }
-                    `,
-                }),
-            })
-            .then(function(response) {
-                return response.json()
-            })
-            .then(function(text) {
-                console.log(text.data.projects);
-                return text.data.projects;
-            })
-            .then(resp => {
-                this.dataPro = resp;
-                console.log(this.dataPro);
-            })
-        },
-        fetchSchItem(val){
-            fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
+                'Authorization' :'Bearer '+this.currentUser.jwt
                 },
                 body: JSON.stringify({
                     query: `
                         query{
-                            schemeAndItemSearch(search:"${val}"){
-                                id
+                        quoteDetail(quote_id:${this.qId} version:${ver}){
+                            id
+                            project{
+                            id
+                            name
+                            category{
                                 name
-                                color{
-                                    id_ral
-                                    hex_code
-                                    ind_name
-                                    eng_name
+                            }
+                            customer{
+                                name
+                                email
+                                category{
+                                    name
                                 }
-                                isItem
-                                item_code
-                                itemCategory{
+                                priceCategory{
                                     name
                                 }
                             }
+                            }
+                            status{
+                                id
+                                name
+                            }
+                            total
+                            last_version
+                            notes
+                            created_at
+                            userCreate{
+                            name
+                            role{
+                                name
+                            }
+                            }
+                            areaItems{
+                                category{
+                                name
+                                }
+                                surface_area
+                                total
+                                total_hpp
+                                surface_preparation
+                                items{
+                                    item_name
+                                    price
+                                    subtotal
+                                    item_id
+                                    liter
+                                    coat
+                                    dry_film_thickness
+                                    theoritical
+                                    practical
+                                    loss
+                                }
+                            }
+                        }
                         }
                     `,
                 }),
@@ -769,15 +730,18 @@ export default {
                 return response.json()
             })
             .then(function(text) {
-                return text.data.schemeAndItemSearch;
+                return text.data.quoteDetail;
             })
             .then(resp => {
-                this.dataSchItem = resp;
-                console.log(this.dataSchItem);
-            })
-        },
+                this.arrTmp = resp
+                var parsedyourElement = JSON.parse(JSON.stringify(this.arrTmp));
+                this.arrVersi = parsedyourElement;
+                console.log(this.arrVersi);
+            });
+        }
     },
     async mounted(){
+        console.log(GlideComponent.data);
         this.qId = this.$route.query.id;
         this.qVer = this.$route.query.ver;
         if(this.qId && this.qVer){
@@ -785,6 +749,7 @@ export default {
 			method: 'POST',
 			headers: {
 			'Content-Type': 'application/json',
+            'Authorization' :'Bearer '+this.currentUser.jwt
 			},
 			body: JSON.stringify({
 				query: `
@@ -869,23 +834,38 @@ export default {
             this.fetchSurface();
             this.user = this.detail.userCreate;
             this.status = this.detail.status.id;
-            console.log(this.status);
             if(this.status == 1){
-                if(this.user || this.user.role.name.toLowerCase() == "manager"){
+                if(this.user.name == this.currentUser.title || this.user.role.name.toLowerCase() == "manager"){
                     this.btn1 = "Submit";
                     this.btn2 = "Close";
                 }
             }
             else if(this.status == 2){
-                if(this.user || this.user.role.name.toLowerCase() == "manager"){
+                if(this.user.role.name.toLowerCase() == "manager"){
                     this.btn1 = "Approve";
                     this.btn2 = "Reject";
+                }
+                if(this.user.name == this.currentUser.title){
                     this.btn3 = "Close";
                 }
             }else if (this.status == 3){
-                
-                }else if (this.status == 7){
-                    this.btn1 = "";
+                if(this.user.name == this.currentUser.title || this.user.role.name.toLowerCase() == "manager"){
+                    this.btn1 = "Rejected by Customer";
+                    this.btn2 = "Forward";
+                }
+            }else if (this.status == 4){
+                if(this.user.name == this.currentUser.title || this.user.role.name.toLowerCase() == "manager"){
+                    this.btn1 = "Close";
+                    this.btn2 = "Submit";
+                }
+            }else if (this.status == 5){
+                if(this.user.name == this.currentUser.title || this.user.role.name.toLowerCase() == "manager"){
+                    this.btn1 = "Close";
+                    this.btn2 = "Revise";
+                }
+            }
+            else if (this.status == 7){
+                this.btn1 = "";
                 this.btn2 = "";
                 this.btn3 = "Cancel";
             }
@@ -895,11 +875,19 @@ export default {
             }else{
                 
             }
+            if(this.qVer > 1){
+                this.fetchVersion(this.versi);
+            }
             this.isLoad = true;
         })
         }else{
             window.location = window.location.origin +"/error?id=404&name=quote";
         }
-    }
+    },
+    computed:{
+        ...mapGetters({
+        currentUser: "currentUser",
+    })
+    } 
 };
 </script>
