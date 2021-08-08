@@ -66,7 +66,7 @@
 
                   <b-row>
                     <b-colxx xxs="12">
-                        <b-button class="mb-1" variant="primary default" style="width:100%">{{ props.rowData.project.name }}</b-button>
+                        <b-button class="mb-1" variant="primary default" style="width:100%" :to="moveProjectDetail(props.rowData.project.id)">{{ props.rowData.project.name }}</b-button>
                     </b-colxx>
                   </b-row>
                   <b-row>
@@ -86,7 +86,7 @@
                         <b-row>
                             <b-colxx xxs="12" xl="6"> customer_id: </b-colxx>
                             <b-colxx xxs="12" xl="6">
-                              <b-button :id="'tool-cd'+props.rowData.id" variant="secondary" class="mr-1 mb-1 small"  :to="movePageDetailCustomer(props.rowData.project.customer_id)">{{props.rowData.project.customer_id}}</b-button>
+                              <b-badge :id="'tool-cd'+props.rowData.id" variant="success" class="mr-1 mb-1 small "  :to="movePageDetailCustomer(props.rowData.project.customer_id)">{{props.rowData.project.customer_id}}</b-badge>
                                 <!-- <b-tooltip :target="'tool-cd'+props.rowData.id"
                                 placement="right"
                                 v-if="fetchDetailCustomer(props.rowData.project.customer_id).length != 0"
@@ -252,7 +252,7 @@ export default {
 
       ],
       sort: "",
-      perPage: 4,
+      perPage: 5,
       search: "",
       from: 0,
       to: 0,
@@ -362,6 +362,9 @@ export default {
     },
     onChangePage(page) {
       this.$refs.vuetable.changePage(page);
+    },
+    moveProjectDetail(val){
+      return "../datatable/projectTable/pDetail?id="+val
     },
     showAvatar(row){
       const tmp = row.split(' ');

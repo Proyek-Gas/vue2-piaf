@@ -58,7 +58,7 @@ export default {
   ],
   data() {
     return {
-      pageSizes: [4, 8, 12]
+      pageSizes: [5,10,15]
     };
   }
 };

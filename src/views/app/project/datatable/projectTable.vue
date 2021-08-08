@@ -52,7 +52,7 @@
                   <router-link tag="a" class="" :to="moveQuoteDetail(props.rowData.lastQuote.id)" v-if="props.rowData.lastQuote.id != null" >
                       <center>
                            {{timeLayout(props.rowData.lastQuote.created_at)}} / {{timeLayout(props.rowData.lastQuote.updated_at)}} <br>
-                          <b-badge variant="primary">{{props.rowData.lastQuote.status.name}}</b-badge>
+                          <b-badge variant="warning">{{props.rowData.lastQuote.status.name}}</b-badge>
                         </center>
                   </router-link>
               </template>
@@ -182,7 +182,7 @@ export default {
 
       ],
       sort: "",
-      perPage: 4,
+      perPage: 5,
       search: "",
       from: 0,
       to: 0,

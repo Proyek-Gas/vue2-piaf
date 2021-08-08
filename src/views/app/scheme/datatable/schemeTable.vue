@@ -40,7 +40,7 @@
              @vuetable:cell-clicked="onCellClicked"
           >
             <template slot="name" slot-scope="props">
-                <a href=""><h5>{{props.rowData.name}}</h5></a>
+                <router-link tag="a" :to="movePageDetail(props.rowData.id)"><h5>{{props.rowData.name}}</h5></router-link>
             </template>
             <template slot="color" slot-scope="props">
                 <div class="btn btn-sm" v-bind:style="returnColor(props.rowData.color.hex_code)">{{props.rowData.color.eng_name}}</div>
@@ -193,7 +193,7 @@ export default {
 
       ],
       sort: "",
-      perPage: 4,
+      perPage: 5,
       search: "",
       schName: "",
       from: 0,
@@ -507,7 +507,7 @@ export default {
         ...mapGetters({
         currentUser: "currentUser",
     })
-    } 
+    }
   },
 
 };

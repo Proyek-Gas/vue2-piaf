@@ -34,25 +34,29 @@
               :per-page="perPage"
               class="order-with-arrow"
               :data-manager="dataManager"
-            :detail-row-component="detailRow"
+              :detail-row-component="detailRow"
               detail-row-transition="expand"
               pagination-path="pagination"
               @vuetable:pagination-data="onPaginationData"
               @vuetable:cell-clicked="onCellClicked"
             >
               <template slot="avatar" slot-scope="props">
+                 <router-link tag="a" :to="movePageDetail(props.rowData.id)" class="d-block position-relative">
                   <div
                     src="/assets/img/profiles/l-1.jpg"
                     alt="Card image cap"
                     class="align-self-center list-thumbnail-letters rounded-circle small"
                   >
                   {{showAvatar(props.rowData.name)}}
-
                   </div>
+                    <b-badge variant="success"  class="position-absolute badge-top-left" style="margin-top:-1vh" v-if="props.rowData.isInAccurate == true"><i class="simple-icon-check"></i></b-badge>
+                 </router-link>
               </template>
               <template slot="name" slot-scope="props">
-                  <h4>{{props.rowData.name}}</h4>
+                  <router-link tag="a" :to="movePageDetail(props.rowData.id)" >
+                    <h4>{{props.rowData.name}}</h4>
                   <i>{{props.rowData.email}}</i>
+                  </router-link>
               </template>
               <template slot="mobilePhone" slot-scope="props">
                 <i>{{props.rowData.mobilePhone}}</i>
@@ -191,7 +195,7 @@ export default {
         }
       ],
       sort: "",
-      perPage: 4,
+      perPage: 5,
       search: "",
       from: 0,
       to: 0,
