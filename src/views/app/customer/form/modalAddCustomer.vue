@@ -79,8 +79,10 @@ export default {
             isLoad3: false,
 
             dataReturn:{
+                tmpId: "",
                 tmpNama: ""
             },
+            id:"",
             name: "",
             kode: "",
             kategori: "",
@@ -112,6 +114,7 @@ export default {
         passingData(){
             if(!this.$v.kode.$invalid && !this.$v.name.$invalid && !this.$v.limit.$invalid){
                 this.dataReturn.tmpNama = this.name;
+                this.dataReturn.tmpId = this.id;
             }
         },
         onValitadeFormSubmit2(refname) {
@@ -160,6 +163,7 @@ export default {
                 })
                 .then(resp => {
                     if(resp.status.toLowerCase() == "success"){
+                        this.tmpId = resp.id;
                         this.$toast(resp.message, {
                             type: "success",
                             hideProgressBar: true,

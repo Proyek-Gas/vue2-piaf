@@ -7,14 +7,14 @@
             </div>
         </div>
         <div v-if="!settings.hideNav" class="glide__arrows slider-nav" data-glide-el="controls">
-            <button class="glide__arrow glide__arrow--left left-arrow btn btn-link" data-glide-dir="<">
+            <button class="glide__arrow glide__arrow--left left-arrow btn btn-link" data-glide-dir="<" @click="previous">
                 <i class="simple-icon-arrow-left"></i>
             </button>
 
             <div class="glide__bullets slider-dot-container" data-glide-el="controls[nav]">
                <button v-for="i in total" class="glide__bullet slider-dot" :key="i" :data-glide-dir="`=${i}`"></button>
             </div>
-            <button class="glide__arrow glide__arrow--right right-arrow btn btn-link" data-glide-dir=">">
+            <button class="glide__arrow glide__arrow--right right-arrow btn btn-link" data-glide-dir=">" @click="next">
                 <i class="simple-icon-arrow-right"></i>
             </button>
         </div>

@@ -343,7 +343,6 @@ export default {
       }).then(function(response) {
           return response.json()
       }).then(function(text) {
-        console.log(text.data)
           return text.data.quoteStatuses;
       })
       .then(resp => {
@@ -375,7 +374,6 @@ export default {
           return response.json()
         })
         .then(function(text) {
-          console.log(text)
           return text.data.customers.customers;
         })
         .then(resp => {
@@ -406,7 +404,6 @@ export default {
           return response.json()
         })
         .then(function(text) {
-          console.log(text)
           return text.data.projects.projects;
         })
         .then(resp => {
@@ -441,7 +438,6 @@ export default {
           return response.json()
         })
         .then(function(text) {
-          console.log(text)
           return text.data.users.users;
         })
         .then(resp => {

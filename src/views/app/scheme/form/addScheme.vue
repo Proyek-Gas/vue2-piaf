@@ -648,6 +648,7 @@ export default {
         }
     },
     async mounted(){
+        console.log(this.currentUser);
         fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
             method: 'POST',
             headers: {
@@ -701,9 +702,11 @@ export default {
             this.dataItem = resp;
         })
     },
-    ...mapGetters({
-      currentUser: "currentUser",
-
-    })
+    computed:{
+        ...mapGetters({
+          currentUser: "currentUser",
+    
+        })
+    }
 };
 </script>

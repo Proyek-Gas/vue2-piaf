@@ -207,10 +207,6 @@ export default {
   //   },
   // },
   mounted() {
-
-
-
-
     fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
         method: 'POST',
         headers: {

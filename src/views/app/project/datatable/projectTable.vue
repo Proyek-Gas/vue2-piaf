@@ -61,7 +61,7 @@
                   <b-dropdown text="Actions" variant="outline-secondary">
                     <b-dropdown-item :to="movePageDetail(props.rowData.id)">Detail</b-dropdown-item>
                     <b-dropdown-item :to="movePageEdit(props.rowData.id)">Edit</b-dropdown-item>
-                    <b-dropdown-item @click="showModal(props.rowData.name,'modalbasic')">Delete</b-dropdown-item>
+                    <b-dropdown-item @click="showModal(props.rowData.name,props.rowData.id,'modalbasic')">Delete</b-dropdown-item>
                 </b-dropdown>
               </template>
             </vuetable>
@@ -183,6 +183,7 @@ export default {
       from: 0,
       to: 0,
       total: 0,
+      proId: "",
       proName: "",
       data: [],
       selectedItems: [],
@@ -321,8 +322,9 @@ export default {
     hideModal(refname){
         this.$refs[refname].hide()
     },
-    showModal(val,refname){
+    showModal(val,val2,refname){
         this.proName = val;
+        this.proId = val2;
         this.$refs[refname].show()
     },
     onPaginationData(paginationData) {
@@ -600,11 +602,9 @@ export default {
         this.selectedItems.length < this.items.length
       );
     },
-    computed:{
-        ...mapGetters({
-        currentUser: "currentUser",
+    ...mapGetters({
+      currentUser: "currentUser",
     })
-    } 
   },
 };
 </script>

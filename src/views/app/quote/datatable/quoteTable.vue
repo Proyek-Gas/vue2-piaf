@@ -318,7 +318,7 @@ export default {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization' :'Bearer '+this.currentUser.jwt
+          //'Authorization' :'Bearer '+this.currentUser.jwt
         },
         body: JSON.stringify({
           query: querystring
@@ -326,7 +326,6 @@ export default {
     }).then(function(response) {
         return response.json()
     }).then(function(text) {
-      console.log(text)
         return text.data.quotes.quotes
     })
     .then(resp => {
@@ -342,7 +341,6 @@ export default {
       this.from = paginationData.from;
       this.to = paginationData.to;
       this.total = paginationData.total;
-      console.log(paginationData);
       this.$refs.pagination.setPaginationData(paginationData);
     },
 
@@ -384,7 +382,6 @@ export default {
      // if (this.data.length < 1) return;
 
       let local = this.data;
-      console.log(this.search);
       local = local.filter(row => {
         return row.project.name.toLowerCase().indexOf(this.search.toLowerCase()) !== -1 ;
       });
@@ -402,7 +399,6 @@ export default {
         local.length,
         this.perPage
       );
-      console.log("pagination:", pagination);
       let from = pagination.from - 1;
       let to = from + this.perPage;
 
@@ -650,7 +646,7 @@ export default {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization' :'Bearer '+this.currentUser.jwt
+          //'Authorization' :'Bearer '+this.currentUser.jwt
         },
         body: JSON.stringify({
           query: querystring
@@ -678,11 +674,9 @@ export default {
         this.selectedItems.length < this.items.length
       );
     },
-    computed:{
-        ...mapGetters({
-        currentUser: "currentUser",
+    ...mapGetters({
+      currentUser: "currentUser",
     })
-    } 
   },
 
 };
