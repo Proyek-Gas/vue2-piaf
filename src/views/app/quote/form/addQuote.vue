@@ -827,7 +827,7 @@ export default {
                     item.loss = resp.items[i].loss;
                     item.coat = resp.items[i].coat;
                     item.dft = resp.items[i].dry_film_thickness;
-                    item.vol = resp.items[i].vs_volume_solid;
+                    item.vsl = resp.items[i].vs_volume_solid;
                     item.item_id = resp.items[i].item_id
                     newArrItem.push(item)
                     this.fetchItemDetail(item,index,true)
@@ -860,6 +860,11 @@ export default {
                   no
                   name
                   id
+                  agent_item_id
+                  packaging_name
+                  unit2Name
+                  unit3Name
+                  liter
                     type{
                       name
                       id
@@ -906,32 +911,40 @@ export default {
               //   this.ctrFetch = this.ctrFetch+1;
               //   this.arrKumpulanArea[index].selectedItem.push(item)
               if(ck){
-                console.log(resp)
-                let dtTmp = item
-                item = resp
-                console.log(resp)
-                console.log(item)
+                console.log(resp);
+                let dtTmp = item;
+                item = resp;
+                console.log(resp);
+                console.log(item);
                  item.no = resp.no;
                 item.name_s = resp.name
                 item.price = resp.detailSellingPrice;
                 item.loss = dtTmp.loss;
+                item.type = resp.type;
                 item.coat = dtTmp.coat;
                 item.isItem = false;
                 item.dft = dtTmp.dft;
-                item.vol = dtTmp.vol;
-                item.item_id = resp.id
-                console.log(ctrItem)
-                console.log(item)
+                item.vsl = dtTmp.vol;
+                item.item_id = resp.id;
+                console.log(ctrItem);
+                console.log(item);
                 this.arrKumpulanArea[index].selectedItem.push(item)
-                // if(ctrItem < item.length){
+                // if(ctrItem < item.length){;
                 //   this.fetchItemDetail(item,index,true,ctrItem+1)
                 // }
               }else{
-                 item.no = resp.no;
-                item.name_s = resp.name
-                item.vol = resp.vs_volume_solid
-                item.price = resp.detailSellingPrice;
-                this.arrKumpulanArea[index].selectedItem.push(item)
+                item = resp
+                //  item.no = resp.no;
+                item.name_s = resp.name;
+                // item.type = resp.type;
+                item.vsl = resp.vs_volume_solid;
+                // item.packaging_name = resp.packaging_name;
+                // item.unit2Name = resp.unit2Name;
+                // item.unit3Name = resp.unit3Name;
+                // item.price = resp.detailSellingPrice;
+                // item.liter = resp.liter;
+                // item.agent_item_id = resp.agent_item_id;
+                this.arrKumpulanArea[index].selectedItem.push(item);
               }
             })
         },
@@ -1028,6 +1041,7 @@ export default {
                 console.log(this.dataPro);
             })
         },
+
      fetchSchItem(val){
             fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
                 method: 'POST',

@@ -24,7 +24,7 @@
                 class="pl-0 align-self-center d-flex flex-column flex-sm-row justify-content-between min-width-zero"
               >
                 <div class="min-width-zero">
-                  <a href=""><h5>{{rowData.lastQuote.userCreate.name}}</h5></a>
+                  <router-link tag="a" :to="movePageCustomer(rowData.lastQuote.userCreate.id)"><h5>{{rowData.lastQuote.userCreate.name}}</h5></router-link>
                  <b-badge v-if="rowData.lastQuote.userCreate.role" variant="primary">{{rowData.userCreate.role.name}}</b-badge>
                 </div>
               </div>
@@ -78,6 +78,10 @@ export default {
       }
 
     },
+    movePageCustomer(val){
+			//window.location = window.location.origin+"/app/datatable/projectTable/pDetail/edit?id="+val;
+       return "../datatable/customerTable/cDetail?id="+val
+		},
     showAddress(data){
         let alamat =""
         if(data.street){

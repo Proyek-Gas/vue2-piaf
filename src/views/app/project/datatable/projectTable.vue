@@ -1,5 +1,7 @@
 <template>
+
   <div>
+
     <datatable-heading
       :title="$t('menu.projectTable')"
       :changePageSize="changePageSize"
@@ -41,15 +43,18 @@
               @vuetable:cell-clicked="onCellClicked"
             >
               <template slot="name" slot-scope="props">
-                  <a href=""><h5>{{props.rowData.name}}</h5></a>
+                  <router-link tag="a"  :to="movePageDetail(props.rowData.id)"><h5>{{props.rowData.name}}</h5></router-link>
               </template>
               <template slot="category" slot-scope="props">
                 <b-badge :variant="props.rowData.status=== 1 ?  'primary' : 'danger'" >{{props.rowData.category.name}}</b-badge>
               </template>
               <template slot="lastQuote" slot-scope="props">
-                  <b-button class="btn btn-sm" style="width:100%">{{timeLayout(props.rowData.lastQuote.created_at)}}/{{timeLayout(props.rowData.lastQuote.updated_at)}} <br>
-                          Status : {{props.rowData.lastQuote.status.name}}
-                  </b-button>
+                  <router-link tag="a" class="" :to="moveQuoteDetail(props.rowData.lastQuote.id)" v-if="props.rowData.lastQuote.id != null" >
+                      <center>
+                           {{timeLayout(props.rowData.lastQuote.created_at)}} / {{timeLayout(props.rowData.lastQuote.updated_at)}} <br>
+                          <b-badge variant="primary">{{props.rowData.lastQuote.status.name}}</b-badge>
+                        </center>
+                  </router-link>
               </template>
               <template slot="lastQuote.total" slot-scope="props">
                     <a href="">{{shortNumber(props.rowData.lastQuote.total)}}</a>
@@ -100,7 +105,6 @@
         </template>
     </b-modal>
   </div>
-
 </template>
 <script>
 import Vuetable from "vuetable-2/src/components/Vuetable";
@@ -269,6 +273,9 @@ export default {
 			//window.location = window.location.href+"/pDetail?id="+val;
       return "projectTable/pDetail?id="+val
 		},
+    moveQuoteDetail(val){
+      return "../datatable/quoteTable/qDetail?id="+val+"&ver=1"
+    },
     movePageEdit(val){
 			//window.location = window.location.origin+"/app/datatable/projectTable/pDetail/edit?id="+val;
       return "projectTable/pDetail/edit?id="+val
@@ -352,8 +359,13 @@ export default {
     timeLayout(n){
       if(n!= null){
        return n.split("T")[0];
+      }else{
+        return " - "
       }
     },
+     generateReport () {
+            this.$refs.html2Pdf.generatePdf()
+        },
     dataManager(sortOrder, pagination) {
     //  if (this.data.length < 1) return;
 

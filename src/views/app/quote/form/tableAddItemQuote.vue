@@ -21,7 +21,7 @@
                        <p style="font-size:10pt"><strong>{{props.rowData.name_s}}</strong></p>
                    </div>
                 </template>
-                <template slot="coat" slot-scope="props" v-if="props.rowData.isItem == false">
+                <template slot="coat" slot-scope="props" v-if="props.rowData.type.id == 1">
                       <b-form-input
                           type="number"
                           v-model="props.rowData.coat"
@@ -36,24 +36,24 @@
                           class="mb-2 mr-sm-2 mb-sm-0"
                         />
                 </template>
-                <template slot="dft" slot-scope="props" v-if="props.rowData.isItem == false">
+                <template slot="dft" slot-scope="props" v-if="props.rowData.type.id == 1">
                       <b-form-input
                           type="number"
                           v-model="props.rowData.dft"
                           class="mb-2 mr-sm-2 mb-sm-0"
                         />
                 </template>
-                <template slot="loss" slot-scope="props" v-if="props.rowData.isItem == false">
+                <template slot="loss" slot-scope="props" v-if="props.rowData.type.id == 1">
                       <b-form-input
                           type="number"
                           v-model="props.rowData.loss"
                           class="mb-2 mr-sm-2 mb-sm-0"
                         />
                 </template>
-                <template slot="theory" slot-scope="props" v-if="props.rowData.isItem == false">
+                <template slot="theory" slot-scope="props" v-if="props.rowData.type.id == 1">
                    {{theory (props.rowData)}}
                 </template>
-                <template slot="wft" slot-scope = "props" v-if="props.rowData.isItem == false">
+                <template slot="wft" slot-scope = "props" v-if="props.rowData.type.id == 1">
                     {{Math.round((props.rowData.dft/props.rowData.coat)*100)/100}}
                 </template>
                 <template slot="harga" slot-scope="props" >
@@ -62,7 +62,7 @@
                 <template slot="subtotal" slot-scope = "props">
                     {{subtotal(props.rowData)|currency}}
                 </template>
-                <template slot="practical" slot-scope = "props" v-if="props.rowData.isItem == false">
+                <template slot="practical" slot-scope = "props" v-if="props.rowData.type.id == 1">
                   {{Math.round(props.rowData.theory * (1- props.rowData.loss/100)*100)/100}}
                 </template>
                 <template slot="btndel" slot-scope="props">
@@ -149,6 +149,17 @@ export default{
           this.dataComponent.selectedItem = data
           console.log(this.dataComponent.selectedItem.length)
       },
+      calculate_vol(props,rowData){
+          let kemasan = Math.round((props.luas / rowData.selectedItem)*100)/100
+          let multiplier  = 0;
+          if(rowData.agent_item_id){
+
+          }else{
+              multiplier = rowData.liter;
+          }
+      },
+
+
       theory(data){
         return data.theory= Math.round((data.coat *10 /data.dft)*100)/100
       },
@@ -213,6 +224,12 @@ export default{
               dataClass : "text-muted",
               width : "5%"
             },
+            {
+             name : "vsl",
+             title : "VS Volume",
+             dataClass : "text-muted",
+             width : "5%"
+           },
            {
              name : "__slot:loss",
              title : "LOSS",
