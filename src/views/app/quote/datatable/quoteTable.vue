@@ -269,8 +269,13 @@ export default {
   // },
   mounted() {
     if(this.$route.query.id){
-      console.log("shano")
-      this.custid = `{customer_id : "${this.$route.query.id}"}`;
+      if(this.$route.query.page == "project"){
+         this.custid = `{project_id : ${this.$route.query.id}}`;
+      }else{
+        this.custid = `{customer_id : "${this.$route.query.id}"}`;
+      }
+
+
     } else{
        this.custid = `null`;
     }

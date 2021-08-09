@@ -273,7 +273,7 @@ export default {
 		},
     movePageDetail(val){
 			//window.location = window.location.href+"/pDetail?id="+val;
-      return "projectTable/pDetail?id="+val
+      return "projectTable/pDetail?id="+val+"&page=project"
 		},
     moveQuoteDetail(val){
       return "../datatable/quoteTable/qDetail?id="+val+"&ver=1"

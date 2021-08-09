@@ -13,6 +13,7 @@ const routes = [
     redirect: `${adminRoot}`,
     //redirect : "/user"
   },
+
   {
     path: adminRoot,
     component: () => import(/* webpackChunkName: "app" */ "./views/app"),
@@ -23,6 +24,18 @@ const routes = [
    meta: { loginRequired: true, roles: [UserRole.Admin, UserRole.Editor] },
    */
     children: [
+      {
+        path: "user",
+        component: () =>
+        import(/* webpackChunkName: "piaf" */ "./views/app/user"),
+        children : [
+          {
+            path: 'setting',
+            component: () => import(/* webpackChunkName: "piaf" */ './views/app/user/settingPage'),
+            // meta: { roles: [UserRole.Admin, UserRole.Editor] },
+          },
+        ]
+      },
       {
         path: "datatable",
         component: () =>
@@ -171,21 +184,7 @@ const routes = [
         component: () =>
           import(/* webpackChunkName: "user" */ "./views/user/Login")
       },
-      {
-        path: "register",
-        component: () =>
-          import(/* webpackChunkName: "user" */ "./views/user/Register")
-      },
-      {
-        path: "forgot-password",
-        component: () =>
-          import(/* webpackChunkName: "user" */ "./views/user/ForgotPassword")
-      },
-      {
-        path: "reset-password",
-        component: () =>
-          import(/* webpackChunkName: "user" */ "./views/user/ResetPassword")
-      },
+
 
     ]
   },

@@ -265,7 +265,7 @@ export default {
        return "customerTable/add"
 		},
     movePageDetail(val){
-       return "customerTable/cDetail?id="+val
+       return "customerTable/cDetail?id="+val+"&page=cust"
 		},
     movePageEdit(val){
       return "customerTable/cDetail/edit?id="+val

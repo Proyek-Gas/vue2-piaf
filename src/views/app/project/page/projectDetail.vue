@@ -47,7 +47,7 @@
                                         <p class="text text-medium mb-2 mt-1 ml-1">-</p>
                                     </b-colxx>
                                     <b-colxx xxs="2" lg="2">
-                                        
+
                                     </b-colxx>
                                     <b-colxx xxs="6" lg="6">
                                         <h6>
@@ -60,7 +60,7 @@
                                         <p class="text text-medium mb-2 mt-1 ml-1">-</p>
                                     </b-colxx>
                                     <b-colxx xxs="2" lg="2">
-                                  
+
                                     </b-colxx>
                                     <b-colxx xxs="6" lg="6">
                                         <h6>
@@ -136,7 +136,7 @@
                                             <p class="text text-medium mb-2 mt-1 ml-1">-</p>
                                         </b-colxx>
                                         <b-colxx xxs="2" lg="2">
-                                            
+
                                         </b-colxx>
                                         <b-colxx xxs="6" lg="6">
                                             <h6>
@@ -149,7 +149,7 @@
                                             <p class="text text-medium mb-2 mt-1 ml-1">-</p>
                                         </b-colxx>
                                         <b-colxx xxs="2" lg="2">
-                                    
+
                                         </b-colxx>
                                         <b-colxx xxs="6" lg="6">
                                             <h6>
@@ -222,10 +222,11 @@
             </b-row>
             <b-card class="mb-4" no-body>
                 <b-tabs card no-fade>
-                    <b-tab :title="$t('pages.details-title')" active>
+                    <b-tab :title="$t('menu.quoteTable')" active>
                         <b-row>
                             <b-colxx sm="12">
                                 <b-card-text>
+                                    <table-quote></table-quote>
                                 </b-card-text>
                             </b-colxx>
                         </b-row>
@@ -234,7 +235,7 @@
 
                         <b-row>
                             <b-colxx sm="12">
-                                <b-card-text> 
+                                <b-card-text>
                                 </b-card-text>
                             </b-colxx>
                         </b-row>
@@ -277,7 +278,7 @@
                 </b-card-title>
                 <b-card-title>{{ detail.name }}</b-card-title>
                 <h6>
-                    <b-badge class="mb-4" pill variant="success">{{ katPro }}</b-badge> 
+                    <b-badge class="mb-4" pill variant="success">{{ katPro }}</b-badge>
                 </h6>
                 <p class="text text-medium mb-4" v-if="detail.tgl_reminder != ''">{{ detail.tgl_reminder }}</p>
                 <p class="text text-medium mb-4" style="font-style:italic;" v-else>No date selected</p>
@@ -287,7 +288,7 @@
                         <div v-if="katArea.length > 0">
                             <div v-for="area in katArea" :key="area.id">
                                 <h6>
-                                    <b-badge class="mb-0" pill variant="secondary" style="width: 50%;">{{ area.name }}</b-badge> 
+                                    <b-badge class="mb-0" pill variant="secondary" style="width: 50%;">{{ area.name }}</b-badge>
                                 </h6>
                             </div>
                         </div>
@@ -305,10 +306,12 @@
 <script>
 import IconCard from '../../../../components/Cards/IconCard';
 import {mapGetters} from 'vuex'
+import vTableQuote from '../../quote/datatable/quoteTable'
 
 export default {
     components: {
-        'icon-card': IconCard
+        'icon-card': IconCard,
+        'table-quote' : vTableQuote
     },
     computed :{
       ...mapGetters({
@@ -466,7 +469,7 @@ export default {
 								this.angkaRec.push(0);
 								this.angkaRec.push(this.recent[i].value);
 								this.angkaRec.push(this.recent[i].quote);
-							}	
+							}
 						}else{
 							if(this.recent[i].type == 3){
 								//Recent approve
@@ -476,19 +479,19 @@ export default {
 								//Recent So
 								this.angkaRec.push(this.recent[i].value);
 								this.angkaRec.push(this.recent[i].quote);
-							}	
+							}
 						}
 					}
-					
+
 					if(this.previous.length == 0){
                         if(this.recent[0].type == 7){
                             for (let i = 0; i < 2; i++) {
                                 this.arrow.push(0);
                                 this.angkaPre.push(0);
-                            }	
+                            }
                             for (let i = 0; i < this.recent.length; i++) {
-                                console.log(this.recent[i].value); 
-                                console.log(this.recent[i].quote); 
+                                console.log(this.recent[i].value);
+                                console.log(this.recent[i].quote);
                                 if(this.recent[i].value > 0 || this.recent[i].quote > 0){
                                     this.arrow.push(2);
                                 }else{
@@ -499,12 +502,12 @@ export default {
                                 }else{
                                     this.arrow.push(0);
                                 }
-                            } 
+                            }
                         }else{
                             let ctr = 0;
                             for (let i = 0; i < this.recent.length; i++) {
-                                console.log(this.recent[i].value); 
-                                console.log(this.recent[i].quote); 
+                                console.log(this.recent[i].value);
+                                console.log(this.recent[i].quote);
                                 if(this.recent[i].value > 0 ){
                                     this.arrow.push(2);
                                     ctr++;
@@ -517,11 +520,11 @@ export default {
                                 }else{
                                     this.arrow.push(0);
                                 }
-                            } 
+                            }
                             for (let i = 0; i < 4-ctr; i++) {
                                 this.arrow.push(0);
                                 this.angkaPre.push(0);
-                            }	
+                            }
                         }
 					}else{
 						for (let j = 0; j < this.previous.length; j++) {
@@ -538,7 +541,7 @@ export default {
                                     this.angkaPre.push(0);
                                     this.angkaPre.push(this.previous[j].value);
                                     this.angkaPre.push(this.previous[j].quote);
-                                }	
+                                }
                             }else{
                                 if(this.previous[j].type == 3){
                                     //Recent approve
@@ -548,7 +551,7 @@ export default {
                                     //Recent So
                                     this.angkaPre.push(this.previous[j].value);
                                     this.angkaPre.push(this.previous[j].quote);
-                                }	
+                                }
                             }
 						}
 						this.perbandingan(this.angkaRec, this.angkaPre);
@@ -558,7 +561,7 @@ export default {
                         for (let i = 0; i < 2; i++) {
                             this.arrow.push(0);
                             this.angkaRec.push(0);
-                        }	
+                        }
                         for (let i = 0; i < this.previous.length; i++) {
                             if(this.previous[i].value > 0){
                                 this.arrow.push(2);
@@ -570,7 +573,7 @@ export default {
                             }else{
                                 this.arrow.push(0);
                             }
-                        } 
+                        }
                     }else{
                         let ctr = 0;
                         for (let i = 0; i < this.previous.length; i++) {
@@ -586,11 +589,11 @@ export default {
                             }else{
                                 this.arrow.push(0);
                             }
-                        } 
+                        }
                         for (let i = 0; i < 4-ctr; i++) {
                             this.arrow.push(0);
                             this.angkaRec.push(0);
-                        }	
+                        }
                     }
 				}
                 }

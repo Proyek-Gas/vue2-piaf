@@ -488,7 +488,8 @@
     "password-confirm": "Confirm Password",
     "validation-bootstrap": "Bootstrap Validation",
     "validation-vuelidate": "Vuelidate Validation",
-    "name": "Name"
+    "name": "Name",
+    "phone" : "Phone"
 
 
   },
