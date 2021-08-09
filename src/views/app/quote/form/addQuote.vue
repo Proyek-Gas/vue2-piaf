@@ -162,8 +162,19 @@
                     </b-colxx>
                 </b-row>
                 <b-form-group label-cols="3" horizontal label="Pilih Item" :disabled="proKat === ''">
+                    <b-input-group>
+                        <b-input-group-prepend>
+                            <b-button
+                                class="glyph-icon simple-icon-plus"
+                                variant="success"
+                                size="sm"
+                                v-b-modal.modalright
+                                @click="addScheme()"
+                                >
+                            </b-button>
+                        </b-input-group-prepend>
                     <vue-autosuggest
-                        class="autosuggest"
+                        class="autosuggest suggest2"
                         :input-props="{id:'autosuggest__input3', class:'form-control', placeholder:'Ketik nama item'}"
                         :suggestions="filteredOptions3"
                         :render-suggestion="renderSuggestion3"
@@ -174,20 +185,8 @@
                         @selected="onAutosuggestSelected3($event,index)"
                         @input="onAutoSuggestInputChange3"
                     >
-                    <template slot="before-section-default">
-                        <div class="p-1">
-                            <b-button
-                                class="glyph-icon simple-icon-plus"
-                                variant="success"
-                                v-b-modal.modalright
-                                size="sm"
-                                style="width: 100%;"
-                                @click="showModal('modalright')">
-                            </b-button>
-                          <!-- disini tempatnya modal tadi ya shan -->
-                        </div>
-                    </template>
                     </vue-autosuggest>
+                    </b-input-group>
                 </b-form-group>
                 <b-form-group label-cols="3" horizontal>
                 </b-form-group>
@@ -388,6 +387,9 @@ export default {
         },
     },
     methods: {
+        addScheme(){
+            window.open(window.location.origin+"/app/datatable/schemeTable/add", "_blank");    
+        },
         // passingData(){
         //     console.log(this.dataPassing)
         //     this.dataPassing.tmpId = this.custId;
@@ -1263,41 +1265,51 @@ export default {
 <style>
 @media screen and (min-width: 350px) {
   .suggest {width: 83%;}
+  .suggest2 {width: 78%;}
 }
 @media screen and (min-width: 400px) {
   .suggest {width: 86%;}
+  .suggest2 {width: 81%;}
 }
 @media screen and (min-width: 450px) {
   .suggest {width: 88%;}
+  .suggest2 {width: 84%;}
 }
 @media screen and (min-width: 500px) {
   .suggest {width: 89%;}
+  .suggest2 {width: 85%;}
 }
 @media screen and (min-width: 550px) {
   .suggest {width: 90%;}
+  .suggest2 {width: 87%;}
 }
 /* Small devices (portrait tablets and large phones, 600px and up) */
 @media screen and (min-width: 600px) {
   .suggest {width: 91%;}
+  .suggest2 {width: 88%;}
 }
 
 /* Medium devices (landscape tablets, 768px and up) */
 @media screen and (min-width: 768px) {
   .suggest {width: 91%;}
+  .suggest2 {width: 88%;}
 }
 
 /* Large devices (laptops/desktops, 992px and up) */
 @media screen and (min-width: 992px) {
   .suggest {width: 94%;}
+  .suggest2 {width: 91%;}
 }
 
 /* Extra large devices (large laptops and desktops, 1200px and up) */
 @media only screen and (min-width: 1200px) {
   .suggest {width: 82%;}
+  .suggest2 {width: 89%;}
 }
 
 /* Extra large devices (large laptops and desktops, 1200px and up) */
 @media only screen and (min-width: 1300px) {
   .suggest {width: 85%;}
+  .suggest2 {width: 91%;}
 }
 </style>

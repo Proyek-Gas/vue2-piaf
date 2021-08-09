@@ -49,7 +49,7 @@
         <div class="separator mb-5"></div>
         <b-row>
             <b-colxx xxs="12" xl="6">
-            <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip tooltip-label-right">
+            <b-form class="av-tooltip tooltip-label-right">
                 <b-card class="mb-4" title="Customer">
                     <b-card class="mb-0" title="Data Customer">
                         <h6 class="text-muted text-medium mb-1">
@@ -69,7 +69,7 @@
             </b-form>
             </b-colxx>
             <b-colxx xxs="12" xl="6">
-                <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip tooltip-label-right">
+                <b-form class="av-tooltip tooltip-label-right">
                 <b-card class="mb-4" title="Project">
                     <b-card class="mb-0" title="Data Project">
                         <h6 class="text-muted text-medium mb-1">
@@ -206,7 +206,7 @@
                 <div class="separator mb-5"></div>
                 <b-row>
                     <b-colxx xxs="12" xl="6">
-                    <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip tooltip-label-right">
+                    <b-form class="av-tooltip tooltip-label-right">
                         <b-card class="mb-4" title="Customer">
                             <b-card class="mb-0" title="Data Customer" :style="returnColor(custNama, arrVersi.project.customer.name)">
                                 <h6 class="text-muted text-medium mb-1">
@@ -223,7 +223,7 @@
                     </b-form>
                     </b-colxx>
                     <b-colxx xxs="12" xl="6">
-                        <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip tooltip-label-right">
+                        <b-form class="av-tooltip tooltip-label-right">
                         <b-card class="mb-4" title="Project">
                             <b-card class="mb-0" title="Data Project">
                                 <h6 class="text-muted text-medium mb-1" :style="returnColor(proNama, arrVersi.project.name)">
@@ -319,20 +319,18 @@
                         <div v-if="btn1 != '' && btn2 != ''" >
                         <b-row>
                             <b-colxx xxs="6" class="text-center">
-                            <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip">
-                                <b-button type="submit" variant="primary" style="width: 100%">{{ btn1 }}</b-button>
-                            </b-form>
+                                <b-button @click="requestSubmit(btn1)" variant="primary" style="width: 100%">{{ btn1 }}</b-button>
                             </b-colxx>
                             <b-colxx xxs="6" class="text-center">
-                            <b-button @click="onFormReset" type="submit" variant="danger" style="width: 100%">{{ btn2 }}</b-button>
+                                <b-button @click="requestSubmit(btn2)" type="submit" variant="danger" style="width: 100%">{{ btn2 }}</b-button>
                             </b-colxx>
                         </b-row>
                         </div>
                         <div v-if="btn3 != ''" >
                             <b-row class="mt-2">
                                 <b-colxx xxs="12" class="text-center">
-                                <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip">
-                                    <b-button type="submit" variant="primary" style="width: 100%">{{ btn3 }}</b-button>
+                                <b-form class="av-tooltip">
+                                    <b-button @click="requestSubmit(btn3)"  variant="primary" style="width: 100%">{{ btn3 }}</b-button>
                                 </b-form>
                                 </b-colxx>
                             </b-row>
@@ -343,8 +341,12 @@
                     </div>
                 </b-tab>
                 <b-tab title="Logs" title-item-class="w-50 text-center">
-                    <h5 class="mb-4 card-title">Wedding Cake with Flowers Macarons and Blueberries</h5>
-                    <b-button size="sm" variant="outline-primary">Edit</b-button>
+                    <vue-perfect-scrollbar
+                    class="dashboard-logs scroll"
+                    :settings="{ suppressScrollX: true, wheelPropagation: false }"
+                    >
+                    <log-list :logs="logs" />
+                    </vue-perfect-scrollbar>
                 </b-tab>
                 </b-tabs>
           </b-card>
@@ -365,6 +367,8 @@ import Switches from "vue-switches";
 import TableItem from "./tableItemQuote.vue"
 import { mapGetters } from "vuex";
 import GlideComponent from '../../../../components/Carousel/GlideComponent'
+import LogList from "../../../../components/Listing/LogList";
+import logs from "../../../../data/logs";
 
 import {
     validationMixin
@@ -392,10 +396,12 @@ export default {
         "selectCategory": selectCategory,
         datepicker: Datepicker,
         'glide-component': GlideComponent,
-        "table-item" : TableItem
+        "table-item" : TableItem,
+        "log-list": LogList
     },
     data() {
         return {
+            logs,
             isLoad: false,
             quote: "# 5037",
             status: "",
@@ -433,6 +439,59 @@ export default {
         },
     },
     methods: {
+        requestSubmit(a){
+            let queryString = "";
+            if(a.toLowerCase() === "close"){
+                queryString = `query{
+                    closeQuote(quote_id:${this.qId}){
+                        status
+                        message
+                    }
+                }`
+            }else if(a.toLowerCase() === "submit"){
+                queryString = `query{
+                    submitQuote(quote_id:${this.qId}){
+                        status
+                        message
+                    }
+                }`
+            }
+            fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                'Authorization' :'Bearer '+this.currentUser.jwt
+                },
+                body: JSON.stringify({
+                    query: queryString
+                    ,
+                }),
+            })
+            .then(function(response) {
+                return response.json()
+            })
+            .then(function(text) {
+                return text.data.closeQuote;
+            })
+            .then(resp => {
+                if(resp.status.toLowerCase() == "success"){
+                    this.$toast(resp.message, {
+                        type: "success",
+                        hideProgressBar: true,
+                        timeout: 2000
+                    });
+                    setTimeout(() => {
+                        window.location = window.location.origin+"/app/datatable/QuoteTable";
+                    }, 1000);
+                }else{
+                    this.$toast(resp.message, {
+                        type: "error",
+                        hideProgressBar: true,
+                        timeout: 2000
+                    });
+                }
+            })
+        },
         returnColor(a,b){
             if(a != b){
                 const style = {
@@ -653,10 +712,6 @@ export default {
                 console.log("error");
             }
         },
-        onFormReset(){
-            this.custNama=""; this.custEmail="";this.namaPro = "";this.tglQuote = "";this.katPro = "";
-            this.$v.$reset();
-        },
         fetchVersion(ver){
             fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
                 method: 'POST',
@@ -841,7 +896,7 @@ export default {
                 }
             }
             else if(this.status == 2){
-                if(this.user.role.name.toLowerCase() == "manager"){
+                if(this.currentUser.role == 2){
                     this.btn1 = "Approve";
                     this.btn2 = "Reject";
                 }
@@ -849,25 +904,27 @@ export default {
                     this.btn3 = "Close";
                 }
             }else if (this.status == 3){
-                if(this.user.name == this.currentUser.title || this.user.role.name.toLowerCase() == "manager"){
+                if(this.user.name == this.currentUser.title || this.currentUser.role == 2){
                     this.btn1 = "Rejected by Customer";
                     this.btn2 = "Forward";
                 }
             }else if (this.status == 4){
-                if(this.user.name == this.currentUser.title || this.user.role.name.toLowerCase() == "manager"){
+                if(this.user.name == this.currentUser.title || this.currentUser.role == 2){
                     this.btn1 = "Close";
                     this.btn2 = "Submit";
                 }
             }else if (this.status == 5){
-                if(this.user.name == this.currentUser.title || this.user.role.name.toLowerCase() == "manager"){
+                if(this.user.name == this.currentUser.title || this.currentUser.role == 2){
                     this.btn1 = "Close";
                     this.btn2 = "Revise";
                 }
             }
             else if (this.status == 7){
-                this.btn1 = "";
-                this.btn2 = "";
-                this.btn3 = "Cancel";
+                if(this.currentUser.role == 2){
+                    this.btn1 = "";
+                    this.btn2 = "";
+                    this.btn3 = "Cancel";
+                }
             }
             if(this.user){
                 if(this.user.role.name.toLowerCase() == "manager"){
