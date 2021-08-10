@@ -1,6 +1,92 @@
 <template>
 
   <div>
+      <vue-html2pdf
+          :show-layout="false"
+          :float-layout="true"
+          :enable-download="false"
+          :preview-modal="true"
+          :paginate-elements-by-height="1400"
+          :pdf-quality="2"
+          :manual-pagination="false"
+          pdf-format="a4"
+          pdf-orientation="landscape"
+          pdf-content-width="100%"
+          @hasStartedGeneration="hasStartedGeneration()"
+          @hasGenerated="hasGenerated($event)"
+          ref="html2Pdf"
+      >
+          <section slot="pdf-content">
+            <datatable-heading
+              :title="$t('menu.projectTable')"
+              :changePageSize="changePageSize"
+              :searchChange="searchChange"
+              :from="from"
+              :to="to"
+              :total="total"
+              :perPage="perPage"
+            ></datatable-heading>
+
+            <b-row>
+              <template v-if="isLoad">
+                <b-colxx xxs="12">
+                  <b-card>
+                    <vuetable
+                      ref="vuetable"
+                      style="display:block; overflow-x:auto;width:auto"
+                      :api-mode="false"
+                      :fields="fields"
+                      :per-page="perPage"
+                      :data-manager="dataManager"
+                      :detail-row-component="detailRow"
+                      class="order-with-arrow"
+                      detail-row-transition="expand"
+                      pagination-path="pagination"
+                      @vuetable:pagination-data="onPaginationData"
+                      @vuetable:cell-clicked="onCellClicked"
+                    >
+                      <template slot="name" slot-scope="props">
+                          <router-link tag="a"  :to="movePageDetail(props.rowData.id)"><h5>{{props.rowData.name}}</h5></router-link>
+                      </template>
+                      <template slot="category" slot-scope="props">
+                        <b-badge :variant="props.rowData.status=== 1 ?  'primary' : 'danger'" >{{props.rowData.category.name}}</b-badge>
+                      </template>
+                      <template slot="lastQuote" slot-scope="props">
+                          <router-link tag="a" class="" :to="moveQuoteDetail(props.rowData.lastQuote.id)" v-if="props.rowData.lastQuote.id != null" >
+                              <center>
+                                  {{timeLayout(props.rowData.lastQuote.created_at)}} / {{timeLayout(props.rowData.lastQuote.updated_at)}} <br>
+                                  <b-badge variant="warning">{{props.rowData.lastQuote.status.name}}</b-badge>
+                                </center>
+                          </router-link>
+                      </template>
+                      <template slot="lastQuote.total" slot-scope="props">
+                            <a href="">{{shortNumber(props.rowData.lastQuote.total)}}</a>
+                      </template>
+                      <template slot="id" slot-scope="props">
+                        <i  class="simple-icon-arrow-down" @click="cellClicked($event, props.rowData)"></i>
+                      </template>
+                      <template slot="action" slot-scope="props">
+                          <b-dropdown text="Actions" variant="outline-secondary">
+                            <b-dropdown-item :to="movePageDetail(props.rowData.id)">Detail</b-dropdown-item>
+                            <b-dropdown-item :to="movePageEdit(props.rowData.id)">Edit</b-dropdown-item>
+                            <b-dropdown-item @click="showModal(props.rowData.name,props.rowData.id,'modalbasic')">Delete</b-dropdown-item>
+                        </b-dropdown>
+                      </template>
+                    </vuetable>
+                  </b-card>
+                  <vuetable-pagination-bootstrap
+                    class="mt-4"
+                    ref="pagination"
+                    @vuetable-pagination:change-page="onChangePage"
+                  />
+                </b-colxx>
+              </template>
+              <template v-else>
+                <div class="loading"></div>
+              </template>
+            </b-row>
+          </section>
+      </vue-html2pdf>
 
     <datatable-heading
       :title="$t('menu.projectTable')"
@@ -17,6 +103,7 @@
         <b-button class="mb-1"  v-b-modal.modalright variant="success " >Filter</b-button>
             <filter-pro v-on:answers="onUpdateAnswer"></filter-pro>
          <b-button class="mb-1" variant="primary" :to="movePageAdd()">Add Project</b-button>
+          <b-button variant="primary" @click="genPdf">Preview PDF</b-button>
       </b-colxx>
       <b-colxx xxs="6" style="text-align:left">
           <h5 v-if="tag.length >0">Filter By</h5>
@@ -82,7 +169,6 @@
         <div class="loading"></div>
       </template>
     </b-row>
-
     <v-contextmenu ref="contextmenu">
       <v-contextmenu-item @click="onContextMenuAction('copy')">
         <i class="simple-icon-docs" />
@@ -114,6 +200,7 @@ import _ from "lodash";
 import MyDetailRow from "./MyDetailRow";
 import filterPro from "./filterProject"
 import { mapGetters } from "vuex";
+import VueHtml2pdf from 'vue-html2pdf'
 
 export default {
   props: ["title"],
@@ -122,6 +209,7 @@ export default {
     "vuetable-pagination-bootstrap": VuetablePaginationBootstrap,
     "datatable-heading": DatatableHeading,
     "filter-pro" : filterPro,
+    VueHtml2pdf
    //"my-detail-row" : MyDetailRow //->ini ga error namun ga ada datanya
   },
   data() {
@@ -266,6 +354,9 @@ export default {
 
   },
   methods: {
+    genPdf() {
+        this.$refs.html2Pdf.generatePdf()
+    },
     movePageAdd(){
 
 			//window.location = window.location.href+"/add";
@@ -367,9 +458,6 @@ export default {
         return " - "
       }
     },
-     generateReport () {
-            this.$refs.html2Pdf.generatePdf()
-        },
     dataManager(sortOrder, pagination) {
     //  if (this.data.length < 1) return;
 

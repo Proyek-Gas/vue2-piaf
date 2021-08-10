@@ -72,7 +72,7 @@
                                   </b-form-group>
                               </b-colxx>
                         </b-row>
-                        <b-row>
+                        <b-row class="mb-3">
                                <router-link to="?" class="d-flex">
                                   <img
                                     src="/assets/img/profiles/tt.png"
@@ -83,7 +83,7 @@
                                 </router-link>
                                 <div class="d-flex flex-grow-1 min-width-zero">
                                   <div
-                                    class="pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero ml-3"
+                                    class="pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero container"
                                   >
                                     <div class="min-width-zero">
                                       <b-button size="m"  variant="primary">Upload</b-button>
@@ -92,8 +92,8 @@
                                   </div>
                                 </div>
                         </b-row>
-                        <b-row>
-                              <b-button size="l" variant="primary"><h6>Save Changes</h6></b-button>
+                        <b-row class="container">
+                            <b-button size="m" variant="primary">Save Changes</b-button>
                         </b-row>
                     </b-form>
               </b-card>

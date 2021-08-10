@@ -376,7 +376,8 @@ export default {
             selected3: {},
             dataSchItem: [],
 
-
+            arrTmp: "",
+            arrVersi: "",
             ctrFetch : 0
         };
     },
@@ -995,7 +996,7 @@ export default {
                       id
                     }
                     name
-    								vs_volume_solid
+                    vs_volume_solid
                     itemCategory{
                       name
                       id
@@ -1029,6 +1030,7 @@ export default {
                 return text.data.itemDetail;
             })
             .then(resp => {
+                
               console.log(resp)
               // item.no = resp.no;
               // item.name_s = resp.name
@@ -1059,6 +1061,7 @@ export default {
                 // }
               }else{
                 item = resp
+                item.price = resp.detailSellingPrice;
                 //  item.no = resp.no;
                 item.name_s = resp.name;
                 // item.type = resp.type;
@@ -1066,7 +1069,12 @@ export default {
                 // item.packaging_name = resp.packaging_name;
                 // item.unit2Name = resp.unit2Name;
                 // item.unit3Name = resp.unit3Name;
-                // item.price = resp.detailSellingPrice;
+                this.arrTmp = resp
+                var parsedyourElement = JSON.parse(JSON.stringify(this.arrTmp));
+                item.price = parsedyourElement;
+                //this.arrVersi = JSON.parse(JSON.stringify(parsedyourElement.detailSellingPrice));
+                console.log(parsedyourElement);
+                console.log(item.price);
                 // item.liter = resp.liter;
                 // item.agent_item_id = resp.agent_item_id;
                 this.arrKumpulanArea[index].selectedItem.push(item);
@@ -1309,7 +1317,7 @@ export default {
 
 /* Extra large devices (large laptops and desktops, 1200px and up) */
 @media only screen and (min-width: 1300px) {
-  .suggest {width: 85%;}
+  .suggest {width: 83%;}
   .suggest2 {width: 91%;}
 }
 </style>
