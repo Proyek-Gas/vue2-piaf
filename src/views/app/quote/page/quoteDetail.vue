@@ -128,11 +128,14 @@
                 <b-row>
 
                       <b-colxx xxs="12" xl="12" class="text-left">
-                        <p class="mb-2">
+                        <!-- <div v-if="currentUser.role == 2"> -->
+                           <p class="mb-2">
                                 HPP/Total
                                 <span class="float-right text-muted">  {{area.total_hpp |currency}}/  {{area.total | currency}}</span>
                               </p>
                               <b-progress :value="(area.total_hpp / area.total) * 100"></b-progress>
+                        <!-- </div>
+                        <div v-else></div> -->
                   </b-colxx>
                 </b-row>
                 <b-row>
@@ -162,7 +165,7 @@
                 </b-colxx>
             </b-row>
             <h4>Version {{ versi }}</h4>
-            <div class="separator mb-5"></div> 
+            <div class="separator mb-5"></div>
             <b-colxx xxs="12" xl="12">
                 <b-row>
                     <b-colxx xxs="6" xl="6">
@@ -304,11 +307,11 @@
         <!-- <glide-component :settings="glideSingleOption">
             <div class="glide__slide" v-for="i in 2" :key="i">
                 <h6>
-                    <b-badge class="mb-0" pill variant="secondary" style="width: 50%;">{{ arrVersi.created_at  }}</b-badge> 
+                    <b-badge class="mb-0" pill variant="secondary" style="width: 50%;">{{ arrVersi.created_at  }}</b-badge>
                 </h6>
             </div>
         </glide-component> -->
-        
+
     </b-colxx>
     <b-colxx xxs="12" xl="4" class="col-right">
         <div class="mb-4" style="position: sticky; top: 20vh">
@@ -554,7 +557,7 @@ export default {
                 let arrTmp = arr.split(',');
                 console.log(arrTmp.length);
                 for (let i = 0; i < 3; i++) {
-                
+
                     for (let j = 0; j < this.surfaceOptions.length; j++) {
                         if(arrTmp[i] == this.surfaceOptions[j].id){
                             console.log(this.surfaceOptions[j].name);
@@ -930,7 +933,7 @@ export default {
                 if(this.user.role.name.toLowerCase() == "manager"){
                     }
             }else{
-                
+
             }
             if(this.qVer > 1){
                 this.fetchVersion(this.versi);
@@ -945,6 +948,6 @@ export default {
         ...mapGetters({
         currentUser: "currentUser",
     })
-    } 
+    }
 };
 </script>

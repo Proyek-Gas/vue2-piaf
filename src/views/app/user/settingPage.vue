@@ -14,7 +14,7 @@
                       class="av-tooltip tooltip-label-bottom"
                     >
                       <b-row class="mb-3">
-                          <router-link to="?" class="d-flex">
+                          <router-link v-b-modal.modalbasic to="?" class="d-flex">
                             <img
                               src="/assets/img/profiles/l-1.jpg"
                               alt="Card image cap"
@@ -22,6 +22,14 @@
                               style="width:120px; height:120px"
                             />
                           </router-link>
+                            <b-modal id="modalbasic" ref="modalbasic" >
+                                 <img
+                                    src="/assets/img/profiles/l-1.jpg"
+                                    alt="Card image cap"
+                                    class="img-thumbnail list-thumbnail align-self-center m-4"
+                                    style="width:100%; height:100%"
+                                  />
+                              </b-modal>
                           <div class="d-flex flex-grow-1 min-width-zero">
                             <div
                               class="pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero"
@@ -39,22 +47,23 @@
                                  <b-form-group :label="$t('forms.phone')" class="has-float-label" style="font-size:15pt">
                                     <b-form-input
                                       type="text"
-                                      v-model.trim="$v.overLineForm.email.$model"
-                                      :state="!$v.overLineForm.email.$error"
+                                      v-model.trim="$v.overLineForm.phone.$model"
+                                      :state="!$v.overLineForm.phone.$error"
+                                      disabled
                                     />
-                                    <b-form-invalid-feedback v-if="!$v.overLineForm.email.required">Email is required!</b-form-invalid-feedback>
-                                    <b-form-invalid-feedback v-else-if="!$v.overLineForm.email.email">Invalid email address</b-form-invalid-feedback>
+                                    <b-form-invalid-feedback v-if="!$v.overLineForm.phone.required">Phone is required!</b-form-invalid-feedback>
+
                                   </b-form-group>
                               </b-colxx>
                                <b-colxx xxs = "6" >
                                  <b-form-group :label="$t('forms.name')" class="has-float-label" style="font-size:15pt">
                                     <b-form-input
                                       type="text"
-                                      v-model.trim="$v.overLineForm.email.$model"
-                                      :state="!$v.overLineForm.email.$error"
+                                      v-model.trim="$v.overLineForm.name.$model"
+                                      :state="!$v.overLineForm.name.$error"
                                     />
-                                    <b-form-invalid-feedback v-if="!$v.overLineForm.email.required">Email is required!</b-form-invalid-feedback>
-                                    <b-form-invalid-feedback v-else-if="!$v.overLineForm.email.email">Invalid email address</b-form-invalid-feedback>
+                                    <b-form-invalid-feedback v-if="!$v.overLineForm.name.required">Name is required!</b-form-invalid-feedback>
+
                                   </b-form-group>
                               </b-colxx>
 
@@ -73,7 +82,7 @@
                               </b-colxx>
                         </b-row>
                         <b-row>
-                               <router-link to="?" class="d-flex">
+                               <router-link to="?" v-b-modal.modalbasic2 class="d-flex">
                                   <img
                                     src="/assets/img/profiles/tt.png"
                                     alt="Card image cap"
@@ -81,6 +90,14 @@
                                     class="img-thumbnail list-thumbnail align-self-center m-4"
                                   />
                                 </router-link>
+                                  <b-modal id="modalbasic2" ref="modalbasic2" >
+                                     <img
+                                        src="/assets/img/profiles/tt.png"
+                                        alt="Card image cap"
+                                        style="width:100%; height:100%"
+                                        class="img-thumbnail list-thumbnail align-self-center m-4"
+                                      />
+                                  </b-modal>
                                 <div class="d-flex flex-grow-1 min-width-zero">
                                   <div
                                     class="pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero ml-3"
@@ -140,11 +157,9 @@ export default {
   data() {
     return {
     overLineForm: {
-        email: "",
-        password: "",
-        state: "",
-        tags: [],
-        date: null
+      email: '',
+      phone : '',
+      name : ''
       },
     };
   },
@@ -155,6 +170,12 @@ export default {
           required,
           email
         },
+        phone : {
+          required
+        },
+        name : {
+          required
+        }
       }
     },
   methods: {
@@ -169,6 +190,11 @@ export default {
 
 
   },
-  mounted() {}
+  mounted() {
+    this.overLineForm.email = this.currentUser.email;
+    this.overLineForm.phone = this.currentUser.phone;
+    this.overLineForm.name = this.currentUser.title;
+    console.log(this.currentUser.email)
+  }
 };
 </script>

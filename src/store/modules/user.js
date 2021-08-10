@@ -106,6 +106,8 @@ export default {
         }else{
           const currentUser ={
               id: resp.user.id,
+              email : resp.user.email,
+              phone : resp.user.phone,
               title: resp.user.name,
               img: '/assets/img/profiles/l-1.jpg',
               date: 'Last seen today '+ new Date().getHours+":"+new Date().getMinutes,

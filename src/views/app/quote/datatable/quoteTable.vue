@@ -99,13 +99,16 @@
                   </b-row>
               </template>
               <template slot="total" slot-scope="props">
-
-
-                  <p class="mb-2">
+                <div v-if="currentUser.role == 2">
+                   <p class="mb-2">
                     HPP
                     <span class="float-right text-muted">  {{shortNumber(props.rowData.total_hpp)}}/  {{shortNumber(props.rowData.total)}}</span>
                   </p>
                   <b-progress :value="(props.rowData.total_hpp / props.rowData.total) * 100"></b-progress>
+                </div>
+                <div v-else>
+                  {{shortNumber(props.rowData.total)}}
+                </div>
               </template>
               <template slot="validuntil" slot-scope="props">
                   <p>{{timeLayout(props.rowData.valid_until)}}</p> <br>
@@ -129,7 +132,7 @@
               <template slot="action" slot-scope="props">
                 <b-dropdown  text="Actions" variant="outline-secondary">
                     <b-dropdown-item :to="movePageDetail(props.rowData.id, props.rowData.version)">Detail</b-dropdown-item>
-                  <b-dropdown-item>Edit</b-dropdown-item>
+                  <b-dropdown-item v-if="((props.rowData.userCreate.id == currentUser.id)|| (currentUser.role == 2))&&((props.rowData.status.id == 1)||(props.rowData.status.id == 4) )">Edit</b-dropdown-item>
                   <b-dropdown-item @click="showModal(props.rowData.name,'modalbasic')">Delete</b-dropdown-item>
               </b-dropdown>
             </template>

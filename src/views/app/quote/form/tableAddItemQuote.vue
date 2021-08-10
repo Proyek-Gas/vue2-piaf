@@ -159,7 +159,9 @@ export default{
           }
       },
 
-
+      dataPrice(val){
+        return JSON.parse(JSON.stringify( val))
+      },
       theory(data){
         return data.theory= Math.round((data.coat *10 /data.dft)*100)/100
       },

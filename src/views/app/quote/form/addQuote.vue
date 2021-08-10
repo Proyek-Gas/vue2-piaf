@@ -258,7 +258,7 @@
                   </b-row>
                   <b-row>
                     <b-colxx xxs="6"><strong>Total:</strong></b-colxx>
-                      <b-colxx xxs="6"><strong>{{totalAll|currency}}</strong></b-colxx>
+                      <b-colxx xxs="6"><strong>{{countTotalHarga()|currency}}</strong></b-colxx>
                   </b-row>
                 </b-colxx>
             </b-row>
@@ -388,7 +388,7 @@ export default {
     },
     methods: {
         addScheme(){
-            window.open(window.location.origin+"/app/datatable/schemeTable/add", "_blank");    
+            window.open(window.location.origin+"/app/datatable/schemeTable/add", "_blank");
         },
         // passingData(){
         //     console.log(this.dataPassing)
@@ -454,6 +454,11 @@ export default {
                 this.custCate = this.arrFilter.customers[this.arrFilter.count-1].category.name +" - " + this.arrFilter.customers[this.arrFilter.count-1].priceCategory.name;
                 console.log(this.custId);
             });
+        },
+        getAreaHarga(value){
+          setInterval(()=>{
+            return value
+          }, 3000);
         },
         filterPro(nama){
             console.log(`
@@ -533,6 +538,16 @@ export default {
             this.arrKumpulanArea[index].volume_total = volume
               console.log(this.arrKumpulanArea[index].volume_total)
             return [this.arrKumpulanArea[index].total_harga,  this.arrKumpulanArea[index].volume_total]
+        },
+        countTotalHarga(){
+            setInterval(()=>{
+
+              let total = 0;
+              for(let i=0; i< this.arrKumpulanArea.length; i++){
+                  total  = total+ this.arrKumpulanArea[i].total_harga;
+              }
+              return total
+            },3000)
         },
         newArea(){
           let cek = true
@@ -1011,6 +1026,8 @@ export default {
               }
               `
 
+              console.log(querystring)
+
             fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
                 method: 'POST',
                 headers: {
@@ -1066,7 +1083,8 @@ export default {
                 // item.packaging_name = resp.packaging_name;
                 // item.unit2Name = resp.unit2Name;
                 // item.unit3Name = resp.unit3Name;
-                // item.price = resp.detailSellingPrice;
+                // item.price = bolox;
+                item.price = resp.detailSellingPrice[0];
                 // item.liter = resp.liter;
                 // item.agent_item_id = resp.agent_item_id;
                 this.arrKumpulanArea[index].selectedItem.push(item);
@@ -1210,6 +1228,7 @@ export default {
         },
     },
     async mounted(){
+      console.log(window.innerWidth)
         console.log(this.currentUser.role);
         this.status = this.$route.query.status;
         if(this.status){
@@ -1309,7 +1328,7 @@ export default {
 
 /* Extra large devices (large laptops and desktops, 1200px and up) */
 @media only screen and (min-width: 1300px) {
-  .suggest {width: 85%;}
-  .suggest2 {width: 91%;}
+  .suggest {width: 83%;}
+  .suggest2 {width: 90%;}
 }
 </style>
