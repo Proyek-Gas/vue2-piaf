@@ -353,7 +353,7 @@ export default {
     },
 
     movePageDetailCustomer(id){
-      return  "customerTable/cDetail?id="+id;
+        return  "customerTable/cDetail?id="+id;
     },
      movePageDetail(val, val2){
 			//window.location = window.location.href+"/pDetail?id="+val;

@@ -17,6 +17,8 @@
     "core-js": "^3.6.5",
     "express": "^4.17.1",
     "firebase": "^7.15.5",
+    "html2canvas": "^1.2.1",
+    "jspdf": "^2.3.1",
     "lodash": "^4.17.21",
     "v-contextmenu": "^2.9.0",
     "v-mask": "^2.2.4",

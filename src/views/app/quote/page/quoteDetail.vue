@@ -1,361 +1,733 @@
 <template>
 <div v-if="isLoad">
-<b-row>
-    <b-colxx xxs="12">
-        <h1>Detail Quote</h1>
-        <piaf-breadcrumb />
-        <div class="separator mb-5"></div>
-    </b-colxx>
-    <b-colxx xxs="12" xl="8">
-        <b-row>
-            <b-colxx xxs="6" xl="6">
-                <h1>Logo dan <br> profil perusahaan</h1>
-            </b-colxx>
-            <b-colxx xxs="6" xl="6" class="mb-3">
+    <div>
+        <vue-html2pdf
+            :show-layout="false"
+            :float-layout="true"
+            :enable-download="false"
+            :preview-modal="true"
+            :paginate-elements-by-height="1400"
+            :pdf-quality="2"
+            :manual-pagination="false"
+            pdf-format="a4"
+            pdf-orientation="landscape"
+            pdf-content-width="100%"
+            @hasStartedGeneration="hasStartedGeneration()"
+            @hasGenerated="hasGenerated($event)"
+            ref="html2Pdf"
+        >
+            <section slot="pdf-content">
                 <b-row>
-                    <b-colxx xxs="6" xl="6" class="text-left">
-                    <p class="text text-medium mt-1">
-                        Quote
-                    </p>
+                    <b-colxx xxs="12">
+                        <h1>Detail Quote</h1>
+                        <piaf-breadcrumb />
+                        <div class="separator mb-5"></div>
                     </b-colxx>
-                    <b-colxx xxs="6" xl="6" class="text-left">
-                    <p class="text text-medium mt-1">
-                        {{ quote }}
-                    </p>
-                    </b-colxx>
-                     <b-colxx xxs="6" xl="6" class="text-left">
-                    <p class="text text-medium mt-1">
-                        Tanggal
-                    </p>
-                    </b-colxx>
-                    <b-colxx xxs="6" xl="6" class="text-left">
-                    <p class="text text-medium mt-1">
-                        {{ dateFormat(tglQuote) }}
-                    </p>
-                    </b-colxx>
-                     <b-colxx xxs="6" xl="6" class="text-left">
-                    <p class="text text-medium mt-1">
-                        Berlaku sampai
-                    </p>
-                    </b-colxx>
-                    <b-colxx xxs="6" xl="6" class="text-left">
-                    <p class="text text-medium mt-1">
-                        {{ dateFormat(tglUntil) }}
-                    </p>
-                    </b-colxx>
-                </b-row>
-            </b-colxx>
-        </b-row>
-        <div class="separator mb-5"></div>
-        <b-row>
-            <b-colxx xxs="12" xl="6">
-            <b-form class="av-tooltip tooltip-label-right">
-                <b-card class="mb-4" title="Customer">
-                    <b-card class="mb-0" title="Data Customer">
-                        <h6 class="text-muted text-medium mb-1">
-                            {{ custNama }}
-                        </h6>
-                        <p class="text-muted text-small mb-2">
-                            {{ custEmail }}
-                        </p>
-                        <p class="text-muted text-small mb-2">
-                            {{ custCate }}
-                        </p>
-                        <div class="text-right" v-if="custId != ''">
-                            <b-button class="mb-1" variant="primary " :to="movePageDetail(custId)">Detail</b-button>
-                        </div>
-                    </b-card>
-                </b-card>
-            </b-form>
-            </b-colxx>
-            <b-colxx xxs="12" xl="6">
-                <b-form class="av-tooltip tooltip-label-right">
-                <b-card class="mb-4" title="Project">
-                    <b-card class="mb-0" title="Data Project">
-                        <h6 class="text-muted text-medium mb-1">
-                            {{ proNama }}
-                        </h6>
-                        <p class="text-muted text-small mb-2">
-                            {{ proKat }}
-                        </p>
-                    </b-card>
-                </b-card>
-            </b-form>
-            </b-colxx>
-        </b-row>
-        <div class="separator mb-2"></div>
-         <b-card class="mb-4" v-for="area in arrKumpulanArea" :key="area.category.name" >
-                  <b-row style="margin-bottom: 2vh">
-                    <b-colxx xxs="6" xl="6"><h2>{{area.category.name}}</h2></b-colxx>
-                  </b-row>
-                 <b-row>
-                    <b-colxx xxs="12" xl="6">
+                    <b-colxx xxs="12" xl="8">
                         <b-row>
-                            <b-colxx xxs="6" xl="6" class="text-left">
-                            <p class="text text-medium mt-1">
-                                Section Area :
-                            </p>
+                            <b-colxx xxs="6" xl="6">
+                                <h1>Logo dan <br> profil perusahaan</h1>
                             </b-colxx>
-                            <b-colxx xxs="6" xl="6" class="text-left">
-                                <div v-if="area.surface_preparation != null" >
-                                    <div v-for="item in splitSurface(area.surface_preparation)" :key="item">
-                                        <h6>
-                                            <b-badge class="mb-0" pill variant="secondary" style="width: 100%;">{{ item }}</b-badge>
-                                        </h6>
-                                    </div>
-                                </div>
-                                <div v-else>
-                                    <p class="text-muted text-medium mt-1" style="font-style: italic;">No surface selected</p>
-                                </div>
-                            </b-colxx>
-                        </b-row>
-                    </b-colxx>
-                    <b-colxx xxs="12" xl="6">
-                        <b-row>
-                            <b-colxx xxs="6" xl="6" class="text-right">
-                                <p class="text text-medium mt-1">
-                                    Luas Area :
-                                </p>
-                            </b-colxx>
-                            <b-colxx xxs="6" xl="6" class="text-left">
-                            <p class="text text-medium mt-1">
-                                {{ area.surface_area }}
-                            </p>
-                            </b-colxx>
-                        </b-row>
-                    </b-colxx>
-                </b-row>
-                <b-row>
-
-                      <b-colxx xxs="12" xl="12" class="text-left">
-                        <!-- <div v-if="currentUser.role == 2"> -->
-                           <p class="mb-2">
-                                HPP/Total
-                                <span class="float-right text-muted">  {{area.total_hpp |currency}}/  {{area.total | currency}}</span>
-                              </p>
-                              <b-progress :value="(area.total_hpp / area.total) * 100"></b-progress>
-                        <!-- </div>
-                        <div v-else></div> -->
-                  </b-colxx>
-                </b-row>
-                <b-row>
-                   <b-colxx xxs="12" xl="12">
-                    <p class="text text-medium mt-3">
-                        Item
-                    </p>
-                    <table-item :dataComponent="area.items"></table-item>
-                   </b-colxx>
-                </b-row>
-         </b-card>
-        <h4>Other Version</h4>
-        <div v-if="arrVersi == ''">
-            <b-card class="mb-4 text-center">
-                <p class="text-muted text-medium mt-1" style="font-style: italic;">
-                    This is the latest version
-                </p>
-            </b-card>
-        </div>
-        <div v-else>
-            <b-row class="mb-3">
-                <b-colxx xxs="6" class="text-center">
-                    <b-button @click="previous" variant="primary" style="width: 50%">Previous</b-button>
-                </b-colxx>
-                <b-colxx xxs="6" class="text-center">
-                <b-button @click="next" variant="danger" style="width: 50%">Next</b-button>
-                </b-colxx>
-            </b-row>
-            <h4>Version {{ versi }}</h4>
-            <div class="separator mb-5"></div>
-            <b-colxx xxs="12" xl="12">
-                <b-row>
-                    <b-colxx xxs="6" xl="6">
-                        <h1>Logo dan <br> profil perusahaan</h1>
-                    </b-colxx>
-                    <b-colxx xxs="6" xl="6" class="mb-3">
-                        <b-row>
-                            <b-colxx xxs="6" xl="6" class="text-left">
-                            <p class="text text-medium mt-1">
-                                Quote
-                            </p>
-                            </b-colxx>
-                            <b-colxx xxs="6" xl="6" class="text-left">
-                            <p class="text text-medium mt-1">
-                                {{ quote }}
-                            </p>
-                            </b-colxx>
-                            <b-colxx xxs="6" xl="6" class="text-left">
-                            <p class="text text-medium mt-1">
-                                Tanggal
-                            </p>
-                            </b-colxx>
-                            <b-colxx xxs="6" xl="6" class="text-left">
-                            <p class="text text-medium mt-1">
-                                {{ dateFormat(new Date(arrVersi.created_at)) }}
-                            </p>
-                            </b-colxx>
-                            <b-colxx xxs="6" xl="6" class="text-left">
-                            <p class="text text-medium mt-1" :style="returnColor(new Date(tglUntil),new Date(new Date(arrVersi.created_at).getTime()+(31*24*60*60*1000)))">
-                                Berlaku sampai
-                            </p>
-                            </b-colxx>
-                            <b-colxx xxs="6" xl="6" class="text-left">
-                            <p class="text text-medium mt-1">
-                                {{ dateFormat(new Date(new Date(arrVersi.created_at).getTime()+(31*24*60*60*1000))) }}
-                            </p>
-                            </b-colxx>
-                        </b-row>
-                    </b-colxx>
-                </b-row>
-                <div class="separator mb-5"></div>
-                <b-row>
-                    <b-colxx xxs="12" xl="6">
-                    <b-form class="av-tooltip tooltip-label-right">
-                        <b-card class="mb-4" title="Customer">
-                            <b-card class="mb-0" title="Data Customer" :style="returnColor(custNama, arrVersi.project.customer.name)">
-                                <h6 class="text-muted text-medium mb-1">
-                                    {{ arrVersi.project.customer.name }}
-                                </h6>
-                                <p class="text-muted text-small mb-2">
-                                    {{ arrVersi.project.customer.email }}
-                                </p>
-                                <p class="text-muted text-small mb-2">
-                                    {{ arrVersi.project.customer.category.name + " - " + arrVersi.project.customer.priceCategory.name }}
-                                </p>
-                            </b-card>
-                        </b-card>
-                    </b-form>
-                    </b-colxx>
-                    <b-colxx xxs="12" xl="6">
-                        <b-form class="av-tooltip tooltip-label-right">
-                        <b-card class="mb-4" title="Project">
-                            <b-card class="mb-0" title="Data Project">
-                                <h6 class="text-muted text-medium mb-1" :style="returnColor(proNama, arrVersi.project.name)">
-                                    {{ arrVersi.project.name }}
-                                </h6>
-                                <p class="text-muted text-small mb-2">
-                                    {{ arrVersi.project.category.name }}
-                                </p>
-                            </b-card>
-                        </b-card>
-                    </b-form>
-                    </b-colxx>
-                </b-row>
-                <div class="separator mb-2"></div>
-                <b-card class="mb-4" v-for="area in arrVersi.areaItems" :key="area.category.id" >
-                        <b-row style="margin-bottom: 2vh">
-                            <b-colxx xxs="6" xl="6"><h2>{{area.category.name}}</h2></b-colxx>
-                        </b-row>
-                        <b-row>
-                            <b-colxx xxs="12" xl="6">
+                            <b-colxx xxs="6" xl="6" class="mb-3">
                                 <b-row>
                                     <b-colxx xxs="6" xl="6" class="text-left">
-                                    <p class="text text-medium mt-1" :style="returnColor(arrKumpulanArea.surface_preparation,area.surface_preparation)">
-                                        Section Area :
-                                    </p>
-                                    </b-colxx>
-                                    <b-colxx xxs="6" xl="6" class="text-left">
-                                        <div v-if="area.surface_preparation != null" >
-                                            <div v-for="item in splitSurface(area.surface_preparation)" :key="item">
-                                                <h6>
-                                                    <b-badge class="mb-0" pill variant="secondary" style="width: 100%;">{{ item }}</b-badge>
-                                                </h6>
-                                            </div>
-                                        </div>
-                                        <div v-else>
-                                            <p class="text-muted text-medium mt-1" style="font-style: italic;">No surface selected</p>
-                                        </div>
-                                    </b-colxx>
-                                </b-row>
-                            </b-colxx>
-                            <b-colxx xxs="12" xl="6">
-                                <b-row>
-                                    <b-colxx xxs="6" xl="6" class="text-right">
-                                    <p class="text text-medium mt-1" :style="returnColor(arrKumpulanArea.surface_area,area.surface_area)">
-                                        Luas Area :
+                                    <p class="text text-medium mt-1">
+                                        Quote
                                     </p>
                                     </b-colxx>
                                     <b-colxx xxs="6" xl="6" class="text-left">
                                     <p class="text text-medium mt-1">
-                                        {{ area.surface_area }}
+                                        {{ quote }}
+                                    </p>
+                                    </b-colxx>
+                                    <b-colxx xxs="6" xl="6" class="text-left">
+                                    <p class="text text-medium mt-1">
+                                        Tanggal
+                                    </p>
+                                    </b-colxx>
+                                    <b-colxx xxs="6" xl="6" class="text-left">
+                                    <p class="text text-medium mt-1">
+                                        {{ dateFormat(tglQuote) }}
+                                    </p>
+                                    </b-colxx>
+                                    <b-colxx xxs="6" xl="6" class="text-left">
+                                    <p class="text text-medium mt-1">
+                                        Berlaku sampai
+                                    </p>
+                                    </b-colxx>
+                                    <b-colxx xxs="6" xl="6" class="text-left">
+                                    <p class="text text-medium mt-1">
+                                        {{ dateFormat(tglUntil) }}
                                     </p>
                                     </b-colxx>
                                 </b-row>
-
                             </b-colxx>
                         </b-row>
+                        <div class="separator mb-5"></div>
                         <b-row>
+                            <b-colxx xxs="12" xl="6">
+                            <b-form class="av-tooltip tooltip-label-right">
+                                <b-card class="mb-4" title="Customer">
+                                    <b-card class="mb-0" title="Data Customer">
+                                        <h6 class="text-muted text-medium mb-1">
+                                            {{ custNama }}
+                                        </h6>
+                                        <p class="text-muted text-small mb-2">
+                                            {{ custEmail }}
+                                        </p>
+                                        <p class="text-muted text-small mb-2">
+                                            {{ custCate }}
+                                        </p>
+                                        <div class="text-right" v-if="custId != ''">
+                                            <b-button class="mb-1" variant="primary " :to="movePageDetail(custId)">Detail</b-button>
+                                        </div>
+                                    </b-card>
+                                </b-card>
+                            </b-form>
+                            </b-colxx>
+                            <b-colxx xxs="12" xl="6">
+                                <b-form class="av-tooltip tooltip-label-right">
+                                <b-card class="mb-4" title="Project">
+                                    <b-card class="mb-0" title="Data Project">
+                                        <h6 class="text-muted text-medium mb-1">
+                                            {{ proNama }}
+                                        </h6>
+                                        <p class="text-muted text-small mb-2">
+                                            {{ proKat }}
+                                        </p>
+                                    </b-card>
+                                </b-card>
+                            </b-form>
+                            </b-colxx>
+                        </b-row>
+                        <div class="separator mb-2"></div>
+                        <b-card class="mb-4" v-for="area in arrKumpulanArea" :key="area.category.name" >
+                                <b-row style="margin-bottom: 2vh">
+                                    <b-colxx xxs="6" xl="6"><h2>{{area.category.name}}</h2></b-colxx>
+                                </b-row>
+                                <b-row>
+                                    <b-colxx xxs="12" xl="6">
+                                        <b-row>
+                                            <b-colxx xxs="6" xl="6" class="text-left">
+                                            <p class="text text-medium mt-1">
+                                                Section Area :
+                                            </p>
+                                            </b-colxx>
+                                            <b-colxx xxs="6" xl="6" class="text-left">
+                                                <div v-if="area.surface_preparation != null" >
+                                                    <div v-for="item in splitSurface(area.surface_preparation)" :key="item">
+                                                        <h6>
+                                                            <b-badge class="mb-0" pill variant="secondary" style="width: 100%;">{{ item }}</b-badge>
+                                                        </h6>
+                                                    </div>
+                                                </div>
+                                                <div v-else>
+                                                    <p class="text-muted text-medium mt-1" style="font-style: italic;">No surface selected</p>
+                                                </div>
+                                            </b-colxx>
+                                        </b-row>
+                                    </b-colxx>
+                                    <b-colxx xxs="12" xl="6">
+                                        <b-row>
+                                            <b-colxx xxs="6" xl="6" class="text-right">
+                                                <p class="text text-medium mt-1">
+                                                    Luas Area :
+                                                </p>
+                                            </b-colxx>
+                                            <b-colxx xxs="6" xl="6" class="text-left">
+                                            <p class="text text-medium mt-1">
+                                                {{ area.surface_area }}
+                                            </p>
+                                            </b-colxx>
+                                        </b-row>
+                                    </b-colxx>
+                                </b-row>
+                                <b-row>
+
+                                    <b-colxx xxs="12" xl="12" class="text-left">
+                                        <p class="mb-2">
+                                                HPP/Total
+                                                <span class="float-right text-muted">  {{area.total_hpp |currency}}/  {{area.total | currency}}</span>
+                                            </p>
+                                            <b-progress :value="(area.total_hpp / area.total) * 100"></b-progress>
+                                </b-colxx>
+                                </b-row>
+                                <b-row>
+                                <b-colxx xxs="12" xl="12">
+                                    <p class="text text-medium mt-3">
+                                        Item
+                                    </p>
+                                    <table-item :dataComponent="area.items"></table-item>
+                                </b-colxx>
+                                </b-row>
+                        </b-card>
+                        <h4>Other Version</h4>
+                        <div v-if="arrVersi == ''">
+                            <b-card class="mb-4 text-center">
+                                <p class="text-muted text-medium mt-1" style="font-style: italic;">
+                                    This is the latest version
+                                </p>
+                            </b-card>
+                        </div>
+                        <div v-else>
+                            <b-row class="mb-3">
+                                <b-colxx xxs="6" class="text-center">
+                                    <b-button @click="previous" variant="primary" style="width: 50%">Previous</b-button>
+                                </b-colxx>
+                                <b-colxx xxs="6" class="text-center">
+                                <b-button @click="next" variant="danger" style="width: 50%">Next</b-button>
+                                </b-colxx>
+                            </b-row>
+                            <h4>Version {{ versi }}</h4>
+                            <div class="separator mb-5"></div>
+                            <b-colxx xxs="12" xl="12">
+                                <b-row>
+                                    <b-colxx xxs="6" xl="6">
+                                        <h1>Logo dan <br> profil perusahaan</h1>
+                                    </b-colxx>
+                                    <b-colxx xxs="6" xl="6" class="mb-3">
+                                        <b-row>
+                                            <b-colxx xxs="6" xl="6" class="text-left">
+                                            <p class="text text-medium mt-1">
+                                                Quote
+                                            </p>
+                                            </b-colxx>
+                                            <b-colxx xxs="6" xl="6" class="text-left">
+                                            <p class="text text-medium mt-1">
+                                                {{ quote }}
+                                            </p>
+                                            </b-colxx>
+                                            <b-colxx xxs="6" xl="6" class="text-left">
+                                            <p class="text text-medium mt-1">
+                                                Tanggal
+                                            </p>
+                                            </b-colxx>
+                                            <b-colxx xxs="6" xl="6" class="text-left">
+                                            <p class="text text-medium mt-1">
+                                                {{ dateFormat(new Date(arrVersi.created_at)) }}
+                                            </p>
+                                            </b-colxx>
+                                            <b-colxx xxs="6" xl="6" class="text-left">
+                                            <p class="text text-medium mt-1" :style="returnColor(new Date(tglUntil),new Date(new Date(arrVersi.created_at).getTime()+(31*24*60*60*1000)))">
+                                                Berlaku sampai
+                                            </p>
+                                            </b-colxx>
+                                            <b-colxx xxs="6" xl="6" class="text-left">
+                                            <p class="text text-medium mt-1">
+                                                {{ dateFormat(new Date(new Date(arrVersi.created_at).getTime()+(31*24*60*60*1000))) }}
+                                            </p>
+                                            </b-colxx>
+                                        </b-row>
+                                    </b-colxx>
+                                </b-row>
+                                <div class="separator mb-5"></div>
+                                <b-row>
+                                    <b-colxx xxs="12" xl="6">
+                                    <b-form class="av-tooltip tooltip-label-right">
+                                        <b-card class="mb-4" title="Customer">
+                                            <b-card class="mb-0" title="Data Customer" :style="returnColor(custNama, arrVersi.project.customer.name)">
+                                                <h6 class="text-muted text-medium mb-1">
+                                                    {{ arrVersi.project.customer.name }}
+                                                </h6>
+                                                <p class="text-muted text-small mb-2">
+                                                    {{ arrVersi.project.customer.email }}
+                                                </p>
+                                                <p class="text-muted text-small mb-2">
+                                                    {{ arrVersi.project.customer.category.name + " - " + arrVersi.project.customer.priceCategory.name }}
+                                                </p>
+                                            </b-card>
+                                        </b-card>
+                                    </b-form>
+                                    </b-colxx>
+                                    <b-colxx xxs="12" xl="6">
+                                        <b-form class="av-tooltip tooltip-label-right">
+                                        <b-card class="mb-4" title="Project">
+                                            <b-card class="mb-0" title="Data Project">
+                                                <h6 class="text-muted text-medium mb-1" :style="returnColor(proNama, arrVersi.project.name)">
+                                                    {{ arrVersi.project.name }}
+                                                </h6>
+                                                <p class="text-muted text-small mb-2">
+                                                    {{ arrVersi.project.category.name }}
+                                                </p>
+                                            </b-card>
+                                        </b-card>
+                                    </b-form>
+                                    </b-colxx>
+                                </b-row>
+                                <div class="separator mb-2"></div>
+                                <b-card class="mb-4" v-for="area in arrVersi.areaItems" :key="area.category.id" >
+                                        <b-row style="margin-bottom: 2vh">
+                                            <b-colxx xxs="6" xl="6"><h2>{{area.category.name}}</h2></b-colxx>
+                                        </b-row>
+                                        <b-row>
+                                            <b-colxx xxs="12" xl="6">
+                                                <b-row>
+                                                    <b-colxx xxs="6" xl="6" class="text-left">
+                                                    <p class="text text-medium mt-1" :style="returnColor(arrKumpulanArea.surface_preparation,area.surface_preparation)">
+                                                        Section Area :
+                                                    </p>
+                                                    </b-colxx>
+                                                    <b-colxx xxs="6" xl="6" class="text-left">
+                                                        <div v-if="area.surface_preparation != null" >
+                                                            <div v-for="item in splitSurface(area.surface_preparation)" :key="item">
+                                                                <h6>
+                                                                    <b-badge class="mb-0" pill variant="secondary" style="width: 100%;">{{ item }}</b-badge>
+                                                                </h6>
+                                                            </div>
+                                                        </div>
+                                                        <div v-else>
+                                                            <p class="text-muted text-medium mt-1" style="font-style: italic;">No surface selected</p>
+                                                        </div>
+                                                    </b-colxx>
+                                                </b-row>
+                                            </b-colxx>
+                                            <b-colxx xxs="12" xl="6">
+                                                <b-row>
+                                                    <b-colxx xxs="6" xl="6" class="text-right">
+                                                    <p class="text text-medium mt-1" :style="returnColor(arrKumpulanArea.surface_area,area.surface_area)">
+                                                        Luas Area :
+                                                    </p>
+                                                    </b-colxx>
+                                                    <b-colxx xxs="6" xl="6" class="text-left">
+                                                    <p class="text text-medium mt-1">
+                                                        {{ area.surface_area }}
+                                                    </p>
+                                                    </b-colxx>
+                                                </b-row>
+
+                                            </b-colxx>
+                                        </b-row>
+                                        <b-row>
+
+                                        <b-colxx xxs="12" xl="12" class="text-left">
+                                            <p class="mb-2">
+                                                HPP/Total
+                                                <span class="float-right text-muted">  {{area.total_hpp |currency}}/  {{area.total | currency}}</span>
+                                            </p>
+                                                <b-progress :value="(area.total_hpp / area.total) * 100"></b-progress>
+                                        </b-colxx>
+                                        </b-row>
+                                        <b-row>
+                                        <b-colxx xxs="12" xl="12">
+                                            <p class="text text-medium mt-3" :style="returnColor(arrKumpulanArea.length,area.items.length)">
+                                                Item
+                                            </p>
+                                            <table-item :dataComponent="area.items"></table-item>
+                                        </b-colxx>
+                                        </b-row>
+                                </b-card>
+                            </b-colxx>
+                        </div>
+                        <!-- <glide-component :settings="glideSingleOption">
+                            <div class="glide__slide" v-for="i in 2" :key="i">
+                                <h6>
+                                    <b-badge class="mb-0" pill variant="secondary" style="width: 50%;">{{ arrVersi.created_at  }}</b-badge>
+                                </h6>
+                            </div>
+                        </glide-component> -->
+
+                    </b-colxx>
+                    <b-colxx xxs="12" xl="4" class="col-right">
+                        <div class="mb-4" style="position: sticky; top: 20vh">
+                            <b-card class="mb-4" no-body>
+                                <b-tabs card no-fade>
+                                <b-tab title="Action" active title-item-class="w-50 text-center">
+                                    <div v-if="status != 6 && btn1 != '' && btn2 != '' && btn3 != ''">
+                                        <div v-if="btn1 != '' && btn2 != ''" >
+                                        <b-row>
+                                            <b-colxx xxs="6" class="text-center">
+                                                <b-button @click="requestSubmit(btn1)" variant="primary" style="width: 100%">{{ btn1 }}</b-button>
+                                            </b-colxx>
+                                            <b-colxx xxs="6" class="text-center">
+                                                <b-button @click="requestSubmit(btn2)" type="submit" variant="danger" style="width: 100%">{{ btn2 }}</b-button>
+                                            </b-colxx>
+                                        </b-row>
+                                        </div>
+                                        <div v-if="btn3 != ''" >
+                                            <b-row class="mt-2">
+                                                <b-colxx xxs="12" class="text-center">
+                                                <b-form class="av-tooltip">
+                                                    <b-button @click="requestSubmit(btn3)" variant="primary" style="width: 100%">{{ btn3 }}</b-button>
+                                                </b-form>
+                                                </b-colxx>
+                                            </b-row>
+                                        </div>
+                                    </div>
+                                    <div v-else>
+                                        <p class="text-muted text-medium mt-1" style="font-style: italic;">No action needed</p>
+                                    </div>
+                                    <b-button variant="primary" style="width: 100%" @click="downloadWithCSS">Preview PDF</b-button>
+                                </b-tab>
+                                <b-tab title="Logs" title-item-class="w-50 text-center">
+                                    <vue-perfect-scrollbar
+                                    class="dashboard-logs scroll"
+                                    :settings="{ suppressScrollX: true, wheelPropagation: false }"
+                                    >
+                                    <log-list :logs="arrLog" />
+                                    </vue-perfect-scrollbar>
+                                </b-tab>
+                                </b-tabs>
+                        </b-card>
+                        </div>
+                    </b-colxx>
+                </b-row>
+            </section>
+        </vue-html2pdf>
+    </div>
+    <b-row>
+        <b-colxx xxs="12">
+            <h1>Detail Quote</h1>
+            <piaf-breadcrumb />
+            <div class="separator mb-5"></div>
+        </b-colxx>
+        <b-colxx xxs="12" xl="8">
+            <b-row>
+                <b-colxx xxs="6" xl="6">
+                    <h1>Logo dan <br> profil perusahaan</h1>
+                </b-colxx>
+                <b-colxx xxs="6" xl="6" class="mb-3">
+                    <b-row>
+                        <b-colxx xxs="6" xl="6" class="text-left">
+                        <p class="text text-medium mt-1">
+                            Quote
+                        </p>
+                        </b-colxx>
+                        <b-colxx xxs="6" xl="6" class="text-left">
+                        <p class="text text-medium mt-1">
+                            {{ quote }}
+                        </p>
+                        </b-colxx>
+                        <b-colxx xxs="6" xl="6" class="text-left">
+                        <p class="text text-medium mt-1">
+                            Tanggal
+                        </p>
+                        </b-colxx>
+                        <b-colxx xxs="6" xl="6" class="text-left">
+                        <p class="text text-medium mt-1">
+                            {{ dateFormat(tglQuote) }}
+                        </p>
+                        </b-colxx>
+                        <b-colxx xxs="6" xl="6" class="text-left">
+                        <p class="text text-medium mt-1">
+                            Berlaku sampai
+                        </p>
+                        </b-colxx>
+                        <b-colxx xxs="6" xl="6" class="text-left">
+                        <p class="text text-medium mt-1">
+                            {{ dateFormat(tglUntil) }}
+                        </p>
+                        </b-colxx>
+                    </b-row>
+                </b-colxx>
+            </b-row>
+            <div class="separator mb-5"></div>
+            <b-row>
+                <b-colxx xxs="12" xl="6">
+                <b-form class="av-tooltip tooltip-label-right">
+                    <b-card class="mb-4" title="Customer">
+                        <b-card class="mb-0" title="Data Customer">
+                            <h6 class="text-muted text-medium mb-1">
+                                {{ custNama }}
+                            </h6>
+                            <p class="text-muted text-small mb-2">
+                                {{ custEmail }}
+                            </p>
+                            <p class="text-muted text-small mb-2">
+                                {{ custCate }}
+                            </p>
+                            <div class="text-right" v-if="custId != ''">
+                                <b-button class="mb-1" variant="primary " :to="movePageDetail(custId)">Detail</b-button>
+                            </div>
+                        </b-card>
+                    </b-card>
+                </b-form>
+                </b-colxx>
+                <b-colxx xxs="12" xl="6">
+                    <b-form class="av-tooltip tooltip-label-right">
+                    <b-card class="mb-4" title="Project">
+                        <b-card class="mb-0" title="Data Project">
+                            <h6 class="text-muted text-medium mb-1">
+                                {{ proNama }}
+                            </h6>
+                            <p class="text-muted text-small mb-2">
+                                {{ proKat }}
+                            </p>
+                        </b-card>
+                    </b-card>
+                </b-form>
+                </b-colxx>
+            </b-row>
+            <div class="separator mb-2"></div>
+            <b-card class="mb-4" v-for="area in arrKumpulanArea" :key="area.category.name" >
+                    <b-row style="margin-bottom: 2vh">
+                        <b-colxx xxs="6" xl="6"><h2>{{area.category.name}}</h2></b-colxx>
+                    </b-row>
+                    <b-row>
+                        <b-colxx xxs="12" xl="6">
+                            <b-row>
+                                <b-colxx xxs="6" xl="6" class="text-left">
+                                <p class="text text-medium mt-1">
+                                    Section Area :
+                                </p>
+                                </b-colxx>
+                                <b-colxx xxs="6" xl="6" class="text-left">
+                                    <div v-if="area.surface_preparation != null" >
+                                        <div v-for="item in splitSurface(area.surface_preparation)" :key="item">
+                                            <h6>
+                                                <b-badge class="mb-0" pill variant="secondary" style="width: 100%;">{{ item }}</b-badge>
+                                            </h6>
+                                        </div>
+                                    </div>
+                                    <div v-else>
+                                        <p class="text-muted text-medium mt-1" style="font-style: italic;">No surface selected</p>
+                                    </div>
+                                </b-colxx>
+                            </b-row>
+                        </b-colxx>
+                        <b-colxx xxs="12" xl="6">
+                            <b-row>
+                                <b-colxx xxs="6" xl="6" class="text-right">
+                                    <p class="text text-medium mt-1">
+                                        Luas Area :
+                                    </p>
+                                </b-colxx>
+                                <b-colxx xxs="6" xl="6" class="text-left">
+                                <p class="text text-medium mt-1">
+                                    {{ area.surface_area }}
+                                </p>
+                                </b-colxx>
+                            </b-row>
+                        </b-colxx>
+                    </b-row>
+                    <b-row>
 
                         <b-colxx xxs="12" xl="12" class="text-left">
                             <p class="mb-2">
-                                HPP/Total
-                                <span class="float-right text-muted">  {{area.total_hpp |currency}}/  {{area.total | currency}}</span>
-                            </p>
+                                    HPP/Total
+                                    <span class="float-right text-muted">  {{area.total_hpp |currency}}/  {{area.total | currency}}</span>
+                                </p>
                                 <b-progress :value="(area.total_hpp / area.total) * 100"></b-progress>
-                        </b-colxx>
-                        </b-row>
-                        <b-row>
-                        <b-colxx xxs="12" xl="12">
-                            <p class="text text-medium mt-3" :style="returnColor(arrKumpulanArea.length,area.items.length)">
-                                Item
-                            </p>
-                            <table-item :dataComponent="area.items"></table-item>
-                        </b-colxx>
-                        </b-row>
+                    </b-colxx>
+                    </b-row>
+                    <b-row>
+                    <b-colxx xxs="12" xl="12">
+                        <p class="text text-medium mt-3">
+                            Item
+                        </p>
+                        <table-item :dataComponent="area.items"></table-item>
+                    </b-colxx>
+                    </b-row>
+            </b-card>
+            <h4>Other Version</h4>
+            <div v-if="arrVersi == ''">
+                <b-card class="mb-4 text-center">
+                    <p class="text-muted text-medium mt-1" style="font-style: italic;">
+                        This is the latest version
+                    </p>
                 </b-card>
-            </b-colxx>
-        </div>
-        <!-- <glide-component :settings="glideSingleOption">
-            <div class="glide__slide" v-for="i in 2" :key="i">
-                <h6>
-                    <b-badge class="mb-0" pill variant="secondary" style="width: 50%;">{{ arrVersi.created_at  }}</b-badge>
-                </h6>
             </div>
-        </glide-component> -->
-
-    </b-colxx>
-    <b-colxx xxs="12" xl="4" class="col-right">
-        <div class="mb-4" style="position: sticky; top: 20vh">
-            <b-card class="mb-4" no-body>
-                <b-tabs card no-fade>
-                <b-tab title="Action" active title-item-class="w-50 text-center">
-                    <div v-if="status != 6">
-                        <div v-if="btn1 != '' && btn2 != ''" >
-                        <b-row>
-                            <b-colxx xxs="6" class="text-center">
-                                <b-button @click="requestSubmit(btn1)" variant="primary" style="width: 100%">{{ btn1 }}</b-button>
-                            </b-colxx>
-                            <b-colxx xxs="6" class="text-center">
-                                <b-button @click="requestSubmit(btn2)" type="submit" variant="danger" style="width: 100%">{{ btn2 }}</b-button>
-                            </b-colxx>
-                        </b-row>
-                        </div>
-                        <div v-if="btn3 != ''" >
-                            <b-row class="mt-2">
-                                <b-colxx xxs="12" class="text-center">
-                                <b-form class="av-tooltip">
-                                    <b-button @click="requestSubmit(btn3)"  variant="primary" style="width: 100%">{{ btn3 }}</b-button>
-                                </b-form>
+            <div v-else>
+                <b-row class="mb-3">
+                    <b-colxx xxs="6" class="text-center">
+                        <b-button @click="previous" variant="primary" style="width: 50%">Previous</b-button>
+                    </b-colxx>
+                    <b-colxx xxs="6" class="text-center">
+                    <b-button @click="next" variant="danger" style="width: 50%">Next</b-button>
+                    </b-colxx>
+                </b-row>
+                <h4>Version {{ versi }}</h4>
+                <div class="separator mb-5"></div>
+                <b-colxx xxs="12" xl="12">
+                    <b-row>
+                        <b-colxx xxs="6" xl="6">
+                            <h1>Logo dan <br> profil perusahaan</h1>
+                        </b-colxx>
+                        <b-colxx xxs="6" xl="6" class="mb-3">
+                            <b-row>
+                                <b-colxx xxs="6" xl="6" class="text-left">
+                                <p class="text text-medium mt-1">
+                                    Quote
+                                </p>
+                                </b-colxx>
+                                <b-colxx xxs="6" xl="6" class="text-left">
+                                <p class="text text-medium mt-1">
+                                    {{ quote }}
+                                </p>
+                                </b-colxx>
+                                <b-colxx xxs="6" xl="6" class="text-left">
+                                <p class="text text-medium mt-1">
+                                    Tanggal
+                                </p>
+                                </b-colxx>
+                                <b-colxx xxs="6" xl="6" class="text-left">
+                                <p class="text text-medium mt-1">
+                                    {{ dateFormat(new Date(arrVersi.created_at)) }}
+                                </p>
+                                </b-colxx>
+                                <b-colxx xxs="6" xl="6" class="text-left">
+                                <p class="text text-medium mt-1" :style="returnColor(new Date(tglUntil),new Date(new Date(arrVersi.created_at).getTime()+(31*24*60*60*1000)))">
+                                    Berlaku sampai
+                                </p>
+                                </b-colxx>
+                                <b-colxx xxs="6" xl="6" class="text-left">
+                                <p class="text text-medium mt-1">
+                                    {{ dateFormat(new Date(new Date(arrVersi.created_at).getTime()+(31*24*60*60*1000))) }}
+                                </p>
                                 </b-colxx>
                             </b-row>
+                        </b-colxx>
+                    </b-row>
+                    <div class="separator mb-5"></div>
+                    <b-row>
+                        <b-colxx xxs="12" xl="6">
+                        <b-form class="av-tooltip tooltip-label-right">
+                            <b-card class="mb-4" title="Customer">
+                                <b-card class="mb-0" title="Data Customer" :style="returnColor(custNama, arrVersi.project.customer.name)">
+                                    <h6 class="text-muted text-medium mb-1">
+                                        {{ arrVersi.project.customer.name }}
+                                    </h6>
+                                    <p class="text-muted text-small mb-2">
+                                        {{ arrVersi.project.customer.email }}
+                                    </p>
+                                    <p class="text-muted text-small mb-2">
+                                        {{ arrVersi.project.customer.category.name + " - " + arrVersi.project.customer.priceCategory.name }}
+                                    </p>
+                                </b-card>
+                            </b-card>
+                        </b-form>
+                        </b-colxx>
+                        <b-colxx xxs="12" xl="6">
+                            <b-form class="av-tooltip tooltip-label-right">
+                            <b-card class="mb-4" title="Project">
+                                <b-card class="mb-0" title="Data Project">
+                                    <h6 class="text-muted text-medium mb-1" :style="returnColor(proNama, arrVersi.project.name)">
+                                        {{ arrVersi.project.name }}
+                                    </h6>
+                                    <p class="text-muted text-small mb-2">
+                                        {{ arrVersi.project.category.name }}
+                                    </p>
+                                </b-card>
+                            </b-card>
+                        </b-form>
+                        </b-colxx>
+                    </b-row>
+                    <div class="separator mb-2"></div>
+                    <b-card class="mb-4" v-for="area in arrVersi.areaItems" :key="area.category.id" >
+                            <b-row style="margin-bottom: 2vh">
+                                <b-colxx xxs="6" xl="6"><h2>{{area.category.name}}</h2></b-colxx>
+                            </b-row>
+                            <b-row>
+                                <b-colxx xxs="12" xl="6">
+                                    <b-row>
+                                        <b-colxx xxs="6" xl="6" class="text-left">
+                                        <p class="text text-medium mt-1" :style="returnColor(arrKumpulanArea.surface_preparation,area.surface_preparation)">
+                                            Section Area :
+                                        </p>
+                                        </b-colxx>
+                                        <b-colxx xxs="6" xl="6" class="text-left">
+                                            <div v-if="area.surface_preparation != null" >
+                                                <div v-for="item in splitSurface(area.surface_preparation)" :key="item">
+                                                    <h6>
+                                                        <b-badge class="mb-0" pill variant="secondary" style="width: 100%;">{{ item }}</b-badge>
+                                                    </h6>
+                                                </div>
+                                            </div>
+                                            <div v-else>
+                                                <p class="text-muted text-medium mt-1" style="font-style: italic;">No surface selected</p>
+                                            </div>
+                                        </b-colxx>
+                                    </b-row>
+                                </b-colxx>
+                                <b-colxx xxs="12" xl="6">
+                                    <b-row>
+                                        <b-colxx xxs="6" xl="6" class="text-right">
+                                        <p class="text text-medium mt-1" :style="returnColor(arrKumpulanArea.surface_area,area.surface_area)">
+                                            Luas Area :
+                                        </p>
+                                        </b-colxx>
+                                        <b-colxx xxs="6" xl="6" class="text-left">
+                                        <p class="text text-medium mt-1">
+                                            {{ area.surface_area }}
+                                        </p>
+                                        </b-colxx>
+                                    </b-row>
+
+                                </b-colxx>
+                            </b-row>
+                            <b-row>
+
+                            <b-colxx xxs="12" xl="12" class="text-left">
+                                <p class="mb-2">
+                                    HPP/Total
+                                    <span class="float-right text-muted">  {{area.total_hpp |currency}}/  {{area.total | currency}}</span>
+                                </p>
+                                    <b-progress :value="(area.total_hpp / area.total) * 100"></b-progress>
+                            </b-colxx>
+                            </b-row>
+                            <b-row>
+                            <b-colxx xxs="12" xl="12">
+                                <p class="text text-medium mt-3" :style="returnColor(arrKumpulanArea.length,area.items.length)">
+                                    Item
+                                </p>
+                                <table-item :dataComponent="area.items"></table-item>
+                            </b-colxx>
+                            </b-row>
+                    </b-card>
+                </b-colxx>
+            </div>
+            <!-- <glide-component :settings="glideSingleOption">
+                <div class="glide__slide" v-for="i in 2" :key="i">
+                    <h6>
+                        <b-badge class="mb-0" pill variant="secondary" style="width: 50%;">{{ arrVersi.created_at  }}</b-badge>
+                    </h6>
+                </div>
+            </glide-component> -->
+
+        </b-colxx>
+        <b-colxx xxs="12" xl="4" class="col-right">
+            <div class="mb-4" style="position: sticky; top: 20vh">
+                <b-card class="mb-4" no-body>
+                    <b-tabs card no-fade>
+                    <b-tab title="Action" active title-item-class="w-50 text-center">
+                        <div v-if="status != 6 && btn1 != '' && btn2 != '' && btn3 != ''">
+                            <div v-if="btn1 != '' && btn2 != ''" >
+                            <b-row>
+                                <b-colxx xxs="6" class="text-center">
+                                    <b-button @click="requestSubmit(btn1)" variant="primary" style="width: 100%">{{ btn1 }}</b-button>
+                                </b-colxx>
+                                <b-colxx xxs="6" class="text-center">
+                                    <b-button @click="requestSubmit(btn2)" type="submit" variant="danger" style="width: 100%">{{ btn2 }}</b-button>
+                                </b-colxx>
+                            </b-row>
+                            </div>
+                            <div v-if="btn3 != ''" >
+                                <b-row class="mt-2">
+                                    <b-colxx xxs="12" class="text-center">
+                                    <b-form class="av-tooltip">
+                                        <b-button @click="requestSubmit(btn3)" variant="primary" style="width: 100%">{{ btn3 }}</b-button>
+                                    </b-form>
+                                    </b-colxx>
+                                </b-row>
+                            </div>
                         </div>
-                    </div>
-                    <div v-else>
-                        <p class="text-muted text-medium mt-1">No action</p>
-                    </div>
-                </b-tab>
-                <b-tab title="Logs" title-item-class="w-50 text-center">
-                    <vue-perfect-scrollbar
-                    class="dashboard-logs scroll"
-                    :settings="{ suppressScrollX: true, wheelPropagation: false }"
-                    >
-                    <log-list :logs="logs" />
-                    </vue-perfect-scrollbar>
-                </b-tab>
-                </b-tabs>
-          </b-card>
-        </div>
-    </b-colxx>
-</b-row>
+                        <div v-else>
+                            <p class="text-muted text-medium mt-1" style="font-style: italic;">No action needed</p>
+                        </div>
+                        <b-button variant="primary" style="width: 100%" @click="downloadWithCSS">Preview PDF</b-button>
+                    </b-tab>
+                    <b-tab title="Logs" title-item-class="w-50 text-center">
+                        <vue-perfect-scrollbar
+                        class="dashboard-logs scroll"
+                        :settings="{ suppressScrollX: true, wheelPropagation: false }"
+                        >
+                        <log-list :logs="arrLog" />
+                        </vue-perfect-scrollbar>
+                    </b-tab>
+                    </b-tabs>
+            </b-card>
+            </div>
+        </b-colxx>
+    </b-row>
 </div>
 </template>
 
@@ -372,6 +744,7 @@ import { mapGetters } from "vuex";
 import GlideComponent from '../../../../components/Carousel/GlideComponent'
 import LogList from "../../../../components/Listing/LogList";
 import logs from "../../../../data/logs";
+import VueHtml2pdf from 'vue-html2pdf'
 
 import {
     validationMixin
@@ -400,11 +773,13 @@ export default {
         datepicker: Datepicker,
         'glide-component': GlideComponent,
         "table-item" : TableItem,
-        "log-list": LogList
+        "log-list": LogList,
+        VueHtml2pdf
     },
     data() {
         return {
             logs,
+            arrLog: [],
             isLoad: false,
             quote: "# 5037",
             status: "",
@@ -442,6 +817,9 @@ export default {
         },
     },
     methods: {
+        downloadWithCSS() {
+            this.$refs.html2Pdf.generatePdf()
+        },
         requestSubmit(a){
             let queryString = "";
             if(a.toLowerCase() === "close"){
@@ -552,7 +930,6 @@ export default {
                     adaKoma = true;
                 }
             }
-            console.log(adaKoma);
             if(adaKoma){
                 let arrTmp = arr.split(',');
                 console.log(arrTmp.length);
@@ -638,7 +1015,6 @@ export default {
             })
             .then(resp => {
                 this.surfaceOptions = resp;
-                console.log(this.surfaceOptions);
             })
         },
         onValitadeFormSubmit() {
@@ -799,7 +1175,6 @@ export default {
         }
     },
     async mounted(){
-        console.log(GlideComponent.data);
         this.qId = this.$route.query.id;
         this.qVer = this.$route.query.ver;
         if(this.qId && this.qVer){
@@ -834,6 +1209,14 @@ export default {
                         status{
                             id
                             name
+                        }
+                        quoteLogs{
+                            created_at
+                            status{
+                                id
+                                name
+                            }
+                            notes
                         }
                         total
                         last_version
@@ -879,7 +1262,6 @@ export default {
 		})
 		.then(resp => {
             this.detail = resp;
-            console.log(this.detail);
             this.tglQuote = new Date(this.detail.created_at);
             this.tglUntil = new Date(new Date(this.detail.created_at).getTime()+(31*24*60*60*1000));
             this.custNama = this.detail.project.customer.name;
@@ -888,7 +1270,7 @@ export default {
             this.proNama = this.detail.project.name;
             this.proKat = this.detail.project.category.name;
             this.arrKumpulanArea = this.detail.areaItems;
-            console.log(this.arrKumpulanArea);
+            this.arrLog = this.detail.quoteLogs;
             this.fetchSurface();
             this.user = this.detail.userCreate;
             this.status = this.detail.status.id;
