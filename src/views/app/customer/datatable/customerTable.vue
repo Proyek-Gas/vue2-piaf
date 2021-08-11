@@ -231,6 +231,17 @@ export default {
           id
           name
         }
+        lastquote{
+          id
+          project{
+            id
+            name
+            reminder
+          }
+          updated_at
+          closed_at
+          version
+      }
   			mobilePhone
   			workPhone
         street
