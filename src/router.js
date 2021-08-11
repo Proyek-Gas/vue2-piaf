@@ -133,6 +133,11 @@ const routes = [
             // meta: { roles: [UserRole.Admin, UserRole.Editor] },
           },
           {
+            path: 'quoteTable/qDetail/edit',
+            component: () => import(/* webpackChunkName: "piaf" */ './views/app/quote/form/editQuote'),
+            // meta: { roles: [UserRole.Admin, UserRole.Editor] },
+          },
+          {
             path: 'quoteTable/qDetail',
             component: () => import(/* webpackChunkName: "piaf" */ './views/app/quote/page/quoteDetail'),
             // meta: { roles: [UserRole.Admin, UserRole.Editor] },

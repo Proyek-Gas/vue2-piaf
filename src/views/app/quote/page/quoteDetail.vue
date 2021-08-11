@@ -689,45 +689,64 @@
                 <b-card class="mb-4" no-body>
                     <b-tabs card no-fade>
                     <b-tab title="Action" active title-item-class="w-50 text-center">
-                        <div v-if="status != 6 && btn1 != '' && btn2 != '' && btn3 != ''">
-                            <div v-if="btn1 != '' && btn2 != ''" >
-                            <b-row>
+                        <div v-if="btn1 == '' && btn2 == '' && btn3 == ''">
+                            <p class="text-muted text-medium mt-1" style="font-style: italic;">No action needed</p>
+                        </div>
+                        <div v-else>
+                        <div v-if="status != 6">
+                            <b-row class="mb-2">
                                 <b-colxx xxs="6" class="text-center">
-                                    <b-button @click="requestSubmit(btn1)" variant="primary" style="width: 100%">{{ btn1 }}</b-button>
+                                    <b-button v-if="btn1 != ''" @click="requestSubmit(btn1,'modalbasic')" variant="primary" style="width: 100%">{{ btn1 }}</b-button>
                                 </b-colxx>
                                 <b-colxx xxs="6" class="text-center">
-                                    <b-button @click="requestSubmit(btn2)" type="submit" variant="danger" style="width: 100%">{{ btn2 }}</b-button>
+                                    <b-button v-if="btn2 != ''" @click="requestSubmit(btn2,'modalbasic')" type="submit" variant="danger" style="width: 100%">{{ btn2 }}</b-button>
                                 </b-colxx>
                             </b-row>
-                            </div>
-                            <div v-if="btn3 != ''" >
-                                <b-row class="mt-2">
-                                    <b-colxx xxs="12" class="text-center">
-                                    <b-form class="av-tooltip">
-                                        <b-button @click="requestSubmit(btn3)" variant="primary" style="width: 100%">{{ btn3 }}</b-button>
-                                    </b-form>
-                                    </b-colxx>
-                                </b-row>
-                            </div>
+                            <b-row class="mb-2">
+                                <b-colxx xxs="6" class="text-center">
+                                <b-form class="av-tooltip">
+                                    <b-button v-if="btn3 != '' && btn3 == 'Edit'" :to="movePageEdit(qId, qVer)" variant="primary" style="width: 100%">{{ btn3 }}</b-button>
+                                    <b-button v-if="btn3 != '' && btn3 != 'Edit'" @click="requestSubmit(btn3,'modalbasic')" variant="primary" style="width: 100%">{{ btn3 }}</b-button>
+                                </b-form>
+                                </b-colxx>
+                                <b-colxx xxs="6" class="text-center">
+                                <b-form class="av-tooltip">
+                                    <b-button v-if="btn4 != ''" @click="requestSubmit(btn4)" variant="primary" style="width: 100%">{{ btn4 }}</b-button>
+                                </b-form>
+                                </b-colxx>
+                            </b-row>
                         </div>
                         <div v-else>
                             <p class="text-muted text-medium mt-1" style="font-style: italic;">No action needed</p>
+                        </div>                        
                         </div>
                         <b-button variant="primary" style="width: 100%" @click="downloadWithCSS">Preview PDF</b-button>
                     </b-tab>
                     <b-tab title="Logs" title-item-class="w-50 text-center">
-                        <vue-perfect-scrollbar
-                        class="dashboard-logs scroll"
-                        :settings="{ suppressScrollX: true, wheelPropagation: false }"
-                        >
-                        <log-list :logs="arrLog" />
-                        </vue-perfect-scrollbar>
+                        <div v-if="arrLog.length == 0">
+                            <p class="text-muted text-medium mt-1" style="font-style: italic;">No logs</p>
+                        </div>
+                        <div v-else>
+                            <vue-perfect-scrollbar
+                            class="dashboard-logs scroll"
+                            :settings="{ suppressScrollX: true, wheelPropagation: false }"
+                            >
+                            <log-list :logs="arrLog" />
+                            </vue-perfect-scrollbar>
+                        </div>
                     </b-tab>
                     </b-tabs>
             </b-card>
             </div>
         </b-colxx>
     </b-row>
+    <b-modal id="modalbasic" ref="modalbasic" title="Konfirmasi">
+        Anda yakin ingin mengubah status quote ini dari {{ status.name }} menjadi {{ konfirm }} ?
+        <template slot="modal-footer">
+            <b-button variant="primary" @click="submitModal(konfirm,'modalbasic')" class="mr-1">OK</b-button>
+            <b-button variant="danger" @click="hideModal('modalbasic')">Cancel</b-button>
+        </template>
+    </b-modal>
 </div>
 </template>
 
@@ -802,12 +821,9 @@ export default {
             btn1: "",
             btn2: "",
             btn3: "",
+            btn4: "",
 
-            glideSingleOption: {
-                gap: 5,
-                perView: 1,
-                type: "carousel"
-            },
+            konfirm: "",
         };
     },
     mixins: [validationMixin],
@@ -817,10 +833,16 @@ export default {
         },
     },
     methods: {
+        movePageEdit(q, v){
+            return "../quoteTable/qDetail/edit?id="+q+"&ver="+v;
+        },
         downloadWithCSS() {
             this.$refs.html2Pdf.generatePdf()
         },
-        requestSubmit(a){
+        hideModal(refname){
+            this.$refs[refname].hide()
+        },
+        submitModal(a){
             let queryString = "";
             if(a.toLowerCase() === "close"){
                 queryString = `query{
@@ -852,26 +874,36 @@ export default {
                 return response.json()
             })
             .then(function(text) {
-                return text.data.closeQuote;
-            })
-            .then(resp => {
-                if(resp.status.toLowerCase() == "success"){
-                    this.$toast(resp.message, {
-                        type: "success",
-                        hideProgressBar: true,
-                        timeout: 2000
-                    });
-                    setTimeout(() => {
-                        window.location = window.location.origin+"/app/datatable/QuoteTable";
-                    }, 1000);
+                console.log(a);
+                if(a.toLowerCase() === "submit"){
+                    console.log(text.data);
                 }else{
-                    this.$toast(resp.message, {
-                        type: "error",
-                        hideProgressBar: true,
-                        timeout: 2000
-                    });
+                    console.log(text.data);
                 }
             })
+            .then(resp => {
+                // if(resp.status.toLowerCase() == "success"){
+                //     this.$toast(resp.message, {
+                //         type: "success",
+                //         hideProgressBar: true,
+                //         timeout: 2000
+                //     });
+                //     setTimeout(() => {
+                //         window.location = window.location.origin+"/app/datatable/QuoteTable";
+                //     }, 1000);
+                // }else{
+                //     this.$toast(resp.message, {
+                //         type: "error",
+                //         hideProgressBar: true,
+                //         timeout: 2000
+                //     });
+                // }
+            })
+        },
+        requestSubmit(a, refname){
+            this.$refs[refname].show()
+            this.konfirm = a;
+            
         },
         returnColor(a,b){
             if(a != b){
@@ -932,12 +964,9 @@ export default {
             }
             if(adaKoma){
                 let arrTmp = arr.split(',');
-                console.log(arrTmp.length);
                 for (let i = 0; i < 3; i++) {
-
                     for (let j = 0; j < this.surfaceOptions.length; j++) {
                         if(arrTmp[i] == this.surfaceOptions[j].id){
-                            console.log(this.surfaceOptions[j].name);
                             tmp.push(this.surfaceOptions[j].name);
                         }
                     }
@@ -1174,10 +1203,11 @@ export default {
             });
         }
     },
-    async mounted(){
+    mounted(){
         this.qId = this.$route.query.id;
         this.qVer = this.$route.query.ver;
         if(this.qId && this.qVer){
+        this.fetchSurface();
         fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
 			method: 'POST',
 			headers: {
@@ -1271,16 +1301,16 @@ export default {
             this.proKat = this.detail.project.category.name;
             this.arrKumpulanArea = this.detail.areaItems;
             this.arrLog = this.detail.quoteLogs;
-            this.fetchSurface();
             this.user = this.detail.userCreate;
-            this.status = this.detail.status.id;
-            if(this.status == 1){
+            this.status = this.detail.status;
+            if(this.status.id == 1){
                 if(this.user.name == this.currentUser.title || this.user.role.name.toLowerCase() == "manager"){
                     this.btn1 = "Submit";
                     this.btn2 = "Close";
+                    this.btn3 = "Edit";
                 }
             }
-            else if(this.status == 2){
+            else if(this.status.id == 2){
                 if(this.currentUser.role == 2){
                     this.btn1 = "Approve";
                     this.btn2 = "Reject";
@@ -1288,39 +1318,35 @@ export default {
                 if(this.user.name == this.currentUser.title){
                     this.btn3 = "Close";
                 }
-            }else if (this.status == 3){
+            }else if (this.status.id == 3){
                 if(this.user.name == this.currentUser.title || this.currentUser.role == 2){
                     this.btn1 = "Rejected by Customer";
                     this.btn2 = "Forward";
                 }
-            }else if (this.status == 4){
+            }else if (this.status.id == 4){
                 if(this.user.name == this.currentUser.title || this.currentUser.role == 2){
                     this.btn1 = "Close";
                     this.btn2 = "Submit";
+                    this.btn3 = "Edit";
                 }
-            }else if (this.status == 5){
+            }else if (this.status.id == 5){
                 if(this.user.name == this.currentUser.title || this.currentUser.role == 2){
                     this.btn1 = "Close";
                     this.btn2 = "Revise";
                 }
             }
-            else if (this.status == 7){
+            else if (this.status.id == 7){
                 if(this.currentUser.role == 2){
                     this.btn1 = "";
                     this.btn2 = "";
                     this.btn3 = "Cancel";
                 }
             }
-            if(this.user){
-                if(this.user.role.name.toLowerCase() == "manager"){
-                    }
-            }else{
+            this.isLoad = true;
 
-            }
             if(this.qVer > 1){
                 this.fetchVersion(this.versi);
             }
-            this.isLoad = true;
         })
         }else{
             window.location = window.location.origin +"/error?id=404&name=quote";

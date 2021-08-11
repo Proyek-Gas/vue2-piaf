@@ -163,6 +163,7 @@ export default {
     },
     data() {
         return {
+            submit: false,
             name: "",
             kode: "",
             kategori: "",
@@ -221,7 +222,8 @@ export default {
     methods: {
         onValitadeFormSubmit() {
             this.$v.$touch();
-            if(!this.$v.$invalid){
+            if(!this.$v.$invalid && !this.submit){
+                this.submit = true;
                 let floatLimit = 0;
                 if(this.limit != ''){
                     floatLimit = parseFloat(this.limit);

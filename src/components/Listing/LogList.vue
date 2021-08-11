@@ -42,6 +42,6 @@ export default {
             if(sec < 10)sec = "0"+sec;
             return hr + ":" + min + ":" + sec;
         },
-    }
+    },
 }
 </script>

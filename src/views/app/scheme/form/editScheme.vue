@@ -187,6 +187,7 @@ export default {
     },
     data() {
         return {
+            submit: false,
             isLoad: false,
             namaSch: "",
          //   item: "",
@@ -274,7 +275,8 @@ export default {
         },
         onValitadeFormSubmit() {
             this.$v.$touch();
-            if(!this.$v.$invalid){
+            if(!this.$v.$invalid && !this.submit){
+                this.submit = true;
                 let data = {};
                 let sukses = true;
                 let sukses2 = true;
@@ -738,8 +740,8 @@ export default {
                             vs: this.dataTmp[i].vs,
                             balance: this.dataTmp[i].balance,
                             coat: this.dataTmp[i].coat,
-                            dft: this.dataTmp[i].coat,
-                            loss: this.dataTmp[i].coat,
+                            dft: this.dataTmp[i].dry_film_thickness,
+                            loss: this.dataTmp[i].loss,
                             price: []
 
                         }
