@@ -16,7 +16,14 @@
       <div class="col-6" style="text-align:right"><b>Price Category: </b></div>
       <div class="col-6"> <b-badge :variant="rowData.priceCategory.name === 'Umum' ? '3' ? 'primary' : 'success' : 'danger'" close-transition>{{rowData.priceCategory.name}}</b-badge></div>
     </div>
-
+    <div class="row">
+      <div class="col-6" style="text-align:right"><b>Last Project Name :</b></div>
+      <div class="col-6"><router-link :to="returnPageProjectDetail(rowData)">{{rowData.lastquote.project.name}}</router-link></div>
+    </div>
+    <div class="row">
+      <div class="col-6" style="text-align:right"><b>Updated At / Clossed At :</b></div>
+      <div class="col-6"><router-link :to="returnPageQuoteDetail(rowData)" v-if="rowData.lastquote.project.id != null">{{timeLayout(rowData.lastquote.updated_at)  }}/ {{timeLayout(rowData.lastquote.closed_at)}}</router-link></div>
+    </div>
   </div>
 </template>
 
@@ -44,6 +51,12 @@ export default {
         else if (n >= 1e6 && n < 1e9) return +(n / 1e6).toFixed(1) + " jt";
         else if (n >= 1e9 && n < 1e12) return +(n / 1e9).toFixed(1) + " M";
         else if (n >= 1e12) return +(n / 1e12).toFixed(1) + " T";
+    },
+    returnPageQuoteDetail(props){
+      return "quoteTable/qDetail?id="+props.lastquote.id+"&ver="+props.lastquote.id
+    },
+    returnPageProjectDetail(props){
+      return "projectTable/pDetail?id="+props.lastquote.project.id
     },
     timeLayout(n){
       if(n!= null){

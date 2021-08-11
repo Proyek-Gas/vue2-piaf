@@ -114,7 +114,7 @@
                   </div>
                </div>
                 <div v-if="dataSelected3.length > 0" class="row">
-                    <table-agent :dataComponent="dataSelected3"></table-agent>
+                    <table-agent :dataComponent="dataSelected3" v-on:btnDel="removeBigData"></table-agent>
                 </div>
             </b-card>
         </b-form>
@@ -265,7 +265,10 @@ export default {
                 if(!arrOld[j].action){
                     newArrSelected.push(arrOld[j])
                 } else{
-                cek = true
+                     cek = true
+                     this.removeDataAgentChild(arrOld[j].recommended_thinner_id)
+                     this.removeDataAgentChild(arrOld[j].agent_item_id);
+
                 }
             }
 
@@ -458,16 +461,66 @@ export default {
         removeBigData : function (item){
           let newArr = this.bigData
           let index = -1;
+
             for(let i=0; i< newArr.length; i++){
              if(newArr[i].no == item.no){
                index = i
              }
             }
 
+
+            if(item.agent_item_id != null){
+              this.removeDataAgentChild(item.agent_item_id)
+            }
+            if(item.recommended_thinner_id != null){
+              this.removeDataAgentChild(item.recommended_thinner_id)
+            }
+
             if(index != -1){
               newArr.splice(index,1)
             }
             this.bigData = newArr
+        },
+        removeDataAgentChild(id){
+          console.log("woy")
+            let newArr = this.bigData
+            let newArr2 = this.dataSelected2
+            let newArr3 = this.dataSelected3
+            let index= -1;
+            let index2 = -1;
+            let index3 = -1;
+            for (let i = 0; i < newArr.length; i++) {
+              if(newArr[i].id == id){
+               index = i
+             }
+            }
+
+             for (let i = 0; i < newArr2.length; i++) {
+              if(newArr2[i].id == id){
+               index2 = i
+             }
+            }
+
+             for (let i = 0; i < newArr3.length; i++) {
+              if(newArr3[i].id == id){
+               index3= i
+             }
+            }
+
+
+
+            if(index != -1){
+              newArr.splice(index,1)
+            }
+            if(index2 != -1){
+              newArr2.splice(index2,1)
+            }
+            if(index3 != -1){
+              newArr3.splice(index3,1)
+            }
+            this.bigData = newArr
+            this.dataSelected2 = newArr2
+            this.dataSelected3 = newArr3
         },
         renderSuggestion(suggestion) {
             const character = suggestion.item;
@@ -571,12 +624,12 @@ export default {
 
                 }
                 console.log(data);
-                this.bigData.push(data);
+
                 //data = this.fetchAgain(data)
                 // if(suggestion.item.type.id == 1)this.dataSelected1.push(data);
                 // else if(suggestion.item.type.id == 1)this.dataSelected2.push(data); //nanti ganti 2 ya
                 // else this.dataSelected3.push(data);
-                this.fetchAgain(data)
+                this.fetchAgain(data,false)
             }
                 console.log(this.bigData);
             return suggestion.item.name;
@@ -587,15 +640,33 @@ export default {
             }
             return style
         },
-        fetchAgain(data){
-
+        fetchAgain(data, cek){
+          let id = null;
+          if(cek) {
+            id = data
+          }else{
+            id = data.id
+          }
           let queryString = `
             query{
-                itemDetail(item_id:${data.id}){
+                itemDetail(item_id:${id}){
+                  name
+                  no
+                  id
                     type{
                       name
                       id
                     }
+                     color{
+                      id_ral
+                      hex_code
+                      ind_name
+                      eng_name
+                    }
+                    balance
+                    vs_volume_solid
+                    agent_item_id
+                    recommended_thinner_id
                   detailSellingPrice{
                     priceCategory{
                       id
@@ -625,13 +696,33 @@ export default {
                 return text.data.itemDetail;
             })
             .then(resp => {
-              console.log(resp.detailSellingPrice)
-              data.price = resp.detailSellingPrice
-              if(resp.type.id != null){
-                if(resp.type.id == 1)this.dataSelected1.push(data);
-                else if(resp.type.id == 2)this.dataSelected2.push(data); //nanti ganti 2 ya
-                else this.dataSelected3.push(data);
+              if(cek){
+                  data = resp
+                  data.warna= resp.color;
+                  data.no = resp.no;
+                  data.name = resp.name;
+                  data.vs= resp.vs_volume_Solid;
+                  data.balance = resp.balance;
+                 // this.bigData.push(data)
               }
+                console.log(resp.detailSellingPrice)
+                data.price = resp.detailSellingPrice
+                data.agent_item_id = resp.agent_item_id;
+                data.recommended_thinner_id = resp.recommended_thinner_id;
+                if(resp.agent_item_id != null && resp.agent_item_id!=0){
+                  this.fetchAgain(resp.agent_item_id, true)
+                }
+
+                 if(resp.recommended_thinner_id != null && resp.recommended_thinner_id != 0){
+                  this.fetchAgain(resp.recommended_thinner_id, true)
+                }
+
+                if(resp.type.id != null){
+                  if(resp.type.id == 1)this.dataSelected1.push(data);
+                  else if(resp.type.id == 2)this.dataSelected2.push(data); //nanti ganti 2 ya
+                  else this.dataSelected3.push(data);
+                }
+                   this.bigData.push(data);
             })
          // return data
         },
@@ -705,7 +796,7 @@ export default {
     computed:{
         ...mapGetters({
           currentUser: "currentUser",
-    
+
         })
     }
 };
