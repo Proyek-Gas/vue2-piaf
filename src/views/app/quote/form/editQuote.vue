@@ -2,7 +2,7 @@
 <div v-if="isLoad">
 <b-row>
     <b-colxx xxs="12">
-        <h1>Add Quote</h1>
+        <h1>Edit Quote</h1>
         <div class="separator mb-5"></div>
     </b-colxx>
     <b-colxx xxs="12" xl="8">
@@ -36,34 +36,8 @@
         <div class="separator mb-5"></div>
         <b-row>
             <b-colxx xxs="12" xl="6">
-            <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip tooltip-label-right">
+            <b-form class="av-tooltip tooltip-label-right">
                 <b-card class="mb-4" title="Customer">
-                    <b-form-group horizontal>
-                        <b-input-group>
-                        <b-input-group-prepend>
-                            <b-button
-                                class="glyph-icon simple-icon-plus"
-                                variant="success"
-                                size="sm"
-                                v-b-modal.modalright
-                                >
-                            </b-button>
-                            <mAddCustomer v-on:answers="onUpdateAnswer"></mAddCustomer>
-                        </b-input-group-prepend>
-                        <vue-autosuggest
-                            class="autosuggest suggest"
-                            :input-props="{id:'autosuggest__input', class:'form-control', placeholder:'Ketik nama customer'}"
-                            :suggestions="filteredOptions"
-                            :render-suggestion="renderSuggestion"
-                            :get-suggestion-value="getSuggestionValue"
-                            :limit="6"
-                            v-model="custNama"
-                            @selected="onAutosuggestSelected"
-                            @input="onAutoSuggestInputChange"
-                        >
-                        </vue-autosuggest>
-                        </b-input-group>
-                    </b-form-group>
                     <b-card class="mb-0" title="Data Customer">
                         <h6 class="text-muted text-medium mb-1">
                             {{ custNama }}
@@ -82,36 +56,8 @@
             </b-form>
             </b-colxx>
             <b-colxx xxs="12" xl="6">
-                <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip tooltip-label-right">
+                <b-form class="av-tooltip tooltip-label-right">
                 <b-card class="mb-4" title="Project">
-                    <b-form-group horizontal>
-                        <b-input-group>
-                        <b-input-group-prepend>
-                            <b-button
-                                class="glyph-icon simple-icon-plus"
-                                variant="success"
-                                size="sm"
-                                v-b-modal.modalright2
-                                >
-                            </b-button>
-                            <mAddProject v-on:answerss="onUpdateAnswer2" :dataPassing="dataPassing" ref="dataPassing"></mAddProject>
-                        </b-input-group-prepend>
-                        <vue-autosuggest
-                            class="autosuggest suggest"
-                            :input-props="{id:'autosuggest__input2', class:'form-control', placeholder:'Ketik nama project'}"
-                            :suggestions="filteredOptions2"
-                            :render-suggestion="renderSuggestion2"
-                            :get-suggestion-value="getSuggestionValue2"
-                            :limit="6"
-                            v-model="proNama"
-                            @selected="onAutosuggestSelected2"
-                            @input="onAutoSuggestInputChange2"
-                        >
-                        </vue-autosuggest>
-                        </b-input-group>
-                        <b-form-input type="text" v-model="$v.proNama.$model" :state="!$v.proNama.$error" style="display:none;" placeholder="Masukkan judul proyek"/>
-                        <b-form-invalid-feedback v-if="!$v.proNama.required">Harap pilih project</b-form-invalid-feedback>
-                    </b-form-group>
                     <b-card class="mb-0" title="Data Project">
                         <h6 class="text-muted text-medium mb-1">
                             {{ proNama }}
@@ -134,7 +80,6 @@
           placeholder="Harap pilih project"/>
       </b-form-group>
         <div class="separator mb-2"></div>
-        <!-- {{arrKumpulanArea}} -->
          <b-card class="mb-4" v-for="(areas,index) in arrKumpulanArea" v-bind:key="areas.id" >
                   <b-row style="margin-bottom: 2vh">
                     <b-colxx xxs="6" xl="6"><h2>{{areas.name}}</h2></b-colxx>
@@ -208,18 +153,18 @@
         <b-card class="mb-4" style="position: sticky; top: 20vh">
             <b-card-title>Quote Summary</b-card-title>
             <b-row class="mb-2">
-                <b-colxx xxs="3">
+                <b-colxx xxs="3" class="text-left">
                 <p class="text text-small mb-2">
                     {{ dateFormat(tglQuote) }}
                 </p>
                 </b-colxx>
                 <b-colxx xxs="3">
-                    <b-badge pill variant="warning">Rejected(M)</b-badge>
+                    <b-badge pill variant="warning">{{ strStatus }}</b-badge>
                 </b-colxx>
                 <b-colxx xxs="3">
-                    <b-badge pill variant="primary">0</b-badge>
+                    <b-badge class="ml-3" pill variant="primary">{{ qVer }}</b-badge>
                 </b-colxx>
-                <b-colxx xxs="3">
+                <b-colxx xxs="3" class="text-right"> 
                 <p class="text text-small mb-2">
                     {{ dateFormat(tglUntil) }}
                 </p>
@@ -263,16 +208,30 @@
                 </b-colxx>
             </b-row>
             <b-row v-else> <p class="text-muted m-3" style="font-style: italic;">No area selected</p></b-row>
-            <b-row>
-                <b-colxx xxs="6" class="text-center">
-                <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip">
-                    <b-button type="submit" variant="primary" style="width: 100%" @click="alrt">{{ btn1 }}</b-button>
-                </b-form>
-                </b-colxx>
-                <b-colxx xxs="6" class="text-center">
-                <b-button @click="onFormReset" type="submit" variant="danger" style="width: 100%">{{ btn2 }}</b-button>
-                </b-colxx>
-            </b-row>
+            <div v-if="status != 6">
+                <b-row >
+                    <b-colxx xxs="6" class="text-center">
+                    <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip">
+                        <b-button v-if="btn1 != ''" type="submit" variant="primary" style="width: 100%" @click="alrt">{{ btn1 }}</b-button>
+                    </b-form>
+                    </b-colxx>
+                    <b-colxx xxs="6" class="text-center">
+                    <b-button v-if="btn2 != ''" @click="onFormReset" type="submit" variant="danger" style="width: 100%">{{ btn2 }}</b-button>
+                    </b-colxx>
+                </b-row>
+                <b-row>
+                    <b-colxx xxs="6" class="text-center">
+                    <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip">
+                        <b-button v-if="btn3 != ''" type="submit" variant="primary" style="width: 100%" @click="alrt">{{ btn3 }}</b-button>
+                    </b-form>
+                    </b-colxx>
+                </b-row>
+            </div>
+            <div v-else>
+                <b-row>
+                    <p class="text-muted text-medium mt-1" style="font-style: italic;">No action needed</p>
+                </b-row>
+            </div>
         </b-card>
     </b-colxx>
 </b-row>
@@ -334,6 +293,7 @@ export default {
             submit: false,
             isLoad: false,
             quote: "# 5037",
+            strStatus: "",
             status: "",
             dataPassing:"",
             custEmail: "",
@@ -346,7 +306,7 @@ export default {
             tglQuote: "",
             tglUntil: "",
             arrDetailProject : [],
-
+            detail: [],
 /////
             arrKumpulanArea : [],
             area: "",
@@ -364,6 +324,7 @@ export default {
             primarySmall: false,
             btn1: "",
             btn2: "",
+            btn3: "",
 
             areaOptions: [],
             filteredOptions: [],
@@ -551,18 +512,18 @@ export default {
             },3000)
         },
         newArea(){
-          let cek = true
-            for(let i=0; i<this.arrKumpulanArea.length; i++){
-              if(this.arrKumpulanArea[i].id == this.area.id){
-                cek = false
-              }
+            let cek = true
+                for(let i=0; i<this.arrKumpulanArea.length; i++){
+                if(this.arrKumpulanArea[i].id == this.area.id){
+                    cek = false
+                }
+                }
+            if(cek){
+                this.arrKumpulanArea.push(this.area)
+                for(let i=0; i< this.arrKumpulanArea.length; i++){
+                this.totalAll += this.arrKumpulanArea[i].total_harga
+                }
             }
-          if(cek){
-            this.arrKumpulanArea.push(this.area)
-            for(let i=0; i< this.arrKumpulanArea.length; i++){
-              this.totalAll += this.arrKumpulanArea[i].total_harga
-            }
-          }
         },
         dateFormat(date){
             let d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -1232,18 +1193,161 @@ export default {
         },
     },
     async mounted(){
-      console.log(window.innerWidth)
-        console.log(this.currentUser.role);
+        this.qId = this.$route.query.id;
+        this.qVer = this.$route.query.ver;
+        console.log(this.qId);
+        console.log(this.qVer);
+    if(this.qId && this.qVer){
         this.status = this.$route.query.status;
-        if(this.status){
-            if(this.status == 1){
-                this.btn1 = "Submit";
-                this.btn2 = "Close";
+        fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+			method: 'POST',
+			headers: {
+			'Content-Type': 'application/json',
+            'Authorization' :'Bearer '+this.currentUser.jwt
+			},
+			body: JSON.stringify({
+				query: `
+					query{
+                    quoteDetail(quote_id:${this.qId} version:${this.qVer}){
+                        id
+                        project{
+                        id
+                        name
+                        category{
+                            id
+                            name
+                        }
+                        customer{
+                            name
+                            email
+                            category{
+                                name
+                            }
+                            priceCategory{
+                                name
+                            }
+                        }
+                        }
+                        status{
+                            id
+                            name
+                        }
+                        quoteLogs{
+                            created_at
+                            status{
+                                id
+                                name
+                            }
+                            notes
+                        }
+                        total
+                        last_version
+                        notes
+                        created_at
+                        userCreate{
+                        name
+                        role{
+                            name
+                        }
+                        }
+                        areaItems{
+                            category{
+                                id
+                                name
+                            }
+                            surface_area
+                            total
+                            total_hpp
+                            surface_preparation
+                            items{
+                                item_name
+                                price
+                                subtotal
+                                item_id
+                                liter
+                                coat
+                                dry_film_thickness
+                                theoritical
+                                practical
+                                loss
+                            }
+                        }
+                    }
+                    }
+				`,
+			}),
+		})
+		.then(function(response) {
+			return response.json()
+		})
+		.then(function(text) {
+			return text.data.quoteDetail;
+		})
+		.then(resp => {
+            this.detail = resp;
+            console.log(this.detail);
+            this.tglQuote = new Date(this.detail.created_at);
+            this.tglUntil = new Date(new Date(this.detail.created_at).getTime()+(31*24*60*60*1000));
+            this.custNama = this.detail.project.customer.name;
+            this.custEmail = this.detail.project.customer.email;
+            this.custCate = this.detail.project.customer.category.name + " - "+ this.detail.project.customer.priceCategory.name;
+            this.proNama = this.detail.project.name;
+            this.proKat = this.detail.project.category;
+            this.arrKumpulanArea = this.detail.areaItems;
+            console.log(this.proKat.id);
+            this.fetchArea(this.proKat.id);
+            this.fetchSurface();
+            this.user = this.detail.userCreate;
+            this.status = this.detail.status;
+            console.log(this.detail);
+            if(this.status.id == 1){
+                this.strStatus = "DRAFT";
+                if(this.user.name == this.currentUser.title || this.currentUser.role == 2){
+                    this.btn1 = "Submit";
+                    this.btn2 = "Close";
+                }
             }
-        }else{
-            this.btn1 = "Submit";
-            this.btn2 = "Draft";
-        }
+            else if(this.status.id == 2){
+                this.strStatus = "SUBMIT";
+                if(this.currentUser.role == 2){
+                    this.btn1 = "Approve";
+                    this.btn2 = "Reject";
+                }
+                if(this.user.name == this.currentUser.title){
+                    this.btn3 = "Close";
+                }
+            }else if (this.status.id == 3){
+                this.strStatus = "APPROVED";
+                if(this.user.name == this.currentUser.title || this.currentUser.role == 2){
+                    this.btn1 = "Rejected by Customer";
+                    this.btn2 = "Forward";
+                }
+            }else if (this.status.id == 4){
+                this.strStatus = "REJECTED(M)";
+                if(this.user.name == this.currentUser.title || this.currentUser.role == 2){
+                    this.btn1 = "Close";
+                    this.btn2 = "Submit";
+                }
+            }else if (this.status.id == 5){
+                this.strStatus = "REJECTED(C)";
+                if(this.user.name == this.currentUser.title || this.currentUser.role == 2){
+                    this.btn1 = "Close";
+                    this.btn2 = "Revise";
+                }
+            }
+            else if (this.status.id == 6){
+                this.strStatus = "CLOSED";
+            }
+            else if (this.status.id == 7){
+                this.strStatus = "FORWARD(SO)";
+                if(this.currentUser.role == 2){
+                    this.btn1 = "";
+                    this.btn2 = "";
+                    this.btn3 = "Cancel";
+                }
+            }
+            this.isLoad = true;
+        })
         fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
 			method: 'POST',
 			headers: {
@@ -1276,11 +1380,12 @@ export default {
 			return text.data.customers;
 		})
 		.then(resp => {
-            this.isLoad = true;
-            this.tglQuote = new Date(Date.now());
-            this.tglUntil = new Date(new Date().getTime()+(30*24*60*60*1000));
             this.dataCust = resp;
 		})
+    }
+    else{
+        window.location = window.location.origin +"/error?id=404&name=quote";
+    }
     }
 };
 </script>

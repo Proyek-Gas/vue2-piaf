@@ -168,6 +168,7 @@ export default {
     data() {
         return {
             isLoad: false,
+            submit: false,
             custPhone: "",
             custId: "",
             custNama: "",
@@ -290,7 +291,8 @@ export default {
         },
         onValitadeFormSubmit() {
             this.$v.$touch();
-            if(!this.$v.$invalid){
+            if(!this.$v.$invalid && !this.submit){
+                this.submit = true;
                 console.log("valid");
                 let date;
                 let str;
@@ -334,14 +336,14 @@ export default {
 				.then(resp => {
 					console.log(resp.message);
 					if(resp.status.toLowerCase() == "success"){
+                        setTimeout(() => {
+                            window.location = window.location.origin+"/app/datatable/projectTable";
+                        }, 1000);
                         this.$toast(resp.message, {
                             type: "success",
                             hideProgressBar: true,
                             timeout: 2000
                         });
-                        setTimeout(() => {
-                            window.location = window.location.origin+"/app/datatable/projectTable";
-                        }, 1000);
                     }else{
                         this.$toast(resp.message, {
                             type: "error",

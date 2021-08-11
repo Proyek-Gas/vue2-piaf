@@ -149,6 +149,7 @@ export default {
     },
     data() {
         return {
+            submit: false,
             isLoad: false,
             proId: 0,
             custPhone: '',
@@ -228,7 +229,8 @@ export default {
         },
         onValitadeFormSubmit() {
             this.$v.$touch();
-            if(!this.$v.$invalid){
+            if(!this.$v.$invalid && !this.submit){
+                this.submit = true;
                 console.log("valid");
                 let date;
                 let str;

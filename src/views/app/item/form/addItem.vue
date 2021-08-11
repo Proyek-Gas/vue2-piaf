@@ -190,6 +190,7 @@ export default {
     },
     data() {
         return {
+            submit: false,
             select1: 0,
             select2: 0,
             itemId: 0,
@@ -254,7 +255,8 @@ export default {
     methods: {
         onValitadeFormSubmit() {
             this.$v.$touch();
-            if(!this.$v.$invalid){
+            if(!this.$v.$invalid && !this.submit){
+                this.submit = true;
                 console.log("valid");
                 let floatvs = 0;let floatAg = 0;
                 let floatltr = 0;let floatThin = 0;

@@ -25,44 +25,6 @@
                         @selected="onAutosuggestSelected"
                         @input="onAutoSuggestInputChange"
                     >
-                    <template slot="before-section-default">
-                        <div class="p-1">
-                            <b-button
-                                class="glyph-icon simple-icon-plus"
-                                variant="success"
-                                v-b-modal.modalright
-                                size="sm"
-                                style="width: 100%;"
-                                @click="showModal('modalright')">
-                            </b-button>
-                            <b-modal id="modalright" ref="modalright" title="Add Customer" modal-class="modal-right">
-                                <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip tooltip-label-right">
-                                        <b-card class="mb-4" title="Profil Customer">
-                                            <b-form-group label-cols="3" horizontal label="Kode">
-
-                                            </b-form-group>
-
-                                            <b-form-group label-cols="3" horizontal label="Nama">
-
-                                            </b-form-group>
-
-                                            <b-form-group label-cols="3" horizontal label="Kategori">
-
-                                            </b-form-group>
-
-                                            <b-form-group label-cols="3" horizontal label="Kategori Harga">
-
-                                            </b-form-group>
-
-                                            <b-form-group label-cols="3" horizontal label="Limit Piutang" >
-
-                                            </b-form-group>
-                                        </b-card>
-                                </b-form>
-                            </b-modal>
-                        </div>
-                    </template>
-
                     </vue-autosuggest>
                 </b-form-group>
             </b-card>
@@ -222,6 +184,7 @@ export default {
     },
     data() {
         return {
+            submit: false,
             isLoad: false,
             namaSch: "",
          //   item: "",
@@ -316,7 +279,8 @@ export default {
 
         onValitadeFormSubmit() {
             this.$v.$touch();
-            if(!this.$v.$invalid){
+            if(!this.$v.$invalid && !this.submit){
+                this.submit = true;
                 let data = {};
                 let sukses = true;
                 let sukses2 = true;
