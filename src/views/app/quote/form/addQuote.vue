@@ -214,7 +214,7 @@
                 </p>
                 </b-colxx>
                 <b-colxx xxs="3">
-                    <b-badge pill variant="warning">Rejected(M)</b-badge>
+                    <b-badge pill variant="warning">New</b-badge>
                 </b-colxx>
                 <b-colxx xxs="3">
                     <b-badge pill variant="primary">0</b-badge>
@@ -265,7 +265,7 @@
             <b-row v-else> <p class="text-muted m-3" style="font-style: italic;">No area selected</p></b-row>
             <b-row>
                 <b-colxx xxs="6" class="text-center">
-                <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip">
+                <b-form @submit.prevent="onValitadeFormSubmit(btn1)" class="av-tooltip">
                     <b-button type="submit" variant="primary" style="width: 100%" @click="alrt">{{ btn1 }}</b-button>
                 </b-form>
                 </b-colxx>
@@ -633,7 +633,7 @@ export default {
                 console.log(this.surfaceOptions);
             })
         },
-        onValitadeFormSubmit() {
+        onValitadeFormSubmit(a) {
             this.$v.$touch();
             if(!this.$v.$invalid && !this.submit){
                 this.submit = true;
@@ -645,64 +645,10 @@ export default {
                     });
                 }else{
                     console.log("valid");
+                    console.log(a);
+                    console.log(new Date(this.tglUntil).toISOString());
                 }
-                // let date;
-                // let str;
-                // if(this.tglQuote != ''){
-                //     date = new Date(this.tglQuote).toISOString();
-                //     str = `tgl_reminder:"${date}"`;
-                // }else{
-                //     date = null;
-                //     str = `tgl_reminder:${date}`;
-                // }
-                // console.log(str);
-                // fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
-                // method: 'POST',
-                // headers: {
-                // 'Content-Type': 'application/json',
-                // },
-                // body: JSON.stringify({
-                //     query: `
-                //         mutation{
-                //             addProject(params:{
-                //                 customer_id:"${this.custId}"
-                //                 name:"${this.namaPro}"
-                //                 project_category:${this.katProId}
-                //                 ${str}
-                //             }){
-                //                 status
-                //                 message
-                //             }
-                //         }
-                //     `,
-                // }),
-				// })
-				// .then(function(response) {
-				// 	return response.json()
-				// })
-				// .then(function(text) {
-				// 	console.log(text);
-				// 	return text.data.addProject;
-				// })
-				// .then(resp => {
-				// 	console.log(resp.message);
-				// 	if(resp.status.toLowerCase() == "success"){
-                //         this.$toast(resp.message, {
-                //             type: "success",
-                //             hideProgressBar: true,
-                //             timeout: 2000
-                //         });
-                //         setTimeout(() => {
-                //             window.location = window.location.origin+"/app/datatable/projectTable";
-                //         }, 1000);
-                //     }else{
-                //         this.$toast(resp.message, {
-                //             type: "error",
-                //             hideProgressBar: true,
-                //             timeout: 2000
-                //         });
-                //     }
-				// });
+                
             }else{
                 console.log("error");
             }
@@ -766,7 +712,6 @@ export default {
             this.dataPro = [];
             this.filteredOptions2 = [];
         }
-        console.log("data:"+this.filteredOptions2);
         if(this.custId == ""){
             if(text !== "" && text.length >= 2){
                 this.fetchProject("",text);
@@ -830,10 +775,8 @@ export default {
             this.dataSchItem = [];
             this.filteredOptions3 = [];
         }
-        console.log(this.primarySmall);
             if(text !== "" && text.length >= 2){
                 this.fetchSchItem(text);
-                console.log("masuk1");
                     const filteredData = this.dataSchItem.filter(option => {
                         return option.name.toLowerCase().indexOf(text.toLowerCase()) > -1;
                     });
@@ -843,7 +786,6 @@ export default {
                         }
                     ];
             }
-            console.log(this.filteredOptions3);
         },
 
       async  onAutosuggestSelected3($event,a) {
@@ -1181,12 +1123,10 @@ export default {
                 return response.json()
             })
             .then(function(text) {
-                console.log(text.data.projects);
                 return text.data.projects;
             })
             .then(resp => {
                 this.dataPro = resp;
-                console.log(this.dataPro);
             })
         },
 

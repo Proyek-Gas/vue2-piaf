@@ -489,7 +489,10 @@
     "validation-bootstrap": "Bootstrap Validation",
     "validation-vuelidate": "Vuelidate Validation",
     "name": "Name",
-    "phone" : "Phone"
+    "phone" : "Phone",
+    "oldPass" : "Old Password",
+    "newPass" : "New Password",
+    "rePass" : "Retype Password"
 
 
   },

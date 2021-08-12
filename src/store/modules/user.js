@@ -107,6 +107,7 @@ export default {
           const currentUser ={
               id: resp.user.id,
               email : resp.user.email,
+              pass: payload.password,
               phone : resp.user.phone,
               title: resp.user.name,
               img: '/assets/img/profiles/l-1.jpg',

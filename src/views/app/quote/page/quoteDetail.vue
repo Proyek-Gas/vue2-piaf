@@ -842,7 +842,7 @@ export default {
         hideModal(refname){
             this.$refs[refname].hide()
         },
-        submitModal(a){
+        submitModal(a, refname){
             let queryString = "";
             if(a.toLowerCase() === "close"){
                 queryString = `query{
@@ -852,8 +852,19 @@ export default {
                     }
                 }`
             }else if(a.toLowerCase() === "submit"){
-                queryString = `query{
+                queryString = `mutation{
                     submitQuote(quote_id:${this.qId}){
+                        status
+                        message
+                    }
+                }`
+            }
+            else if(a.toLowerCase() === "rejected by customer"){
+                queryString = `mutation{
+                    rejectQuoteByCustomer(
+                    quote_id:${this.qId}
+                    notes: ""
+                    ){
                         status
                         message
                     }
@@ -876,34 +887,36 @@ export default {
             .then(function(text) {
                 console.log(a);
                 if(a.toLowerCase() === "submit"){
-                    console.log(text.data);
-                }else{
-                    console.log(text.data);
+                    return text.data.submitQuote;
+                }else if(a.toLowerCase() === "close"){
+                    return text.data.closeQuote;
+                }else if(a.toLowerCase() === "rejected by customer"){
+                    return text.data.rejectQuoteByCustomer;
                 }
             })
             .then(resp => {
-                // if(resp.status.toLowerCase() == "success"){
-                //     this.$toast(resp.message, {
-                //         type: "success",
-                //         hideProgressBar: true,
-                //         timeout: 2000
-                //     });
-                //     setTimeout(() => {
-                //         window.location = window.location.origin+"/app/datatable/QuoteTable";
-                //     }, 1000);
-                // }else{
-                //     this.$toast(resp.message, {
-                //         type: "error",
-                //         hideProgressBar: true,
-                //         timeout: 2000
-                //     });
-                // }
+                if(resp.status.toLowerCase() == "success"){
+                    this.$toast(resp.message, {
+                        type: "success",
+                        hideProgressBar: true,
+                        timeout: 2000
+                    });
+                    this.$refs[refname].hide()
+                    setTimeout(() => {
+                        window.location = window.location.origin+"/app/datatable/quoteTable";
+                    }, 1000);
+                }else{
+                    this.$toast(resp.message, {
+                        type: "error",
+                        hideProgressBar: true,
+                        timeout: 2000
+                    });
+                }
             })
         },
         requestSubmit(a, refname){
             this.$refs[refname].show()
             this.konfirm = a;
-            
         },
         returnColor(a,b){
             if(a != b){
@@ -913,16 +926,6 @@ export default {
                 return style
             }
         },
-        // returnStyle(a,b){
-        //     const style = {};
-        //     console.log(a)
-        //     if(a != b){
-        //         style = {
-        //             color: "yellow",
-        //         }
-        //     }
-        //     return style;
-        // },
         previous(){
             if(this.versi > 1){
                 if(this.versi == this.qVer){
@@ -978,11 +981,13 @@ export default {
             }
         },
         dateFormat(date){
+            if(date != ''){
             let d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
             let ye = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(d);
             let mo = new Intl.DateTimeFormat('en', { month: 'short' }).format(d);
             let da = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(d);
             return da + " "+ mo + " " +ye;
+            }
         },
         clear(){
             this.tglQuote = "";
@@ -1058,64 +1063,6 @@ export default {
                 }else{
                     console.log("valid");
                 }
-                // let date;
-                // let str;
-                // if(this.tglQuote != ''){
-                //     date = new Date(this.tglQuote).toISOString();
-                //     str = `tgl_reminder:"${date}"`;
-                // }else{
-                //     date = null;
-                //     str = `tgl_reminder:${date}`;
-                // }
-                // console.log(str);
-                // fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
-                // method: 'POST',
-                // headers: {
-                // 'Content-Type': 'application/json',
-                // 'Authorization' :'Bearer '+this.currentUser.jwt
-                // },
-                // body: JSON.stringify({
-                //     query: `
-                //         mutation{
-                //             addProject(params:{
-                //                 customer_id:"${this.custId}"
-                //                 name:"${this.namaPro}"
-                //                 project_category:${this.katProId}
-                //                 ${str}
-                //             }){
-                //                 status
-                //                 message
-                //             }
-                //         }
-                //     `,
-                // }),
-				// })
-				// .then(function(response) {
-				// 	return response.json()
-				// })
-				// .then(function(text) {
-				// 	console.log(text);
-				// 	return text.data.addProject;
-				// })
-				// .then(resp => {
-				// 	console.log(resp.message);
-				// 	if(resp.status.toLowerCase() == "success"){
-                //         this.$toast(resp.message, {
-                //             type: "success",
-                //             hideProgressBar: true,
-                //             timeout: 2000
-                //         });
-                //         setTimeout(() => {
-                //             window.location = window.location.origin+"/app/datatable/projectTable";
-                //         }, 1000);
-                //     }else{
-                //         this.$toast(resp.message, {
-                //             type: "error",
-                //             hideProgressBar: true,
-                //             timeout: 2000
-                //         });
-                //     }
-				// });
             }else{
                 console.log("error");
             }
@@ -1208,146 +1155,149 @@ export default {
         this.qVer = this.$route.query.ver;
         if(this.qId && this.qVer){
         this.fetchSurface();
-        fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
-			method: 'POST',
-			headers: {
-			'Content-Type': 'application/json',
-            'Authorization' :'Bearer '+this.currentUser.jwt
-			},
-			body: JSON.stringify({
-				query: `
-					query{
-                    quoteDetail(quote_id:${this.qId} version:${this.qVer}){
-                        id
-                        project{
-                        id
-                        name
-                        category{
+        setTimeout(() => {
+            
+            fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                'Authorization' :'Bearer '+this.currentUser.jwt
+                },
+                body: JSON.stringify({
+                    query: `
+                        query{
+                        quoteDetail(quote_id:${this.qId} version:${this.qVer}){
+                            id
+                            project{
+                            id
                             name
-                        }
-                        customer{
-                            name
-                            email
                             category{
                                 name
                             }
-                            priceCategory{
+                            customer{
                                 name
+                                email
+                                category{
+                                    name
+                                }
+                                priceCategory{
+                                    name
+                                }
                             }
-                        }
-                        }
-                        status{
-                            id
-                            name
-                        }
-                        quoteLogs{
-                            created_at
+                            }
                             status{
                                 id
                                 name
                             }
-                            notes
-                        }
-                        total
-                        last_version
-                        notes
-                        created_at
-                        userCreate{
-                        name
-                        role{
-                            name
-                        }
-                        }
-                        areaItems{
-                            category{
-                            name
+                            quoteLogs{
+                                created_at
+                                status{
+                                    id
+                                    name
+                                }
+                                notes
                             }
-                            surface_area
                             total
-                            total_hpp
-                            surface_preparation
-                            items{
-                                item_name
-                                price
-                                subtotal
-                                item_id
-                                liter
-                                coat
-                                dry_film_thickness
-                                theoritical
-                                practical
-                                loss
+                            last_version
+                            notes
+                            created_at
+                            userCreate{
+                            name
+                            role{
+                                name
+                            }
+                            }
+                            areaItems{
+                                category{
+                                name
+                                }
+                                surface_area
+                                total
+                                total_hpp
+                                surface_preparation
+                                items{
+                                    item_name
+                                    price
+                                    subtotal
+                                    item_id
+                                    liter
+                                    coat
+                                    dry_film_thickness
+                                    theoritical
+                                    practical
+                                    loss
+                                }
                             }
                         }
+                        }
+                    `,
+                }),
+            })
+            .then(function(response) {
+                return response.json()
+            })
+            .then(function(text) {
+                return text.data.quoteDetail;
+            })
+            .then(resp => {
+                this.detail = resp;
+                this.tglQuote = new Date(this.detail.created_at);
+                this.tglUntil = new Date(new Date(this.detail.created_at).getTime()+(31*24*60*60*1000));
+                this.custNama = this.detail.project.customer.name;
+                this.custEmail = this.detail.project.customer.email;
+                this.custCate = this.detail.project.customer.category.name + " - "+ this.detail.project.customer.priceCategory.name;
+                this.proNama = this.detail.project.name;
+                this.proKat = this.detail.project.category.name;
+                this.arrKumpulanArea = this.detail.areaItems;
+                this.arrLog = this.detail.quoteLogs;
+                this.user = this.detail.userCreate;
+                this.status = this.detail.status;
+                if(this.status.id == 1){
+                    if(this.user.name == this.currentUser.title || this.user.role.name.toLowerCase() == "manager"){
+                        this.btn1 = "Submit";
+                        this.btn2 = "Close";
+                        this.btn3 = "Edit";
                     }
+                }
+                else if(this.status.id == 2){
+                    if(this.currentUser.role == 2){
+                        this.btn1 = "Approve";
+                        this.btn2 = "Reject";
                     }
-				`,
-			}),
-		})
-		.then(function(response) {
-			return response.json()
-		})
-		.then(function(text) {
-			return text.data.quoteDetail;
-		})
-		.then(resp => {
-            this.detail = resp;
-            this.tglQuote = new Date(this.detail.created_at);
-            this.tglUntil = new Date(new Date(this.detail.created_at).getTime()+(31*24*60*60*1000));
-            this.custNama = this.detail.project.customer.name;
-            this.custEmail = this.detail.project.customer.email;
-            this.custCate = this.detail.project.customer.category.name + " - "+ this.detail.project.customer.priceCategory.name;
-            this.proNama = this.detail.project.name;
-            this.proKat = this.detail.project.category.name;
-            this.arrKumpulanArea = this.detail.areaItems;
-            this.arrLog = this.detail.quoteLogs;
-            this.user = this.detail.userCreate;
-            this.status = this.detail.status;
-            if(this.status.id == 1){
-                if(this.user.name == this.currentUser.title || this.user.role.name.toLowerCase() == "manager"){
-                    this.btn1 = "Submit";
-                    this.btn2 = "Close";
-                    this.btn3 = "Edit";
+                    if(this.user.name == this.currentUser.title){
+                        this.btn3 = "Close";
+                    }
+                }else if (this.status.id == 3){
+                    if(this.user.name == this.currentUser.title || this.currentUser.role == 2){
+                        this.btn1 = "Rejected by Customer";
+                        this.btn2 = "Forward";
+                    }
+                }else if (this.status.id == 4){
+                    if(this.user.name == this.currentUser.title || this.currentUser.role == 2){
+                        this.btn1 = "Close";
+                        this.btn2 = "Submit";
+                        this.btn3 = "Edit";
+                    }
+                }else if (this.status.id == 5){
+                    if(this.user.name == this.currentUser.title || this.currentUser.role == 2){
+                        this.btn1 = "Close";
+                        this.btn2 = "Revise";
+                    }
                 }
-            }
-            else if(this.status.id == 2){
-                if(this.currentUser.role == 2){
-                    this.btn1 = "Approve";
-                    this.btn2 = "Reject";
+                else if (this.status.id == 7){
+                    if(this.currentUser.role == 2){
+                        this.btn1 = "";
+                        this.btn2 = "";
+                        this.btn3 = "Cancel";
+                    }
                 }
-                if(this.user.name == this.currentUser.title){
-                    this.btn3 = "Close";
+    
+                this.isLoad = true;
+                if(this.qVer > 1){
+                    this.fetchVersion(this.versi);
                 }
-            }else if (this.status.id == 3){
-                if(this.user.name == this.currentUser.title || this.currentUser.role == 2){
-                    this.btn1 = "Rejected by Customer";
-                    this.btn2 = "Forward";
-                }
-            }else if (this.status.id == 4){
-                if(this.user.name == this.currentUser.title || this.currentUser.role == 2){
-                    this.btn1 = "Close";
-                    this.btn2 = "Submit";
-                    this.btn3 = "Edit";
-                }
-            }else if (this.status.id == 5){
-                if(this.user.name == this.currentUser.title || this.currentUser.role == 2){
-                    this.btn1 = "Close";
-                    this.btn2 = "Revise";
-                }
-            }
-            else if (this.status.id == 7){
-                if(this.currentUser.role == 2){
-                    this.btn1 = "";
-                    this.btn2 = "";
-                    this.btn3 = "Cancel";
-                }
-            }
-            this.isLoad = true;
-
-            if(this.qVer > 1){
-                this.fetchVersion(this.versi);
-            }
-        })
+            })
+        }, 100);
         }else{
             window.location = window.location.origin +"/error?id=404&name=quote";
         }

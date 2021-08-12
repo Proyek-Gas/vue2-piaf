@@ -38,7 +38,7 @@
                      <b-button
                         variant="danger"
                         size="sm"
-                        @click="deleteItemGroup(1)"> delete
+                        @click="deleteItemGroup(1)">Delete
                        <!-- ({{itemDelCount}}) -->
                     </b-button>
                   </div>
@@ -54,7 +54,7 @@
                       <b-button
                         variant="danger"
                         size="sm"
-                        @click="deleteItemGroup(2)"> delete
+                        @click="deleteItemGroup(2)">Delete
                        <!-- ({{itemDelCount}}) -->
                     </b-button>
                   </div>
@@ -70,7 +70,7 @@
                       <b-button
                         variant="danger"
                         size="sm"
-                        @click="deleteItemGroup(3)"> delete
+                        @click="deleteItemGroup(3)">Delete
                        <!-- ({{itemDelCount}}) -->
                     </b-button>
                   </div>
@@ -305,8 +305,6 @@ export default {
                         ctr3 = ctr3 + 1;
                     }
                 }
-                console.log(this.bigData.length);
-                console.log(ctr);
                 if(ctr < this.bigData.length){
                     sukses = false;
                    this.$toast("Range Coat tidak valid! (1-100)", {
@@ -330,9 +328,7 @@ export default {
                     });
                 }
                 if(sukses && sukses2 && sukses3){
-                    console.log("masuk");
                 for (let i = 0; i < this.bigData.length; i++) {
-                    console.log(this.bigData);
                     data = `{
                         item_id:${this.bigData[i].id},
                         coat:${this.bigData[i].coat},
@@ -341,7 +337,6 @@ export default {
                     }`
                        this.itemToAdd.push(data);
                 }
-                // console.log(this.itemToAdd);
                 fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
                     method: 'POST',
                     headers: {
@@ -368,11 +363,9 @@ export default {
 					return response.json()
 				})
 				.then(function(text) {
-					console.log(text);
 					return text.data.addScheme;
 				})
 				.then(resp => {
-					console.log(resp.message);
 					if(resp.status.toLowerCase() == "success"){
                         this.$toast(resp.message, {
                             type: "success",
@@ -446,7 +439,6 @@ export default {
             this.bigData = newArr
         },
         removeDataAgentChild(id){
-          console.log("woy")
             let newArr = this.bigData
             let newArr2 = this.dataSelected2
             let newArr3 = this.dataSelected3
@@ -488,8 +480,6 @@ export default {
         },
         renderSuggestion(suggestion) {
             const character = suggestion.item;
-            console.log(character)
-
               if( character.type.id == 1 ){
                 return <b-card class="mb-0 p-1 d-flex flex-row" no-body>
                             <div src="/assets/img/profiles/l-1.jpg"
@@ -575,7 +565,6 @@ export default {
         },
         getSuggestionValue(suggestion) {
             this.item = suggestion.item.name;
-          //  console.log(suggestion.item.type.id);
             let ada = this.check(suggestion.item.no);
             if(!ada){
                 let data = {
@@ -587,7 +576,6 @@ export default {
                     id : suggestion.item.id
 
                 }
-                console.log(data);
 
                 //data = this.fetchAgain(data)
                 // if(suggestion.item.type.id == 1)this.dataSelected1.push(data);
@@ -595,7 +583,6 @@ export default {
                 // else this.dataSelected3.push(data);
                 this.fetchAgain(data,false)
             }
-                console.log(this.bigData);
             return suggestion.item.name;
         },
         returnColor(a){
@@ -641,7 +628,6 @@ export default {
                 }
               }
           `
-          console.log(queryString)
           fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
             method: 'POST',
             headers: {
@@ -656,7 +642,6 @@ export default {
                 return response.json()
             })
             .then(function(text) {
-                console.log(text.data.itemDetail);
                 return text.data.itemDetail;
             })
             .then(resp => {
@@ -669,7 +654,6 @@ export default {
                   data.balance = resp.balance;
                  // this.bigData.push(data)
               }
-                console.log(resp.detailSellingPrice)
                 data.price = resp.detailSellingPrice
                 data.agent_item_id = resp.agent_item_id;
                 data.recommended_thinner_id = resp.recommended_thinner_id;
@@ -693,8 +677,6 @@ export default {
         check(a){
             let kembar = false;
             this.bigData.forEach(element => {
-                console.log(element.no);
-                console.log(a);
                 if(element.no == a){
                     kembar = true;
                 }
@@ -703,7 +685,6 @@ export default {
         }
     },
     async mounted(){
-        console.log(this.currentUser);
         fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
             method: 'POST',
             headers: {
