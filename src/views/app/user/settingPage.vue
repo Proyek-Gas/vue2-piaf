@@ -149,7 +149,7 @@
                                 v-model.trim="$v.overLineForm2.newpass.$model"
                                 :state="!$v.overLineForm2.newpass.$error"
                               />
-                              <password v-model="$v.overLineForm2.newpass.$model" :strength-meter-only="true"/>
+                              <password v-if="$v.overLineForm2.newpass.$model != ''" v-model="$v.overLineForm2.newpass.$model" :strength-meter-only="true"/>
                               <b-form-invalid-feedback v-if="!$v.overLineForm2.newpass.required">Harap isi password baru</b-form-invalid-feedback>
                             </b-form-group>
                         </b-colxx>
@@ -286,9 +286,9 @@ export default {
         this.submit = false;
       },
       handleClick(){
+        this.overLineForm2.newpass = "";
+        this.overLineForm2.repass = "";
         this.$v.$reset();
-        this.overLineForm2.newpass = '';
-        this.overLineForm2.repass = '';
       },
       onValitadeOverLineFormFormSubmit() {
       this.$v.overLineForm.$touch();
