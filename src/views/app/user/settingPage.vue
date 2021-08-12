@@ -123,7 +123,28 @@
         </b-tab>
 
         <b-tab title="Ganti DB Accurate">
+            <b-row>
+              <b-colxx xs='12' xl='12'>
+                  <b-card class="mb-4">
+                      <b-row class="mb-2">
+                        <b-colxx xs="12" xl="12">
+                          <h2>Ganti Database</h2>
+                        </b-colxx>
+                      </b-row>
+                      <b-row class="mb-4">
+                          <b-colxx xl="12" xs="12">
+                              <v-select
+                              v-model="database"
+                              :options="databaseOption"
+                              placeholder ="Silahkan pilih Database"
+                            >
 
+                            </v-select>
+                          </b-colxx>
+                      </b-row>
+                  </b-card>
+              </b-colxx>
+            </b-row>
         </b-tab>
 
 
@@ -135,6 +156,8 @@
 <script>
 
 import { validationMixin } from "vuelidate";
+import vSelect from "vue-select";
+import "vue-select/dist/vue-select.css";
 const {
   required,
   email,
@@ -147,7 +170,7 @@ const {
 import { mapGetters } from 'vuex';
 export default {
   components: {
-
+       "v-select": vSelect,
   },
   computed : {
       ...mapGetters({
@@ -156,6 +179,8 @@ export default {
   },
   data() {
     return {
+      database : "",
+      databaseOption : [],
     overLineForm: {
       email: '',
       phone : '',

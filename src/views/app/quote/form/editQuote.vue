@@ -164,7 +164,7 @@
                 <b-colxx xxs="3">
                     <b-badge class="ml-3" pill variant="primary">{{ qVer }}</b-badge>
                 </b-colxx>
-                <b-colxx xxs="3" class="text-right"> 
+                <b-colxx xxs="3" class="text-right">
                 <p class="text text-small mb-2">
                     {{ dateFormat(tglUntil) }}
                 </p>
@@ -577,6 +577,7 @@ export default {
                     query: `
                         query{
                             surfacePreparations{
+                                id
                                 name
                             }
                         }
@@ -1099,6 +1100,61 @@ export default {
                 }
             })
         },
+        returnArrSurface(arr){
+          let newArr = []
+          console.log(arr)
+           fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                 'Authorization' :'Bearer '+this.currentUser.jwt
+                },
+                body: JSON.stringify({
+                    query: `
+                        query{
+                            surfacePreparations{
+                                id
+                                name
+                            }
+                        }
+                    `,
+                }),
+            })
+            .then(function(response) {
+                return response.json()
+            })
+            .then(function(text) {
+                return text.data.surfacePreparations;
+            })
+            .then(resp => {
+                  console.log(this.surfaceOptions.length)
+                  for(let i=0; i< arr.length; i++){
+                    for(let j=0; j<resp.length; j++){
+                        if(arr[i] == resp[j].id){
+                          newArr.push(resp[j])
+                        }
+                    }
+                  }
+            })
+          return newArr
+        },
+
+        recalibrateArea(item){
+          console.log(item)
+          let newArr = []
+          for(let i=0; i< item.length; i++){
+             let surface = item[i].surface_preparation.split(",")
+             let arrSurface = this.returnArrSurface(surface);
+              let newData = {
+                name : item[i].category.name,
+                id : item[i].category.id,
+                luas : item[i].surface_area,
+                surface : arrSurface
+              }
+              newArr.push(newData)
+          }
+          return newArr
+        },
         fetchProject(custId,proName){
             let str = "";
             let filter = "";
@@ -1284,8 +1340,10 @@ export default {
 			return text.data.quoteDetail;
 		})
 		.then(resp => {
+        this.fetchSurface();
             this.detail = resp;
             console.log(this.detail);
+            console.log(this.detail.areaItems)
             this.tglQuote = new Date(this.detail.created_at);
             this.tglUntil = new Date(new Date(this.detail.created_at).getTime()+(31*24*60*60*1000));
             this.custNama = this.detail.project.customer.name;
@@ -1293,10 +1351,11 @@ export default {
             this.custCate = this.detail.project.customer.category.name + " - "+ this.detail.project.customer.priceCategory.name;
             this.proNama = this.detail.project.name;
             this.proKat = this.detail.project.category;
-            this.arrKumpulanArea = this.detail.areaItems;
+            this.arrKumpulanArea = this.recalibrateArea(this.detail.areaItems);
+            console.log(this.arrKumpulanArea)
             console.log(this.proKat.id);
             this.fetchArea(this.proKat.id);
-            this.fetchSurface();
+
             this.user = this.detail.userCreate;
             this.status = this.detail.status;
             console.log(this.detail);
@@ -1438,6 +1497,6 @@ export default {
 /* Extra large devices (large laptops and desktops, 1200px and up) */
 @media only screen and (min-width: 1300px) {
   .suggest {width: 83%;}
-  .suggest2 {width: 91%;}
+  .suggest2 {width: 90%;}
 }
 </style>

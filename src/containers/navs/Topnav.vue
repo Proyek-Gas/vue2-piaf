@@ -118,7 +118,7 @@
             </span>
           </template>
           <b-dropdown-item>Profile</b-dropdown-item>
-          <b-dropdown-item>Task </b-dropdown-item>
+          <b-dropdown-item to="../user/task">Task </b-dropdown-item>
           <b-dropdown-divider />
           <b-dropdown-item to="../user/setting">Setting</b-dropdown-item>
           <b-dropdown-item @click="logout">Log out</b-dropdown-item>

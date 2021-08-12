@@ -134,7 +134,7 @@
           placeholder="Harap pilih project"/>
       </b-form-group>
         <div class="separator mb-2"></div>
-        <!-- {{arrKumpulanArea}} -->
+        {{arrKumpulanArea}}
          <b-card class="mb-4" v-for="(areas,index) in arrKumpulanArea" v-bind:key="areas.id" >
                   <b-row style="margin-bottom: 2vh">
                     <b-colxx xxs="6" xl="6"><h2>{{areas.name}}</h2></b-colxx>
@@ -149,7 +149,8 @@
                             label="name"
                             v-model="areas.surface"
                             multiple
-                            :options="surfaceOptions"
+                             :options="surfaceOptions"
+
                             :disabled="proKat === ''"
                             placeholder="Harap pilih project"
                         />
@@ -616,6 +617,7 @@ export default {
                     query: `
                         query{
                             surfacePreparations{
+                                id
                                 name
                             }
                         }
@@ -1333,6 +1335,6 @@ export default {
 /* Extra large devices (large laptops and desktops, 1200px and up) */
 @media only screen and (min-width: 1300px) {
   .suggest {width: 83%;}
-  .suggest2 {width: 91%;}
+  .suggest2 {width: 90%;}
 }
 </style>
