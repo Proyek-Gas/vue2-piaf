@@ -221,31 +221,14 @@
             </b-row>
             <b-card class="mb-4" no-body>
                 <b-tabs card no-fade>
-                    <b-tab :title="$t('pages.details-title')" active>
+                    <b-tab title="Detail Selling Price" active>
                         <b-row>
-                            <b-colxx sm="12">
-                                <b-card-text>
-                                </b-card-text>
+                            <b-colxx xs="12">
+                                <table-price :dataComponent="detail.detailSellingPrice"></table-price>
                             </b-colxx>
                         </b-row>
                     </b-tab>
-                    <b-tab :title="`${$t('pages.comments-title')} (19)`">
 
-                        <b-row>
-                            <b-colxx sm="12">
-                                <b-card-text>
-                                </b-card-text>
-                            </b-colxx>
-                        </b-row>
-                    </b-tab>
-                    <b-tab :title="`${$t('pages.questions-title')} (6)`">
-                        <b-row>
-                            <b-colxx sm="12">
-                                <b-card-text>
-                                </b-card-text>
-                            </b-colxx>
-                        </b-row>
-                    </b-tab>
                 </b-tabs>
             </b-card>
         </b-colxx>
@@ -281,10 +264,13 @@
 <script>
 import IconCard from '../../../../components/Cards/IconCard';
 import {mapGetters} from 'vuex'
+import tableSellingPrice from './tableSellingPrice.vue'
 
 export default {
+
     components: {
-        'icon-card': IconCard
+        'icon-card': IconCard,
+          'table-price' : tableSellingPrice
     },
     data() {
         return {
