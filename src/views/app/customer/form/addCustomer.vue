@@ -36,17 +36,17 @@
             <b-card class="mb-4" title="Informasi Tambahan">
                 <b-form-group label-cols="3" horizontal label="Email">
                     <b-form-input type="text" v-model="$v.email.$model" :state="!$v.email.$error" placeholder="Masukkan email"/>
-                    <b-form-invalid-feedback v-if="!$v.email.email">Please enter a valid email address</b-form-invalid-feedback>
+                    <b-form-invalid-feedback v-if="!$v.email.email">Struktur email tidak valid</b-form-invalid-feedback>
                 </b-form-group>
                 <b-form-group label-cols="3" horizontal label="Workphone">
                     <b-form-input type="text" v-model="$v.tlp.$model" :state="!$v.tlp.$error" placeholder="Masukkan nomor"/>
-                    <b-form-invalid-feedback v-if="!$v.tlp.numeric">Only number</b-form-invalid-feedback>
-                     <b-form-invalid-feedback v-else-if="!$v.tlp.minLength || !$v.tlp.maxLength">Your name must be between 10 and 13 characters</b-form-invalid-feedback>
+                    <b-form-invalid-feedback v-if="!$v.tlp.numeric">Nomor telepon hanya angka</b-form-invalid-feedback>
+                     <b-form-invalid-feedback v-else-if="!$v.tlp.minLength || !$v.tlp.maxLength">Panjang nomor telepon antara 10-13 katakter</b-form-invalid-feedback>
                 </b-form-group>
                 <b-form-group label-cols="3" horizontal label="Handphone">
                     <b-form-input type="text" v-model="$v.hp.$model" :state="!$v.hp.$error" placeholder="Masukkan nomor"/>
-                    <b-form-invalid-feedback v-if="!$v.hp.numeric">Only number</b-form-invalid-feedback>
-                     <b-form-invalid-feedback v-else-if="!$v.hp.minLength || !$v.hp.maxLength">Your name must be between 10 and 13 characters</b-form-invalid-feedback>
+                    <b-form-invalid-feedback v-if="!$v.hp.numeric">Nomor handphone hanya angka</b-form-invalid-feedback>
+                     <b-form-invalid-feedback v-else-if="!$v.hp.minLength || !$v.hp.maxLength">Panjang nomor handphone antara 10-13 katakter</b-form-invalid-feedback>
                 </b-form-group>
                 <b-form-group label-cols="3" horizontal label="NPWP">
                     <b-form-input type="text" v-model="$v.npwp.$model" :state="!$v.npwp.$error" v-mask="'##.###.###.#-###.###'" placeholder="Masukakan nomor NPWP"/>

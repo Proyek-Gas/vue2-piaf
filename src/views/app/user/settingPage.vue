@@ -4,10 +4,9 @@
       <h1>{{currentUser.title}}</h1>
 
       <b-tabs nav-class="separator-tabs ml-0 mb-5" content-class="tab-content" :no-fade="true">
-        <b-tab title="Umum">
-         <b-row>
+        <b-tab title="Umum" @click="handleClick">
+          <b-row>
             <b-colxx xs="12" xl="12">
-
                <b-card class="mb-4" >
                     <b-form
                       @submit.prevent="onValitadeOverLineFormFormSubmit"
@@ -44,25 +43,26 @@
                           <div class="separator mb-5"></div>
                         <b-row>
                               <b-colxx xxs = "6" >
-                                 <b-form-group :label="$t('forms.phone')" class="has-float-label" style="font-size:15pt">
+                                 <b-form-group :label="$t('forms.phone')" class="has-float-label" style="font-size:12pt">
                                     <b-form-input
                                       type="text"
                                       v-model.trim="$v.overLineForm.phone.$model"
                                       :state="!$v.overLineForm.phone.$error"
                                       disabled
                                     />
-                                    <b-form-invalid-feedback v-if="!$v.overLineForm.phone.required">Phone is required!</b-form-invalid-feedback>
+                                    <b-form-invalid-feedback v-if="!$v.overLineForm.phone.required">Harap isi nomor telepon</b-form-invalid-feedback>
 
                                   </b-form-group>
                               </b-colxx>
                                <b-colxx xxs = "6" >
-                                 <b-form-group :label="$t('forms.name')" class="has-float-label" style="font-size:15pt">
+                                 <b-form-group :label="$t('forms.name')" class="has-float-label" style="font-size:12pt">
                                     <b-form-input
                                       type="text"
                                       v-model.trim="$v.overLineForm.name.$model"
                                       :state="!$v.overLineForm.name.$error"
                                     />
-                                    <b-form-invalid-feedback v-if="!$v.overLineForm.name.required">Name is required!</b-form-invalid-feedback>
+                                    <b-form-invalid-feedback v-if="!$v.overLineForm.name.required">Harap isi nama</b-form-invalid-feedback>
+                                    <b-form-invalid-feedback v-else-if="!$v.overLineForm.name.minLength || !$v.overLineForm.name.maxLength">Panjang nama antara 3-50 karakter</b-form-invalid-feedback>
 
                                   </b-form-group>
                               </b-colxx>
@@ -70,14 +70,14 @@
                         </b-row>
                         <b-row>
                            <b-colxx xxs = "6" >
-                                 <b-form-group :label="$t('forms.email')" class="has-float-label" style="font-size:15pt">
+                                 <b-form-group :label="$t('forms.email')" class="has-float-label" style="font-size:12pt">
                                     <b-form-input
                                       type="text"
                                       v-model.trim="$v.overLineForm.email.$model"
                                       :state="!$v.overLineForm.email.$error"
                                     />
-                                    <b-form-invalid-feedback v-if="!$v.overLineForm.email.required">Email is required!</b-form-invalid-feedback>
-                                    <b-form-invalid-feedback v-else-if="!$v.overLineForm.email.email">Invalid email address</b-form-invalid-feedback>
+                                    <b-form-invalid-feedback v-if="!$v.overLineForm.email.required">Harap isi email</b-form-invalid-feedback>
+                                    <b-form-invalid-feedback v-else-if="!$v.overLineForm.email.email">Struktur email tidak valid</b-form-invalid-feedback>
                                   </b-form-group>
                               </b-colxx>
                         </b-row>
@@ -110,17 +110,71 @@
                                 </div>
                         </b-row>
                         <b-row class="container">
-                            <b-button size="m" variant="primary">Save Changes</b-button>
+                          <b-form @submit.prevent="onValitadeOverLineFormFormSubmit" class="av-tooltip">
+                              <b-button size="m" type="submit" variant="primary">Save Changes</b-button>
+                          </b-form>
                         </b-row>
                     </b-form>
               </b-card>
             </b-colxx>
           </b-row>
         </b-tab>
+        <b-tab title="Ganti Password" @click="handleClick">
+          <b-row>
+            <b-colxx xs="12" xl="12">
+               <b-card class="mb-4" >
+                  <b-form
+                    @submit.prevent="onValitadeOverLineFormFormSubmit"
+                    class="av-tooltip tooltip-label-bottom"
+                  >
+                    <b-row>
+                        <b-colxx xxs = "6" >
+                            <b-form-group :label="$t('forms.oldPass')" class="has-float-label" style="font-size:12pt">
+                              <b-form-input
+                                type="password"
+                                v-model.trim="$v.overLineForm2.oldpass.$model"
+                                :state="!$v.overLineForm2.oldpass.$error"
+                                disabled
+                              />
+                            </b-form-group>
+                        </b-colxx>
+                    </b-row>
+                    <b-row>
+                        <b-colxx xxs = "6" >
+                            <b-form-group :label="$t('forms.newPass')" class="has-float-label" style="font-size:12pt">
+                              <b-form-input
+                                type="password"
+                                v-model.trim="$v.overLineForm2.newpass.$model"
+                                :state="!$v.overLineForm2.newpass.$error"
+                              />
+                              <password v-model="$v.overLineForm2.newpass.$model" :strength-meter-only="true"/>
+                              <b-form-invalid-feedback v-if="!$v.overLineForm2.newpass.required">Harap isi password baru</b-form-invalid-feedback>
+                            </b-form-group>
+                        </b-colxx>
+                        <b-colxx xxs = "6" >
+                          <b-form-group :label="$t('forms.rePass')" class="has-float-label" style="font-size:12pt">
 
-        <b-tab title="Ganti Password">
-
+                            <b-form-input
+                              type="password"
+                              v-model.trim="$v.overLineForm2.repass.$model"
+                              :state="!$v.overLineForm2.repass.$error"
+                            />
+                            <b-form-invalid-feedback v-if="!$v.overLineForm2.repass.required">Harap ulangi password baru</b-form-invalid-feedback>
+                            <b-form-invalid-feedback v-else-if="!$v.overLineForm2.newpass.sameAsPass">Password tidak sama</b-form-invalid-feedback>
+                          </b-form-group>
+                        </b-colxx>
+                    </b-row>
+                    <b-row class="container">
+                      <b-form @submit.prevent="onValitadeOverLineFormFormSubmit2" class="av-tooltip">
+                          <b-button size="m" type="submit" variant="primary">Save Changes</b-button>
+                      </b-form>
+                    </b-row>
+                  </b-form>
+              </b-card>
+            </b-colxx>
+          </b-row>
         </b-tab>
+<<<<<<< HEAD
 
         <b-tab title="Ganti DB Accurate">
             <b-row>
@@ -138,6 +192,9 @@
                               :options="databaseOption"
                               placeholder ="Silahkan pilih Database"
                             >
+=======
+        <b-tab title="Ganti DB Accurate" @click="handleClick">
+>>>>>>> ede0f21fbcc8de0537c0a8837ff7ce62ba17f406
 
                             </v-select>
                           </b-colxx>
@@ -147,7 +204,6 @@
             </b-row>
         </b-tab>
 
-
       </b-tabs>
     </b-colxx>
   </b-row>
@@ -155,6 +211,9 @@
 
 <script>
 
+import Password from 'vue-password-strength-meter'
+import { setCurrentUser, getCurrentUser } from '../../../utils'
+import { mapGetters } from 'vuex';
 import { validationMixin } from "vuelidate";
 import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
@@ -163,15 +222,18 @@ const {
   email,
   minLength,
   maxLength,
+  sameAs,
   helpers
 } = require("vuelidate/lib/validators");
 
-
-import { mapGetters } from 'vuex';
 export default {
+<<<<<<< HEAD
   components: {
        "v-select": vSelect,
   },
+=======
+  components: { Password },
+>>>>>>> ede0f21fbcc8de0537c0a8837ff7ce62ba17f406
   computed : {
       ...mapGetters({
           currentUser : "currentUser"
@@ -179,6 +241,7 @@ export default {
   },
   data() {
     return {
+<<<<<<< HEAD
       database : "",
       databaseOption : [],
     overLineForm: {
@@ -188,6 +251,20 @@ export default {
       },
     };
   },
+=======
+      overLineForm: {
+        email: '',
+        phone : '',
+        name : '',
+        },
+      overLineForm2:{
+        oldpass: '',
+        newpass: '',
+        repass: ''
+      }
+      };
+    },
+>>>>>>> ede0f21fbcc8de0537c0a8837ff7ce62ba17f406
     mixins: [validationMixin],
     validations: {
       overLineForm: {
@@ -199,27 +276,145 @@ export default {
           required
         },
         name : {
+          required,
+          minLength: minLength(3),
+          maxLength: maxLength(50),
+        },
+      },
+      overLineForm2: {
+        oldpass:{
           required
-        }
+        },
+        newpass : {
+          required
+        },
+        repass : {
+          required,
+          sameAsPass: sameAs('newpass')
+        },
       }
     },
   methods: {
+      handleClick(){
+        this.$v.$reset();
+        this.overLineForm2.newpass = '';
+        this.overLineForm2.repass = '';
+      },
       onValitadeOverLineFormFormSubmit() {
       this.$v.overLineForm.$touch();
-      console.log("overLineForm is invalid :", this.$v.overLineForm.$invalid);
+      if(!this.$v.overLineForm.$invalid){
+        console.log("valid");
+        fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',
+            'Authorization' :'Bearer '+this.currentUser.jwt
+            },
+            body: JSON.stringify({
+                query: `
+                    mutation{
+                        updateUser(param:{
+                            name: "${this.overLineForm.name}"
+                            email:"${this.overLineForm.email}"
+                        }){
+                            status
+                            message
+                        }
+                    }
+                `,
+            }),
+        })
+        .then(function(response) {
+            return response.json()
+        })
+        .then(function(text) {
+            console.log(text.data);
+            return text.data.updateUser;
+
+        })
+        .then(resp => {
+            if(resp.status.toLowerCase() == "success"){
+                this.$toast(resp.message, {
+                    type: "success",
+                    hideProgressBar: true,
+                    timeout: 2000
+                });
+                this.currentUser.title = this.overLineForm.name;
+                this.currentUser.email = this.overLineForm.email;
+                console.log(this.currentUser);
+            }else{
+                this.$toast(resp.message, {
+                    type: "error",
+                    hideProgressBar: true,
+                    timeout: 2000
+                });
+            }
+        });
+      }else{
+        console.log("error");
+      }
     },
-    onValitadeLabelInInputFormFormSubmit() {
-      this.$v.labelsInInput.$touch();
-      console.log("labelsInInput is invalid :", this.$v.labelsInInput.$invalid);
+    onValitadeOverLineFormFormSubmit2() {
+      this.$v.overLineForm2.$touch();
+        if(!this.$v.overLineForm2.$invalid){
+          console.log("valid2");
+          fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',
+            'Authorization' :'Bearer '+this.currentUser.jwt
+            },
+            body: JSON.stringify({
+                query: `
+                    mutation{
+                        changePassword(
+                        oldPassword: "${this.overLineForm2.oldpass}"
+                        newPassword: "${this.overLineForm2.newpass}"
+                        ){
+                            status
+                            message
+                        }
+                    }
+                `,
+            }),
+        })
+        .then(function(response) {
+            return response.json()
+        })
+        .then(function(text) {
+            console.log(text.data);
+            return text.data.changePassword;
+
+        })
+        .then(resp => {
+            if(resp.status.toLowerCase() == "success"){
+                this.$toast(resp.message, {
+                    type: "success",
+                    hideProgressBar: true,
+                    timeout: 2000
+                });
+                this.currentUser.pass = this.overLineForm2.newpass;
+                this.overLineForm2.newpass = '';
+                this.overLineForm2.repass = '';
+            }else{
+                this.$toast(resp.message, {
+                    type: "error",
+                    hideProgressBar: true,
+                    timeout: 2000
+                });
+            }
+        });
+        }else{
+          console.log("error");
+        }
     }
-
-
   },
   mounted() {
     this.overLineForm.email = this.currentUser.email;
     this.overLineForm.phone = this.currentUser.phone;
     this.overLineForm.name = this.currentUser.title;
-    console.log(this.currentUser.email)
+    this.overLineForm2.oldpass = this.currentUser.pass;
+    console.log(this.currentUser)
   }
 };
 </script>
