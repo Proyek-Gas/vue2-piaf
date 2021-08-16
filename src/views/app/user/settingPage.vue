@@ -57,6 +57,7 @@
                                <b-colxx xxs = "6" >
                                  <b-form-group :label="$t('forms.name')" class="has-float-label" style="font-size:12pt">
                                     <b-form-input
+                                      @focus="ubah"
                                       type="text"
                                       v-model.trim="$v.overLineForm.name.$model"
                                       :state="!$v.overLineForm.name.$error"
@@ -72,6 +73,7 @@
                            <b-colxx xxs = "6" >
                                  <b-form-group :label="$t('forms.email')" class="has-float-label" style="font-size:12pt">
                                     <b-form-input
+                                      @focus="ubah"
                                       type="text"
                                       v-model.trim="$v.overLineForm.email.$model"
                                       :state="!$v.overLineForm.email.$error"
@@ -147,7 +149,7 @@
                                 v-model.trim="$v.overLineForm2.newpass.$model"
                                 :state="!$v.overLineForm2.newpass.$error"
                               />
-                              <password v-model="$v.overLineForm2.newpass.$model" :strength-meter-only="true"/>
+                              <password v-if="$v.overLineForm2.newpass.$model != ''" v-model="$v.overLineForm2.newpass.$model" :strength-meter-only="true"/>
                               <b-form-invalid-feedback v-if="!$v.overLineForm2.newpass.required">Harap isi password baru</b-form-invalid-feedback>
                             </b-form-group>
                         </b-colxx>
@@ -227,7 +229,6 @@ export default {
        "v-select": vSelect,
        Password
   },
-
   computed : {
       ...mapGetters({
           currentUser : "currentUser"
@@ -237,7 +238,7 @@ export default {
     return {
       database : "",
       databaseOption : [],
-
+      submit: false,
       overLineForm: {
         email: '',
         phone : '',
@@ -280,14 +281,19 @@ export default {
       }
     },
   methods: {
+      ubah(){
+        console.log("y");
+        this.submit = false;
+      },
       handleClick(){
+        this.overLineForm2.newpass = "";
+        this.overLineForm2.repass = "";
         this.$v.$reset();
-        this.overLineForm2.newpass = '';
-        this.overLineForm2.repass = '';
       },
       onValitadeOverLineFormFormSubmit() {
       this.$v.overLineForm.$touch();
-      if(!this.$v.overLineForm.$invalid){
+      if(!this.$v.overLineForm.$invalid && !this.submit){
+        this.submit = true;
         console.log("valid");
         fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
             method: 'POST',
@@ -356,8 +362,8 @@ export default {
                         oldPassword: "${this.overLineForm2.oldpass}"
                         newPassword: "${this.overLineForm2.newpass}"
                         ){
-                            status
-                            message
+                          status
+                          message
                         }
                     }
                 `,
@@ -379,8 +385,8 @@ export default {
                     timeout: 2000
                 });
                 this.currentUser.pass = this.overLineForm2.newpass;
-                this.overLineForm2.newpass = '';
-                this.overLineForm2.repass = '';
+                this.overLineForm2.oldpass = this.currentUser.pass;
+                this.handleClick();
             }else{
                 this.$toast(resp.message, {
                     type: "error",

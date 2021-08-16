@@ -748,6 +748,9 @@
         </template>
     </b-modal>
 </div>
+<div v-else>
+    <div class="loading"></div>
+</div>
 </template>
 
 <script>
