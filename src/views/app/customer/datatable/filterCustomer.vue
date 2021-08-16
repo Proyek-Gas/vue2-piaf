@@ -150,7 +150,6 @@ export default {
   methods: {
     hideModal (refname) {
       this.$refs[refname].hide()
-      console.log('hide modal:: ' + refname)
 
       if (refname === 'modalnestedinline') {
         this.$refs['modalnested'].show()
@@ -196,7 +195,6 @@ export default {
       }).then(function(response) {
           return response.json()
       }).then(function(text) {
-        console.log(text.data)
           return text.data.priceCategory;
       })
       .then(resp => {
@@ -224,7 +222,6 @@ export default {
       }).then(function(response) {
           return response.json()
       }).then(function(text) {
-        console.log(text.data)
           return text.data.customerCategory;
       })
       .then(resp => {

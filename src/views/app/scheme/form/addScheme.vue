@@ -284,8 +284,6 @@ export default {
             this.$v.$touch();
             let ctrItem = 0;
             if(!this.$v.$invalid && !this.submit){
-
-                this.submit = true;
                 let data = {};
                 let sukses = true;
                 let sukses2 = true;
@@ -293,12 +291,13 @@ export default {
                 let ctr = 0;
                 let ctr2 = 0;
                 let ctr3 = 0;
+                let arr = []; let arr2 = []; let arr3 = [];
                 for (let i = 0; i < this.bigData.length; i++) {
                   if(this.bigData[i].type.id == 1){
                     ctrItem ++;
-                    let arr = this.checkIsian(this.bigData[i].coat,1,"Coat");
-                    let arr2 = this.checkIsian(this.bigData[i].dft,2,"DFT");
-                    let arr3 = this.checkIsian(this.bigData[i].loss,1,"Loss");
+                    arr = this.checkIsian(this.bigData[i].coat,1,"Coat");
+                    arr2 = this.checkIsian(this.bigData[i].dft,2,"DFT");
+                    arr3 = this.checkIsian(this.bigData[i].loss,1,"Loss");
                     if(arr[0] == true && arr[1] == true){
                         ctr = ctr + 1;
                     }
@@ -309,11 +308,10 @@ export default {
                         ctr3 = ctr3 + 1;
                     }
                   }
-
                 }
                 if(ctr < ctrItem){
                     sukses = false;
-                   this.$toast("Coat tidak valid!", {
+                    this.$toast("Coat tidak valid!", {
                         type: "warning",
                         hideProgressBar: true,
                         timeout: 2000
@@ -334,6 +332,8 @@ export default {
                     });
                 }
                 if(sukses && sukses2 && sukses3){
+                    console.log("masuk");
+                    this.submit = true;
                 for (let i = 0; i < this.bigData.length; i++) {
                     data = `{
                         item_id:${this.bigData[i].id},
@@ -701,61 +701,64 @@ export default {
                 }
             });
             return kembar;
-        }
-    },
-    async mounted(){
-        fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
-            method: 'POST',
-            headers: {
-            'Content-Type': 'application/json',
-            'Authorization' :'Bearer '+this.currentUser.jwt
-            },
-            body: JSON.stringify({
-                query: `
-                    query{
-                        items{
-                            count
+        },
+        fetch(){
+            fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                'Authorization' :'Bearer '+this.currentUser.jwt
+                },
+                body: JSON.stringify({
+                    query: `
+                        query{
                             items{
-                                id
-                                no
-                                name
-                                balance
-                                itemCategory{
+                                count
+                                items{
                                     id
+                                    no
                                     name
-                                }
-                                vs_volume_solid
-                                color{
-                                    id_ral
-                                    hex_code
-                                    ind_name
-                                    eng_name
-                                }
-                                packaging_name
-                                liter
-                                agent_item_id
-                                ratio_agent
+                                    balance
+                                    itemCategory{
+                                        id
+                                        name
+                                    }
+                                    vs_volume_solid
+                                    color{
+                                        id_ral
+                                        hex_code
+                                        ind_name
+                                        eng_name
+                                    }
+                                    packaging_name
+                                    liter
+                                    agent_item_id
+                                    ratio_agent
 
-                                type{
-                                    id
-                                    name
+                                    type{
+                                        id
+                                        name
+                                    }
                                 }
                             }
                         }
-                    }
-                `,
-            }),
-        })
-        .then(function(response) {
-            return response.json()
-        })
-        .then(function(text) {
-            return text.data.items;
-        })
-        .then(resp => {
-            this.isLoad = true;
-            this.dataItem = resp;
-        })
+                    `,
+                }),
+            })
+            .then(function(response) {
+                return response.json()
+            })
+            .then(function(text) {
+                return text.data.items;
+            })
+            .then(resp => {
+                this.dataItem = resp;
+                this.isLoad = true;
+            })
+        }
+    },
+    async mounted(){
+        this.fetch();
     },
     computed:{
         ...mapGetters({

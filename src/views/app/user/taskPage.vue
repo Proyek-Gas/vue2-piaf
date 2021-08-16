@@ -17,7 +17,8 @@
         :to="to"
         :total="total"
         :perPage="perPage"
-      ></list-page-heading>
+      >
+      </list-page-heading>
       <template v-if="isLoad">
         <list-page-listing
           :displayMode="displayMode"
@@ -124,13 +125,12 @@ export default {
               return text.data.tasks;
           })
           .then(resp => {
-            console.log(resp)
             this.items = resp;
             this.total = resp.length;
             this.perPage = 5;
             this.to = 4;
             this.from = 0;
-             this.selectedItems = [];
+            this.selectedItems = [];
             this.lastPage = this.total/ this.perPage
             this.isLoad = true
             });
