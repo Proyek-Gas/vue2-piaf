@@ -109,7 +109,7 @@ export default {
             //this.total = resp.length;
             this.selectedItems = [];
             this.itemSClone = resp;
-            this.itemClone2 = resp;
+            this.itemsClone2 = resp;
             // console.log(resp)
             // this.items =  _.slice(this.itemSClone, this.from-1, this.to);
 
@@ -142,7 +142,7 @@ export default {
       console.log(val)
       this.search = val;
       this.page = 1;
-      this.items = this.itemSClone2.filter(row => {
+      this.items = this.itemsClone2.filter(row => {
         return row.description.toLowerCase().indexOf(this.search.toLowerCase()) !== -1 ;
       });
 
