@@ -17,7 +17,8 @@
         :to="to"
         :total="total"
         :perPage="perPage"
-      ></list-page-heading>
+      >
+      </list-page-heading>
       <template v-if="isLoad">
         <list-page-listing
           :displayMode="displayMode"

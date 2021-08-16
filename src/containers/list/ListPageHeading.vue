@@ -9,6 +9,7 @@
           size="lg"
           class="top-right-button"
         >{{ $t('pages.add-new') }}</b-button>
+        <mAddTask></mAddTask>
         <b-button-group>
           <b-dropdown split right @click="selectAll(true)" class="check-button" variant="primary">
             <label
@@ -114,6 +115,7 @@ import {
   ThumbListIcon,
   ImageListIcon
 } from "../../components/Svg";
+import mAddTask from "../../../src/views/app/user/modalAddTask.vue"
 // import AddNewModal from "./AddNewModal";
 
 export default {
@@ -121,6 +123,7 @@ export default {
     "data-list-icon": DataListIcon,
     "thumb-list-icon": ThumbListIcon,
     "image-list-icon": ImageListIcon,
+    "mAddTask": mAddTask
     // "add-new-modal": AddNewModal
   },
   props: [

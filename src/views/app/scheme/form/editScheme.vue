@@ -256,7 +256,7 @@ export default {
             }
 
         },
-        checkIsian(value, type){
+        checkIsian(value, type, item){
             let cek = true;
             let cek2 = true;
                 if(!value){
@@ -285,7 +285,6 @@ export default {
         onValitadeFormSubmit() {
             this.$v.$touch();
             let ctrItem =0;
-              this.submit = false;
             if(!this.$v.$invalid && !this.submit){
 
                 let data = {};
@@ -295,13 +294,14 @@ export default {
                 let ctr = 0;
                 let ctr2 = 0;
                 let ctr3 = 0;
+                let arr = []; let arr2 = []; let arr3 = [];
                 for (let i = 0; i < this.bigData.length; i++) {
                   console.log(this.bigData[i])
                   if(this.bigData[i].type.id == 1){
                     ctrItem ++;
-                    let arr = this.checkIsian(this.bigData[i].coat,1);
-                    let arr2 = this.checkIsian(this.bigData[i].dft,2);
-                    let arr3 = this.checkIsian(this.bigData[i].loss,1);
+                     arr = this.checkIsian(this.bigData[i].coat,1,"Coat");
+                    arr2 = this.checkIsian(this.bigData[i].dft,2,"DFT");
+                    arr3 = this.checkIsian(this.bigData[i].loss,1,"Loss");
                     if(arr[0] == true && arr[1] == true){
                         ctr = ctr + 1;
                     }
@@ -922,8 +922,8 @@ export default {
                 return text.data.items;
             })
             .then(resp => {
-                this.isLoad = true;
                 this.dataItem = resp;
+                this.isLoad = true;
             })
         }else{
             window.location = window.location.origin +"/error?id=404&name=scheme";

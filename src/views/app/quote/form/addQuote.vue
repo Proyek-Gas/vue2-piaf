@@ -1200,6 +1200,7 @@ export default {
                         id
                         name
                         email
+                        workPhone
                         category{
                             name
                         }

@@ -247,11 +247,9 @@ export default {
     }).then(function(response) {
         return response.json()
     }).then(function(text) {
-      console.log(text)
         return text.data.scheme.schemes;
     })
     .then(resp => {
-      console.log(resp)
         this.data = resp;
         this.dataClone = resp;
         this.isLoad = true
@@ -264,7 +262,6 @@ export default {
       return "schemeTable/add";
 		},
     movePageDetail(val){
-      // console.log(val);
 			// window.location = window.location.href+"/sDetail?id="+val;
       return "schemeTable/sDetail?id="+val;
 		},
@@ -294,11 +291,9 @@ export default {
             return response.json()
         })
         .then(function(text) {
-            console.log(text.data);
             return text.data.deleteScheme;
         })
         .then(resp => {
-            console.log(resp.message);
             if(resp.status.toLowerCase() == "success"){
               this.$toast(resp.message, {
                   type: "success",
@@ -327,16 +322,12 @@ export default {
       this.from = paginationData.from;
       this.to = paginationData.to;
       this.total = paginationData.total;
-      console.log(paginationData);
       this.$refs.pagination.setPaginationData(paginationData);
     },
      onCellClicked (data, field, event) {
-        console.log('cellClicked: ', field.name)
-        console.log(data.id)
         this.$refs.vuetable.toggleDetailRow(data.id)
       },
     cellClicked ($event, data) {
-      // console.log('cellClicked: ', $event)
       this.$refs.vuetable.toggleDetailRow(data.id)
     },
     onChangePage(page) {
@@ -353,13 +344,11 @@ export default {
      // if (this.data.length < 1) return;
 
       let local = this.data;
-      console.log(this.search);
       local = local.filter(row => {
         return row.name.toLowerCase().indexOf(this.search.toLowerCase()) !== -1 ;
       });
       // sortOrder can be empty, so we have to check for that as well
       if (sortOrder.length > 0) {
-        console.log("orderBy:", sortOrder[0].sortField, sortOrder[0].direction);
         local = _.orderBy(
           local,
           sortOrder[0].sortField,
@@ -371,7 +360,6 @@ export default {
         local.length,
         this.perPage
       );
-      console.log("pagination:", pagination);
       let from = pagination.from - 1;
       let to = from + this.perPage;
 
@@ -382,7 +370,6 @@ export default {
     },
     changePageSize(perPage) {
       this.perPage = perPage;
-      console.log(this.perPage);
       this.$refs.vuetable.refresh();
     },
      showAvatar(row){
@@ -503,11 +490,9 @@ export default {
         this.selectedItems.length < this.items.length
       );
     },
-    computed:{
-        ...mapGetters({
-        currentUser: "currentUser",
+      ...mapGetters({
+      currentUser: "currentUser",
     })
-    }
   },
 
 };

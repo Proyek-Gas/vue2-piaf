@@ -296,7 +296,6 @@ export default {
           return response.json()
         })
         .then(function(text) {
-          console.log(text)
           return text.data.customers.customers;
         })
         .then(resp => {

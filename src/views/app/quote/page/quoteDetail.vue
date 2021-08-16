@@ -862,6 +862,61 @@ export default {
                     }
                 }`
             }
+            else if(a.toLowerCase() === "revise"){
+                queryString = `mutation{
+                    addNewVersionQuote(
+                        quote_id:${this.qId}
+                        is_draft:
+                        params:{
+                            valid_until: ""
+                            notes: ""
+                            discount: 0
+                            total_volume: 0
+                            total: 0
+                            total_hpp: 0
+                            areas:{
+                                area_category: Int!
+                                surface_area: Int
+                                total_volume: Float
+                                total: Float!
+                                total_hpp: Float
+                                surface_preparation: String!
+                                items:{
+                                    item_id: Int!
+                                    item_name: String!
+                                    item_code: String!
+                                    liter: Float!
+                                    thinner_code: String
+                                    price: Float!
+                                    hpp: Float
+                                    subtotal: Float!
+                                    subtotal_hpp: Float
+                                    coat: Int
+                                    dry_film_thickness: Int
+                                    theoritical: Float
+                                    practical: Float
+                                    loss: Int
+                                }
+                            }
+                        }
+                    ){
+                        status
+                        message
+                    }
+                }`
+            }
+            else if(a.toLowerCase() === "approve"){
+                queryString = `mutation{
+                    acceptRejectQuote(
+                        quote_id:${this.qId}
+                        status:${this.status.id}
+                        notes:""
+                    ){
+                        status
+                        message
+                    }
+                }`
+            }
             else if(a.toLowerCase() === "rejected by customer"){
                 queryString = `mutation{
                     rejectQuoteByCustomer(
@@ -895,6 +950,8 @@ export default {
                     return text.data.closeQuote;
                 }else if(a.toLowerCase() === "rejected by customer"){
                     return text.data.rejectQuoteByCustomer;
+                }else if(a.toLowerCase() === "approve"){
+                    return text.data.acceptRejectQuote;
                 }
             })
             .then(resp => {
