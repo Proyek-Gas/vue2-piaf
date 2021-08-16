@@ -67,19 +67,19 @@
             </a> -->
           </span>
           <div class="d-block d-md-inline-block pt-1">
-            <b-dropdown
+            <!-- <b-dropdown
               id="ddown1"
               :text="`${$t('pages.orderby')} ${sort.label}`"
               variant="outline-dark"
               class="mr-1 float-md-left btn-group"
               size="xs"
             >
-              <b-dropdown-item
+               <b-dropdown-item
                 v-for="(order,index) in sortOptions"
                 :key="index"
                 @click="changeOrderBy(order)"
               >{{ order.label }}</b-dropdown-item>
-            </b-dropdown>
+            </b-dropdown> -->
 
             <div class="search-sm d-inline-block float-md-left mr-1 align-top">
               <b-input :placeholder="$t('menu.search')"  @input="(val) => searchChange(val)" />
@@ -142,44 +142,44 @@ export default {
   ],
   data() {
     return {
-      categories: [
-        {
-          label: "Cakes",
-          value: "Cakes"
-        },
-        {
-          label: "Cupcakes",
-          value: "Cupcakes"
-        },
-        {
-          label: "Desserts",
-          value: "Desserts"
-        }
-      ],
-      statuses: [
-        {
-          text: "ON HOLD",
-          value: "ON HOLD"
-        },
-        {
-          text: "PROCESSED",
-          value: "PROCESSED"
-        }
-      ],
-      sortOptions: [
-        {
-          column: "title",
-          label: "Product Name"
-        },
-        {
-          column: "category",
-          label: "Category"
-        },
-        {
-          column: "status",
-          label: "Status"
-        }
-      ],
+      // categories: [
+      //   {
+      //     label: "Cakes",
+      //     value: "Cakes"
+      //   },
+      //   {
+      //     label: "Cupcakes",
+      //     value: "Cupcakes"
+      //   },
+      //   {
+      //     label: "Desserts",
+      //     value: "Desserts"
+      //   }
+      // ],
+      // statuses: [
+      //   {
+      //     text: "ON HOLD",
+      //     value: "ON HOLD"
+      //   },
+      //   {
+      //     text: "PROCESSED",
+      //     value: "PROCESSED"
+      //   }
+      // ],
+      // sortOptions: [
+      //   {
+      //     column: "title",
+      //     label: "Product Name"
+      //   },
+      //   {
+      //     column: "category",
+      //     label: "Category"
+      //   },
+      //   {
+      //     column: "status",
+      //     label: "Status"
+      //   }
+      // ],
       pageSizes: [5,10,15]
     };
   }

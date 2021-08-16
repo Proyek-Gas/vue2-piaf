@@ -16,13 +16,21 @@
       <div class="col-6" style="text-align:right"><b>Price Category: </b></div>
       <div class="col-6"> <b-badge :variant="rowData.priceCategory.name === 'Umum' ? '3' ? 'primary' : 'success' : 'danger'" close-transition>{{rowData.priceCategory.name}}</b-badge></div>
     </div>
-    <div class="row">
+    <!-- <div class="row">
       <div class="col-6" style="text-align:right"><b>Last Project Name :</b></div>
       <div class="col-6"><router-link :to="returnPageProjectDetail(rowData)">{{rowData.lastquote.project.name}}</router-link></div>
     </div>
     <div class="row">
       <div class="col-6" style="text-align:right"><b>Updated At / Clossed At :</b></div>
       <div class="col-6"><router-link :to="returnPageQuoteDetail(rowData)" v-if="rowData.lastquote.project.id != null">{{timeLayout(rowData.lastquote.updated_at)  }}/ {{timeLayout(rowData.lastquote.closed_at)}}</router-link></div>
+    </div> -->
+     <div class="row">
+      <div class="col-6" style="text-align:right"><b>Mobile phone - Work Phone: </b></div>
+      <div class="col-6"> {{rowData.mobilePhone}} - {{rowData.workPhone}}</div>
+    </div>
+    <div class="row">
+      <div class="col-6" style="text-align:right"><b>NO NPWP :  </b></div>
+      <div class="col-6"> {{rowData.npwpNo}}</div>
     </div>
   </div>
 </template>

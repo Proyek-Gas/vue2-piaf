@@ -58,10 +58,16 @@
                   <i>{{props.rowData.email}}</i>
                   </router-link>
               </template>
-              <template slot="mobilePhone" slot-scope="props">
+              <!-- <template slot="mobilePhone" slot-scope="props">
                 <i>{{props.rowData.mobilePhone}}</i>
                 <br>
                   <i>{{props.rowData.workPhone}}</i>
+              </template> -->
+              <template slot="lastpro" slot-scope="props">
+                <router-link :to="returnPageProjectDetail(props.rowData)">{{props.rowData.lastquote.project.name}}</router-link>
+              </template>
+              <template slot="lastquote" slot-scope="props">
+                <router-link :to="returnPageQuoteDetail(props.rowData)" v-if="props.rowData.lastquote.project.id != null">{{timeLayout(props.rowData.lastquote.updated_at)  }}/ {{timeLayout(props.rowData.lastquote.closed_at)}}</router-link>
               </template>
               <template slot="categoryName" slot-scope="props">
                 <b-badge  v-if="props.rowData.category" :variant="props.rowData.category.name === 'CUSTOMER' ?  'primary' : 'success'" >{{props.rowData.category.name}}</b-badge>
@@ -153,23 +159,38 @@ export default {
           titleClass: "",
           dataClass: "text-muted",
           togglable : true,
-          width:"15%"
+          width:"5%"
         },
+        // {
+        //   name: "__slot:mobilePhone",
+        //   sortField: "mobilePhone",
+        //   title: "Telepon",
+        //   titleClass: "",
+        //   dataClass: "text-muted",
+        //   width:"10%"
+        // },
         {
-          name: "__slot:mobilePhone",
-          sortField: "mobilePhone",
-          title: "Telepon",
-          titleClass: "",
-          dataClass: "text-muted",
-          width:"10%"
+          name : "__slot:lastpro",
+          title : "Last Project",
+          sortField: "lastquote.project.name",
+          titleClass : "",
+          dataClass : "text-muted",
+          width : "25%"
         },
+        // {
+        //   name: "npwpNo",
+        //   sortField: "npwpNo",
+        //   title: "NPWP",
+        //   titleClass: "",
+        //   dataClass: "text-muted",
+        //  width:"10%"
+        // },
         {
-          name: "npwpNo",
-          sortField: "npwpNo",
-          title: "NPWP",
-          titleClass: "",
-          dataClass: "text-muted",
-         width:"10%"
+          name: "__slot:lastquote",
+          title : "Last Quote Time",
+          titleClass : "",
+          dataClass : "text-muted",
+          width : "10%"
         },
         {
           name: "__slot:categoryName",
@@ -272,6 +293,18 @@ export default {
 
   },
   methods: {
+    returnPageQuoteDetail(props){
+      return "quoteTable/qDetail?id="+props.lastquote.id+"&ver="+props.lastquote.id
+    },
+    returnPageProjectDetail(props){
+      return "projectTable/pDetail?id="+props.lastquote.project.id
+    },
+     timeLayout(n){
+      if(n!= null){
+       return n.split("T")[0];
+      }
+
+    },
     movePageAdd(){
        return "customerTable/add"
 		},

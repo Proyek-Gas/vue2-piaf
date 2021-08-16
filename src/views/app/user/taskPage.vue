@@ -8,7 +8,7 @@
         :isAnyItemSelected="isAnyItemSelected"
         :keymap="keymap"
         :displayMode="displayMode"
-        :changeDisplayMode="changeDisplayMode"
+
         :changeOrderBy="changeOrderBy"
         :changePageSize="changePageSize"
         :sort="sort"
@@ -28,8 +28,6 @@
           :perPage="perPage"
           :page="page"
           :changePage="changePage"
-          :handleContextMenu="handleContextMenu"
-          :onContextMenuAction="onContextMenuAction"
         ></list-page-listing>
       </template>
       <template v-else>
@@ -40,11 +38,10 @@
 </template>
 
 <script>
-import axios from "axios";
-import { apiUrl } from "../../../constants/config";
 import ListPageHeading from "../../../containers/list/ListPageHeading.vue";
 import ListPageListing from "../../../containers/list/ListPageListing";
 import { mapGetters } from 'vuex';
+import _ from "lodash";
 
 export default {
   components: {
@@ -54,47 +51,28 @@ export default {
   data() {
     return {
       isLoad: false,
-      apiBase: apiUrl + "/cakes/fordatatable",
+
       displayMode: "list",
       sort: {
         column: "title",
         label: "Product Name"
       },
       page: 1,
-      perPage: 4,
+      perPage: 5,
       search: "",
       from: 0,
       to: 0,
       total: 0,
       lastPage: 0,
       items: [],
-      selectedItems: []
+      itemSClone : [],
+      selectedItems: [],
+      itemClone2 : []
     };
   },
   methods: {
     loadItems() {
       this.isLoad = false;
-
-      // axios
-      //   .get(this.apiUrl)
-      //   .then(response => {
-      //     return response.data;
-      //   })
-      //   .then(res => {
-      //     this.total = res.total;
-      //     this.from = res.from;
-      //     this.to = res.to;
-      //     this.items = res.data.map(x => {
-      //       return {
-      //         ...x,
-      //         img: x.img.replace("/img/", "/img/products/")
-      //       };
-      //     });
-      //     this.perPage = res.per_page;
-      //     this.selectedItems = [];
-      //     this.lastPage = res.last_page;
-      //     this.isLoad = true;
-      //   });
 
           fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
               method: 'POST',
@@ -124,39 +102,66 @@ export default {
               return text.data.tasks;
           })
           .then(resp => {
-            console.log(resp)
-            this.items = resp;
-            this.total = resp.length;
             this.perPage = 5;
-            this.to = 4;
-            this.from = 0;
-             this.selectedItems = [];
-            this.lastPage = this.total/ this.perPage
+            this.to = this.perPage;
+            this.from = 1;
+            //this.total = resp.length;
+            this.selectedItems = [];
+            this.itemSClone = resp;
+            this.itemClone2 = resp;
+            // console.log(resp)
+            // this.items =  _.slice(this.itemSClone, this.from-1, this.to);
+
+            // let ctr = this.total/ this.perPage
+            //  this.lastPage = ctr+1;
+
+            // console.log(this.lastPage)
+            this.changePageSize(this.perPage,this.itemSClone)
             this.isLoad = true
-            });
+          });
 
     },
 
-    changeDisplayMode(displayType) {
-      this.displayMode = displayType;
-    },
-    changePageSize(perPage) {
+    changePageSize(perPage,arr) {
       this.page = 1;
+      this.total = arr.length
       this.perPage = perPage;
+      this.to = this.perPage;
+      if(this.to>this.total) this.to = this.total
+      this.from = 1;
+      this.items =  _.slice(arr, this.from-1, this.to);
+      let ctr = this.total/ this.perPage
+      this.lastPage = ctr+1;
+      console.log(this.lastPage)
     },
     changeOrderBy(sort) {
       this.sort = sort;
     },
     searchChange(val) {
+      console.log(val)
       this.search = val;
       this.page = 1;
+      this.items = this.itemSClone2.filter(row => {
+        return row.description.toLowerCase().indexOf(this.search.toLowerCase()) !== -1 ;
+      });
+
+      console.log(this.items)
+      this.itemSClone = this.items
+      this.changePageSize(this.perPage,this.items)
+      // this.to = this.perPage;
+      // if(this.to>this.items.length) this.to = this.items.length
+      // this.from = 1;
+      // this.items =  _.slice(this.items, this.from-1, this.to);
+      // let ctr = this.items.length/ this.perPage
+      // this.lastPage = ctr+1;
+
     },
 
     selectAll(isToggle) {
-      if (this.selectedItems.length >= this.items.length) {
+      if (this.selectedItems.length >= this.itemSClone.length) {
         if (isToggle) this.selectedItems = [];
       } else {
-        this.selectedItems = this.items.map(x => x.id);
+        this.selectedItems = this.itemSClone.map(x => x.id);
       }
     },
     keymap(event) {
@@ -179,7 +184,7 @@ export default {
     },
     toggleItem(event, itemId) {
       if (event.shiftKey && this.selectedItems.length > 0) {
-        let itemsForToggle = this.items;
+        let itemsForToggle = this.itemSClone;
         var start = this.getIndex(itemId, itemsForToggle, "id");
         var end = this.getIndex(
           this.selectedItems[this.selectedItems.length - 1],
@@ -213,7 +218,15 @@ export default {
       );
     },
     changePage(pageNum) {
+      console.log(pageNum)
+      this.to = pageNum *this.perPage
+      this.from = this.to- (this.perPage -1)
+      if(this.to> this.itemSClone.length) this.to = this.itemSClone.length;
+    //  this.from =pageNum*(Math.round(this.total/this.perPage));
+     // this.from = pageNum * this.from
+
       this.page = pageNum;
+      this.items =  _.slice(this.itemSClone,this.from-1, this.to)
     }
   },
   computed: {
@@ -221,17 +234,15 @@ export default {
         currentUser : "currentUser"
     }),
     isSelectedAll() {
-      return this.selectedItems.length >= this.items.length;
+      return this.selectedItems.length >= this.itemSClone.length;
     },
     isAnyItemSelected() {
       return (
         this.selectedItems.length > 0 &&
-        this.selectedItems.length < this.items.length
+        this.selectedItems.length < this.itemSClone.length
       );
     },
-    apiUrl() {
-      return `${this.apiBase}?sort=${this.sort.column}&page=${this.page}&per_page=${this.perPage}&search=${this.search}`;
-    }
+
   },
   watch: {
     search() {
