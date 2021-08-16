@@ -174,7 +174,6 @@
             </b-colxx>
           </b-row>
         </b-tab>
-<<<<<<< HEAD
 
         <b-tab title="Ganti DB Accurate">
             <b-row>
@@ -192,9 +191,6 @@
                               :options="databaseOption"
                               placeholder ="Silahkan pilih Database"
                             >
-=======
-        <b-tab title="Ganti DB Accurate" @click="handleClick">
->>>>>>> ede0f21fbcc8de0537c0a8837ff7ce62ba17f406
 
                             </v-select>
                           </b-colxx>
@@ -227,13 +223,11 @@ const {
 } = require("vuelidate/lib/validators");
 
 export default {
-<<<<<<< HEAD
   components: {
        "v-select": vSelect,
+       Password
   },
-=======
-  components: { Password },
->>>>>>> ede0f21fbcc8de0537c0a8837ff7ce62ba17f406
+
   computed : {
       ...mapGetters({
           currentUser : "currentUser"
@@ -241,17 +235,9 @@ export default {
   },
   data() {
     return {
-<<<<<<< HEAD
       database : "",
       databaseOption : [],
-    overLineForm: {
-      email: '',
-      phone : '',
-      name : ''
-      },
-    };
-  },
-=======
+
       overLineForm: {
         email: '',
         phone : '',
@@ -264,7 +250,6 @@ export default {
       }
       };
     },
->>>>>>> ede0f21fbcc8de0537c0a8837ff7ce62ba17f406
     mixins: [validationMixin],
     validations: {
       overLineForm: {

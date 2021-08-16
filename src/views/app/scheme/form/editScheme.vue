@@ -78,7 +78,7 @@
                   </div>
                </div>
                 <div v-if="dataSelected3.length > 0" class="row">
-                    <table-agent :dataComponent="dataSelected3"></table-agent>
+                    <table-agent :dataComponent="dataSelected3" v-on:btnDel="removeBigData"></table-agent>
                 </div>
             </b-card>
         </b-form>
@@ -215,7 +215,7 @@ export default {
         },
     },
     methods: {
-        deleteItemGroup(type){
+         deleteItemGroup(type){
             let cek = false;
             let arrOld = []
             if(type == 1){
@@ -231,7 +231,10 @@ export default {
                 if(!arrOld[j].action){
                     newArrSelected.push(arrOld[j])
                 } else{
-                cek = true
+                     cek = true
+                     this.removeDataAgentChild(arrOld[j].recommended_thinner_id)
+                     this.removeDataAgentChild(arrOld[j].agent_item_id);
+
                 }
             }
 
@@ -258,6 +261,11 @@ export default {
             let cek2 = true;
                 if(!value){
                     cek = false;
+                     this.$toast(item+" tidak boleh kosong", {
+                        type: "warning",
+                        hideProgressBar: true,
+                        timeout: 2000
+                    });
                 }else{
                     if(type == 1){
                         if(value < 0 || value > 100){
@@ -271,12 +279,15 @@ export default {
                     }
                 }
 
+
             return [cek, cek2];
         },
         onValitadeFormSubmit() {
             this.$v.$touch();
+            let ctrItem =0;
+              this.submit = false;
             if(!this.$v.$invalid && !this.submit){
-                this.submit = true;
+
                 let data = {};
                 let sukses = true;
                 let sukses2 = true;
@@ -284,7 +295,10 @@ export default {
                 let ctr = 0;
                 let ctr2 = 0;
                 let ctr3 = 0;
-                for (let i = 0; i < this.bigData.length; i++) { 
+                for (let i = 0; i < this.bigData.length; i++) {
+                  console.log(this.bigData[i])
+                  if(this.bigData[i].type.id == 1){
+                    ctrItem ++;
                     let arr = this.checkIsian(this.bigData[i].coat,1);
                     let arr2 = this.checkIsian(this.bigData[i].dft,2);
                     let arr3 = this.checkIsian(this.bigData[i].loss,1);
@@ -297,24 +311,27 @@ export default {
                     if(arr3[0] == true && arr3[1] == true){
                         ctr3 = ctr3 + 1;
                     }
+                  }
+
                 }
                 console.log(this.bigData.length);
                 console.log(ctr);
-                if(ctr < this.bigData.length){
+                console.log(ctrItem)
+                if(ctr < ctrItem){
                     sukses = false;
                     this.$toast("Coat tidak valid", {
                         type: "warning",
                         hideProgressBar: true,
                         timeout: 2000
                     });
-                }else if (ctr2 < this.bigData.length){
+                }else if (ctr2 < ctrItem){
                     sukses2 = false;
                     this.$toast("Dft tidak valid", {
                         type: "warning",
                         hideProgressBar: true,
                         timeout: 2000
                     });
-                }else if (ctr3 < this.bigData.length){
+                }else if (ctr3 < ctrItem){
                     sukses3 = false;
                     this.$toast("Loss tidak valid", {
                         type: "warning",
@@ -324,6 +341,7 @@ export default {
                 }
                 if(sukses && sukses2 && sukses3){
                     console.log("masuk");
+                     this.submit = true;
                 for (let i = 0; i < this.bigData.length; i++) {
                     console.log(this.bigData[i].id);
                     data = `{
@@ -372,6 +390,7 @@ export default {
                     }),
                 })
                 .then(function(response) {
+                  console.log(response)
 					return response.json()
 				})
 				.then(function(text) {
@@ -439,10 +458,56 @@ export default {
              }
             }
 
+             if(item.agent_item_id != null){
+              this.removeDataAgentChild(item.agent_item_id)
+            }
+            if(item.recommended_thinner_id != null){
+              this.removeDataAgentChild(item.recommended_thinner_id)
+            }
             if(index != -1){
               newArr.splice(index,1)
             }
             this.bigData = newArr
+        },
+        removeDataAgentChild(id){
+            let newArr = this.bigData
+            let newArr2 = this.dataSelected2
+            let newArr3 = this.dataSelected3
+            let index= -1;
+            let index2 = -1;
+            let index3 = -1;
+            for (let i = 0; i < newArr.length; i++) {
+              if(newArr[i].id == id){
+               index = i
+             }
+            }
+
+             for (let i = 0; i < newArr2.length; i++) {
+              if(newArr2[i].id == id){
+               index2 = i
+             }
+            }
+
+             for (let i = 0; i < newArr3.length; i++) {
+              if(newArr3[i].id == id){
+               index3= i
+             }
+            }
+
+
+
+            if(index != -1){
+              newArr.splice(index,1)
+            }
+            if(index2 != -1){
+              newArr2.splice(index2,1)
+            }
+            if(index3 != -1){
+              newArr3.splice(index3,1)
+            }
+            this.bigData = newArr
+            this.dataSelected2 = newArr2
+            this.dataSelected3 = newArr3
         },
         renderSuggestion(suggestion) {
             const character = suggestion.item;
@@ -545,14 +610,14 @@ export default {
                     id : suggestion.item.id
 
                 }
-                this.bigData.push(data);
+                //this.bigData.push(data);
                 //data = this.fetchAgain(data)
                 // if(suggestion.item.type.id == 1)this.dataSelected1.push(data);
                 // else if(suggestion.item.type.id == 1)this.dataSelected2.push(data); //nanti ganti 2 ya
                 // else this.dataSelected3.push(data);
-                this.fetchAgain(data)
+                this.fetchAgain(data,false)
             }
-                console.log(this.bigData);
+               // console.log(this.bigData);
             return suggestion.item.name;
         },
         returnColor(a){
@@ -561,16 +626,34 @@ export default {
             }
             return style
         },
-        fetchAgain(data){
-
+        fetchAgain(data, cek){
+          let id = null;
+          if(cek) {
+            id = data
+          }else{
+            id = data.id
+          }
           let queryString = `
             query{
-                itemDetail(item_id:${data.id}){
+                itemDetail(item_id:${id}){
+                  name
+                  no
+                  id
                     type{
                       name
                       id
                     }
-                    detailSellingPrice{
+                     color{
+                      id_ral
+                      hex_code
+                      ind_name
+                      eng_name
+                    }
+                    balance
+                    vs_volume_solid
+                    agent_item_id
+                    recommended_thinner_id
+                  detailSellingPrice{
                     priceCategory{
                       id
                       name
@@ -579,10 +662,7 @@ export default {
                   }
                 }
               }
-
-
           `
-          console.log(queryString)
           fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
             method: 'POST',
             headers: {
@@ -597,17 +677,40 @@ export default {
                 return response.json()
             })
             .then(function(text) {
-                console.log(text.data);
                 return text.data.itemDetail;
             })
             .then(resp => {
-              console.log(resp.detailSellingPrice)
-              data.price = resp.detailSellingPrice
-              if(resp.type.id != null){
-                if(resp.type.id == 1)this.dataSelected1.push(data);
-                else if(resp.type.id == 2)this.dataSelected2.push(data); //nanti ganti 2 ya
-                else this.dataSelected3.push(data);
-              }
+
+              data = resp
+              data.warna= resp.color;
+              data.no = resp.no;
+              data.name = resp.name;
+              data.vs= resp.vs_volume_Solid;
+              data.balance = resp.balance;
+              data.coat = 0;
+              data.dft = 0;
+              data.loss = 0;
+              // this.bigData.push(data)
+
+                data.price = resp.detailSellingPrice;
+                data.type = resp.type;
+                data.agent_item_id = resp.agent_item_id;
+                data.recommended_thinner_id = resp.recommended_thinner_id;
+                if(resp.agent_item_id != null && resp.agent_item_id!=0){
+                  this.fetchAgain(resp.agent_item_id, true)
+                }
+
+                 if(resp.recommended_thinner_id != null && resp.recommended_thinner_id != 0){
+                  this.fetchAgain(resp.recommended_thinner_id, true)
+                }
+
+                if(resp.type.id != null){
+
+                  if(resp.type.id == 1)this.dataSelected1.push(data);
+                  else if(resp.type.id == 2)this.dataSelected2.push(data); //nanti ganti 2 ya
+                  else this.dataSelected3.push(data);
+                }
+                   this.bigData.push(data);
             })
          // return data
         },
@@ -652,9 +755,11 @@ export default {
                 }),
             })
             .then(function(response) {
+              console.log(response)
                 return response.json()
             })
             .then(function(text) {
+              console.log(text)
                 return text.data.itemDetail;
             })
             .then(resp => {
@@ -663,8 +768,13 @@ export default {
                 console.log(this.dataSelected1);
                 data.price = this.tmp.detailSellingPrice;
                 data.name = this.tmp.name;
+                data.type = this.tmp.type;
                 if(this.tmp.type.id == 1){
                     this.dataSelected1.push(data);
+                }else if(this.tmp.type.id==2){
+                  this.dataSelected2.push(data);
+                }else{
+                  this.dataSelected3.push(data);
                 }
             })
         },
@@ -704,10 +814,11 @@ export default {
                                 dry_film_thickness
                                 loss
                                 vs_volume_solid
+
                             }
                         }
                     }
-                
+
                 `,
             })
             })
@@ -742,8 +853,16 @@ export default {
                             coat: this.dataTmp[i].coat,
                             dft: this.dataTmp[i].dry_film_thickness,
                             loss: this.dataTmp[i].loss,
-                            price: []
+                            price: [],
+                           // type : this.dataTmp[i].type
 
+
+                        }
+                        if(data.coat != 0){
+                          data.type = {
+                            name : "UMUM",
+                            id : 1
+                          }
                         }
                         console.log(data);
                         this.fetchItem(data);
@@ -785,7 +904,7 @@ export default {
                                     liter
                                     agent_item_id
                                     ratio_agent
-    
+
                                     type{
                                         id
                                         name
@@ -814,6 +933,6 @@ export default {
         ...mapGetters({
         currentUser: "currentUser",
     })
-    } 
+    }
 };
 </script>

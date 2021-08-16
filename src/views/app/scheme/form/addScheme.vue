@@ -282,7 +282,9 @@ export default {
 
         onValitadeFormSubmit() {
             this.$v.$touch();
+            let ctrItem = 0;
             if(!this.$v.$invalid && !this.submit){
+
                 this.submit = true;
                 let data = {};
                 let sukses = true;
@@ -292,6 +294,8 @@ export default {
                 let ctr2 = 0;
                 let ctr3 = 0;
                 for (let i = 0; i < this.bigData.length; i++) {
+                  if(this.bigData[i].type.id == 1){
+                    ctrItem ++;
                     let arr = this.checkIsian(this.bigData[i].coat,1,"Coat");
                     let arr2 = this.checkIsian(this.bigData[i].dft,2,"DFT");
                     let arr3 = this.checkIsian(this.bigData[i].loss,1,"Loss");
@@ -304,24 +308,26 @@ export default {
                     if(arr3[0] == true && arr3[1] == true){
                         ctr3 = ctr3 + 1;
                     }
+                  }
+
                 }
-                if(ctr < this.bigData.length){
+                if(ctr < ctrItem){
                     sukses = false;
-                   this.$toast("Range Coat tidak valid! (1-100)", {
+                   this.$toast("Coat tidak valid!", {
                         type: "warning",
                         hideProgressBar: true,
                         timeout: 2000
                     });
-                }else if (ctr2 < this.bigData.length){
+                }else if (ctr2 < ctrItem){
                     sukses2 = false;
-                    this.$toast("Range DFT tidak valid! (1-1000)", {
+                    this.$toast("DFT tidak valid!", {
                         type: "warning",
                         hideProgressBar: true,
                         timeout: 2000
                     });
-                }else if (ctr3 < this.bigData.length){
+                }else if (ctr3 < ctrItem){
                     sukses3 = false;
-                    this.$toast("Range Loss tidak valid! (1-100)", {
+                    this.$toast("Loss tidak valid!", {
                         type: "warning",
                         hideProgressBar: true,
                         timeout: 2000
@@ -335,6 +341,7 @@ export default {
                         dry_film_thickness:${this.bigData[i].dft},
                         loss:${this.bigData[i].loss}
                     }`
+                      console.log(data)
                        this.itemToAdd.push(data);
                 }
                 fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
@@ -360,9 +367,11 @@ export default {
                     }),
                 })
                 .then(function(response) {
+                  console.log(response)
 					return response.json()
 				})
 				.then(function(text) {
+          console.log(text)
 					return text.data.addScheme;
 				})
 				.then(resp => {
@@ -591,7 +600,7 @@ export default {
             }
             return style
         },
-        fetchAgain(data, cek){
+        fetchAgain(data,cek){
           let id = null;
           if(cek) {
             id = data
@@ -645,30 +654,40 @@ export default {
                 return text.data.itemDetail;
             })
             .then(resp => {
-              if(cek){
-                  data = resp
-                  data.warna= resp.color;
-                  data.no = resp.no;
-                  data.name = resp.name;
-                  data.vs= resp.vs_volume_Solid;
-                  data.balance = resp.balance;
+
+                data = resp
+                data.warna= resp.color;
+                data.no = resp.no;
+                data.name = resp.name;
+                data.vs= resp.vs_volume_Solid;
+                data.balance = resp.balance;
                  // this.bigData.push(data)
-              }
+
                 data.price = resp.detailSellingPrice
                 data.agent_item_id = resp.agent_item_id;
                 data.recommended_thinner_id = resp.recommended_thinner_id;
+                data.type = resp.type;
+                data.coat = 0;
+                data.loss = 0;
+                data.dft = 0;
                 if(resp.agent_item_id != null && resp.agent_item_id!=0){
-                  this.fetchAgain(resp.agent_item_id, true)
+                  this.fetchAgain(resp.agent_item_id,true)
+
                 }
 
                  if(resp.recommended_thinner_id != null && resp.recommended_thinner_id != 0){
-                  this.fetchAgain(resp.recommended_thinner_id, true)
+                  this.fetchAgain(resp.recommended_thinner_id,true)
                 }
 
                 if(resp.type.id != null){
                   if(resp.type.id == 1)this.dataSelected1.push(data);
-                  else if(resp.type.id == 2)this.dataSelected2.push(data); //nanti ganti 2 ya
-                  else this.dataSelected3.push(data);
+                  else if(resp.type.id == 2){
+                    this.dataSelected2.push(data);
+
+                  } //nanti ganti 2 ya
+                  else{
+                    this.dataSelected3.push(data);
+                  }
                 }
                    this.bigData.push(data);
             })
