@@ -1138,7 +1138,25 @@ export default {
             })
           return newArr
         },
-
+        recalibrateItemArea(item){
+          console.log(item);
+          let newArr = [];
+          for(let i=0; i< item.length; i++){
+              let data = {
+                id : item[i].item_id,
+                name : item[i].item_name,
+                price : item[i].name,
+                isItem : true,
+                dft : item[i].dry_film_thickness,
+                coat : item[i].coat,
+                theory : item[i].theoritical,
+                loss : item[i].loss,
+                practical : item[i].practical,
+                subtotal : item[i].subtotal
+              }
+          }
+          return newArr;
+        },
         recalibrateArea(item){
           console.log(item)
           let newArr = []
@@ -1149,7 +1167,8 @@ export default {
                 name : item[i].category.name,
                 id : item[i].category.id,
                 luas : item[i].surface_area,
-                surface : arrSurface
+                surface : arrSurface,
+                selectedItem : this.recalibrateItemArea(item[i].items)
               }
               newArr.push(newData)
           }
@@ -1266,6 +1285,7 @@ export default {
 					query{
                     quoteDetail(quote_id:${this.qId} version:${this.qVer}){
                         id
+                        notes
                         project{
                         id
                         name
@@ -1316,6 +1336,8 @@ export default {
                             total_hpp
                             surface_preparation
                             items{
+                                item_id
+                                price
                                 item_name
                                 price
                                 subtotal
