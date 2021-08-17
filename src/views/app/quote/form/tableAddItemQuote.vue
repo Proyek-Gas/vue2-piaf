@@ -63,7 +63,7 @@
                     {{subtotal(props.rowData)|currency}}
                 </template>
                 <template slot="practical" slot-scope = "props" v-if="props.rowData.type.id == 1">
-                  {{Math.round(props.rowData.theory * (1- props.rowData.loss/100)*100)/100}}
+                  {{practical(props.rowData)}}
                 </template>
                 <template slot="btndel" slot-scope="props">
                     <b-button class=" btn mb-1" variant="danger default" @click="deleteItem(props.rowData.id)" v-if="props.rowData.isItem == true">Delete <i class="simple-icon-close"></i></b-button>
@@ -128,6 +128,9 @@ export default{
         this.totalVol = total
         this.totalHarga = totalhrg
 
+      },
+      practical(data){
+       return data.practical =   Math.round(data.theory * (1- data.loss/100)*100)/100
       },
        deleteItem(id){
           let data = this.dataComponent.selectedItem;

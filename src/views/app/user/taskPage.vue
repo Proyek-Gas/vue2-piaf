@@ -19,21 +19,32 @@
         :perPage="perPage"
       >
       </list-page-heading>
-      <template v-if="isLoad">
-        <list-page-listing
-          :displayMode="displayMode"
-          :items="items"
-          :selectedItems="selectedItems"
-          :toggleItem="toggleItem"
-          :lastPage="lastPage"
-          :perPage="perPage"
-          :page="page"
-          :changePage="changePage"
-        ></list-page-listing>
-      </template>
-      <template v-else>
-        <div class="loading"></div>
-      </template>
+      <b-row>
+        <b-colxx xs="12" class="mb-3">
+            <b-button v-b-modal.modalright2>Filter</b-button>
+            <filter-task></filter-task>
+        </b-colxx>
+      </b-row>
+      <b-row>
+          <b-colxx xs="12">
+              <template v-if="isLoad">
+              <list-page-listing
+                :displayMode="displayMode"
+                :items="items"
+                :selectedItems="selectedItems"
+                :toggleItem="toggleItem"
+                :lastPage="lastPage"
+                :perPage="perPage"
+                :page="page"
+                :changePage="changePage"
+              ></list-page-listing>
+            </template>
+            <template v-else>
+              <div class="loading"></div>
+            </template>
+          </b-colxx>
+      </b-row>
+
     </b-colxx>
   </b-row>
 </template>
@@ -41,13 +52,15 @@
 <script>
 import ListPageHeading from "../../../containers/list/ListPageHeading.vue";
 import ListPageListing from "../../../containers/list/ListPageListing";
+import FilterTask from "./modalFilterTask.vue";
 import { mapGetters } from 'vuex';
 import _ from "lodash";
 
 export default {
   components: {
     "list-page-heading": ListPageHeading,
-    "list-page-listing": ListPageListing
+    "list-page-listing": ListPageListing,
+    "filter-task" : FilterTask
   },
   data() {
     return {
