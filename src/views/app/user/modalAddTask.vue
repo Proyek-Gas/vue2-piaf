@@ -13,7 +13,7 @@
                         :get-suggestion-value="getSuggestionValue"
                         :limit="6"
                         clearable
-                        v-model="custNama"
+                        v-model="tmpCustNama"
                         @selected="onAutosuggestSelected"
                         @input="onAutoSuggestInputChange"
                     >
@@ -31,7 +31,7 @@
                         :get-suggestion-value="getSuggestionValue2"
                         :limit="6"
                         clearable
-                        v-model="proNama"
+                        v-model="tmpProNama"
                         @selected="onAutosuggestSelected2"
                         @input="onAutoSuggestInputChange2"
                     >
@@ -106,8 +106,10 @@ export default {
             notes: "",
 
             customer: "",
+            tmpCustNama: "",
             custNama: "",
             project: "",
+            tmpProNama: "",
             proNama: "",
             tglTask: "",
             recur: 30,
@@ -159,63 +161,72 @@ export default {
         },
         onValitadeFormSubmit(refname) {
             this.$v.$touch();
+            console.log(this.proNama);
             if(!this.$v.$invalid){
-                console.log("valid");
-                let str;
-                if(this.tglTask != ''){
-                    str = `due_date:"${this.formatDate(this.tglTask)}"`;
+                if(new Date(this.tglTask) < new Date()){
+                    this.$toast("Tanggal jatuh tempo tidak valid", {
+                        type: "warning",
+                        hideProgressBar: true,
+                        timeout: 2000
+                    });
                 }else{
-                    str = `due_date:null`;
-                }
-                fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
-                method: 'POST',
-                headers: {
-                'Content-Type': 'application/json',
-                'Authorization' :'Bearer '+this.currentUser.jwt
-                },
-                body: JSON.stringify({
-                    query: `
-                        mutation{
-                            addTask(
-                                params:{
-                                    description:"${this.notes}",
-                                    project_id:${this.project.id},
-                                    ${str}
-                                    recurring:${this.recur},
-                                    tags: 1
-                                }
-                            ){
-                                status
-                                message
-                            }
-                        }   
-                     `,
-                }),
-				})
-				.then(function(response) {
-					return response.json()
-				})
-				.then(function(text) {
-                    console.log(text.data);
-					return text.data.addTask;
-				})
-				.then(resp => {
-					if(resp.status.toLowerCase() == "success"){
-                        this.$toast(resp.message, {
-                            type: "success",
-                            hideProgressBar: true,
-                            timeout: 2000
-                        });
-                        this.$refs[refname].hide();
-                        this.onFormReset();
+                    console.log("valid");
+                    let str;
+                    if(this.tglTask != ''){
+                        str = `due_date:"${this.formatDate(this.tglTask)}"`;
                     }else{
-                        this.$toast(resp.message, {
-                            type: "error",
-                            hideProgressBar: true,
-                            timeout: 2000
-                        });
+                        str = `due_date:null`;
                     }
-				});
+                    // fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+                    // method: 'POST',
+                    // headers: {
+                    // 'Content-Type': 'application/json',
+                    // 'Authorization' :'Bearer '+this.currentUser.jwt
+                    // },
+                    // body: JSON.stringify({
+                    //     query: `
+                    //         mutation{
+                    //             addTask(
+                    //                 params:{
+                    //                     description:"${this.notes}",
+                    //                     project_id:${this.project.id},
+                    //                     ${str}
+                    //                     recurring:${this.recur},
+                    //                     tags: 1
+                    //                 }
+                    //             ){
+                    //                 status
+                    //                 message
+                    //             }
+                    //         }   
+                    //      `,
+                    // }),
+                    // })
+                    // .then(function(response) {
+                    // 	return response.json()
+                    // })
+                    // .then(function(text) {
+                    //     console.log(text.data);
+                    // 	return text.data.addTask;
+                    // })
+                    // .then(resp => {
+                    // 	if(resp.status.toLowerCase() == "success"){
+                    //         this.$toast(resp.message, {
+                    //             type: "success",
+                    //             hideProgressBar: true,
+                    //             timeout: 2000
+                    //         });
+                    //         this.$refs[refname].hide();
+                    //         this.onFormReset();
+                    //     }else{
+                    //         this.$toast(resp.message, {
+                    //             type: "error",
+                    //             hideProgressBar: true,
+                    //             timeout: 2000
+                    //         });
+                    //     }
+                    // });
+                }
             }else{
                 console.log("error");
             }
@@ -254,7 +265,8 @@ export default {
         },
         getSuggestionValue(suggestion) {
             this.customer = suggestion.item;
-            this.custNama = suggestion.item.name;
+            this.tmpCustNama = suggestion.item.name;
+            this.custNama = this.tmpCustNama;
             return suggestion.item.name;
         },
 
@@ -286,6 +298,7 @@ export default {
             // Store data in one property, and filtered in another
             }else{
                 if(text !== "" && text.length >= 2){
+                    console.log(this.customer);
                     this.fetchProject(this.customer.id,text);
                     setTimeout(() => {
                         const filteredData = this.dataPro.projects.filter(option => {
@@ -309,8 +322,9 @@ export default {
         },
         getSuggestionValue2(suggestion) {
             this.project = suggestion.item;
-            console.log(this.project.id);
-            this.proNama = suggestion.item.name;
+            this.tmpProNama = suggestion.item.name;
+            this.proNama = this.tmpProNama;
+            console.log(this.proNama);
             this.fetchCustomer(suggestion.item.customer_id);
             //this.fetchArea(this.proKat.id);
             //this.fetchSurface();
@@ -375,6 +389,7 @@ export default {
                 body: JSON.stringify({
                     query: `
                         query{ customerDetail(customer_id:"${val}") {
+                            id
                             name
                             email
                             category{
@@ -397,6 +412,7 @@ export default {
             .then(resp => {
                 if(resp != null){
                     this.custNama = resp.name;
+                    this.tmpCustNama = resp.name;
                     this.customer = resp;
                 }
             })
