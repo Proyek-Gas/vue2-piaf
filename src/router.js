@@ -34,9 +34,16 @@ const routes = [
             component: () => import(/* webpackChunkName: "piaf" */ './views/app/user/settingPage'),
             // meta: { roles: [UserRole.Admin, UserRole.Editor] },
           },
+        ]
+      },
+      {
+        path: "task",
+        component: () =>
+        import(/* webpackChunkName: "piaf" */ "./views/app/task"),
+        children : [
           {
-            path: 'task',
-            component: () => import(/* webpackChunkName: "piaf" */ './views/app/user/taskPage'),
+            path: 'taskDetail',
+            component: () => import(/* webpackChunkName: "piaf" */ './views/app/task/taskPage'),
             // meta: { roles: [UserRole.Admin, UserRole.Editor] },
           },
         ]

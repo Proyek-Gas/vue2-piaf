@@ -115,7 +115,7 @@ import {
   ThumbListIcon,
   ImageListIcon
 } from "../../components/Svg";
-import mAddTask from "../../../src/views/app/user/modalAddTask.vue"
+import mAddTask from "../../../src/views/app/task/modalAddTask.vue"
 // import AddNewModal from "./AddNewModal";
 
 export default {
