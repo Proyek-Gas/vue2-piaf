@@ -22,7 +22,7 @@
       <b-row>
         <b-colxx xs="12" class="mb-3">
             <b-button v-b-modal.modalright2>Filter</b-button>
-            <filter-task></filter-task>
+            <filter-task :dataComponent="itemsClone2"></filter-task>
         </b-colxx>
       </b-row>
       <b-row>
@@ -81,7 +81,7 @@ export default {
       items: [],
       itemSClone : [],
       selectedItems: [],
-      itemClone2 : []
+      itemsClone2 : []
     };
   },
   methods: {
@@ -99,10 +99,15 @@ export default {
                     query{
                         tasks{
                           id
+                          status
                           description
                           due_date
                           recurring
                           tags{
+                            id
+                            name
+                          }
+                          project{
                             id
                             name
                           }
@@ -121,6 +126,12 @@ export default {
             this.from = 1;
             //this.total = resp.length;
             this.selectedItems = [];
+            for(let i=0; i<resp.length; i++){
+              if(resp[i].status != 0){
+                console.log(resp[i].id+""+resp[i].status)
+                this.selectedItems.push(resp[i].id)
+              }
+            }
             this.itemSClone = resp;
             this.itemsClone2 = resp;
             // console.log(resp)
@@ -177,6 +188,7 @@ export default {
       } else {
         this.selectedItems = this.itemSClone.map(x => x.id);
       }
+      console.log(this.selectedItems)
     },
     keymap(event) {
       switch (event.srcKey) {
@@ -196,6 +208,34 @@ export default {
       }
       return -1;
     },
+    fetchUpdateStatus(id){
+         fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization' :'Bearer '+this.currentUser.jwt
+              },
+              body: JSON.stringify({
+                query: `
+                   mutation{
+                    doneTask(task_id : ${id}){
+                      status
+                      message
+                    }
+                  }
+            `
+            }),
+          }).then(function(response) {
+              return response.json()
+          }).then(function(text) {
+              return text.data.tasks;
+          })
+          .then(resp => {
+
+          });
+
+    },
+
     toggleItem(event, itemId) {
       if (event.shiftKey && this.selectedItems.length > 0) {
         let itemsForToggle = this.itemSClone;
@@ -219,6 +259,7 @@ export default {
           this.selectedItems = this.selectedItems.filter(x => x !== itemId);
         } else this.selectedItems.push(itemId);
       }
+      this.fetchUpdateStatus(itemId)
     },
     handleContextMenu(vnode) {
       if (!this.selectedItems.includes(vnode.key)) {
