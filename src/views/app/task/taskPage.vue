@@ -22,7 +22,7 @@
       <b-row>
         <b-colxx xs="12" class="mb-3">
             <b-button v-b-modal.modalright2>Filter</b-button>
-            <filter-task :dataComponent="itemsClone2"></filter-task>
+            <filter-task :dataComponent="itemsClone2" v-on:answers="onUpdateAnswer"></filter-task>
         </b-colxx>
       </b-row>
       <b-row>
@@ -282,6 +282,11 @@ export default {
 
       this.page = pageNum;
       this.items =  _.slice(this.itemSClone,this.from-1, this.to)
+    },
+    onUpdateAnswer: function(newAnswer){
+    },
+    fetchWithFilter(order,orderBy,status, tags){
+
     }
   },
   computed: {
