@@ -284,8 +284,106 @@ export default {
       this.items =  _.slice(this.itemSClone,this.from-1, this.to)
     },
     onUpdateAnswer: function(newAnswer){
+      let cek = false;
+
+      if(newAnswer != null){
+        cek = true;
+        let status = null;
+        let orderBy = newAnswer.sortBy;
+        let order = newAnswer.sort.value;
+        let arrTags =[];
+        for(let i=0; i< newAnswer.selectedTags.length; i++){
+          arrTags.push(newAnswer.selectedTags[i].id)
+        }
+        console.log(arrTags)
+        console.log(order)
+        console.log(newAnswer)
+        if(newAnswer.checkedCheckboxes != -1) status = newAnswer.checkedCheckboxes;
+
+
+        this.fetchWithFilter(order,orderBy, status, arrTags)
+      }
+
+      if(!cek){
+        this.items = this.itemsClone2;
+        this.itemSClone = this.itemsClone2;
+        this.changePageSize(this.perPage,this.itemSClone)
+      }
+
     },
     fetchWithFilter(order,orderBy,status, tags){
+
+        let tg =  ` tags : [${tags}],`
+        if(tags.length ==0){
+          tg = ` tags :null ,`
+        }
+        let filter = `{
+          status: ${status},
+          ${tg}
+          sort : "${orderBy}",
+          sortType : "${order}"
+        }`
+
+        let querys =  `
+                    query{
+                        tasks(filter : ${filter}){
+                          id
+                          status
+                          description
+                          due_date
+                          recurring
+                          tags{
+                            id
+                            name
+                          }
+                          project{
+                            id
+                            name
+                          }
+                        }
+                      }
+            `
+            console.log(querys)
+
+         fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization' :'Bearer '+this.currentUser.jwt
+              },
+              body: JSON.stringify({
+                query: querys
+            }),
+          }).then(function(response) {
+              return response.json()
+          }).then(function(text) {
+              return text.data.tasks;
+          })
+          .then(resp => {
+            this.perPage = 5;
+            this.to = this.perPage;
+            this.from = 1;
+            //this.total = resp.length;
+            this.selectedItems = [];
+            for(let i=0; i<resp.length; i++){
+              if(resp[i].status != 0){
+                console.log(resp[i].id+""+resp[i].status)
+                this.selectedItems.push(resp[i].id)
+              }
+            }
+            this.itemSClone = resp;
+          //  this.itemsClone2 = resp;
+            // console.log(resp)
+            // this.items =  _.slice(this.itemSClone, this.from-1, this.to);
+
+            // let ctr = this.total/ this.perPage
+            //  this.lastPage = ctr+1;
+
+            // console.log(this.lastPage)
+            this.changePageSize(this.perPage,this.itemSClone)
+            this.isLoad = true
+          });
+
 
     }
   },

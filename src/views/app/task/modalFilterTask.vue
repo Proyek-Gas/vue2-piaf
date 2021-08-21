@@ -104,6 +104,14 @@ export default{
         console.log()
         this.data.checkedCheckboxes = i;
       },
+      hideModal (refname) {
+        this.$refs[refname].hide()
+        console.log('hide modal:: ' + refname)
+
+        if (refname === 'modalnestedinline') {
+          this.$refs['modalnested'].show()
+        }
+      },
       fetchTags(){
            fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
               method: 'POST',
