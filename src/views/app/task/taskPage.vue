@@ -37,6 +37,7 @@
                 :perPage="perPage"
                 :page="page"
                 :changePage="changePage"
+
               ></list-page-listing>
             </template>
             <template v-else>
@@ -218,7 +219,7 @@ export default {
               body: JSON.stringify({
                 query: `
                    mutation{
-                    doneTask(task_id : ${id}){
+                    doneUndoneTask(task_id : ${id}){
                       status
                       message
                     }
@@ -226,8 +227,10 @@ export default {
             `
             }),
           }).then(function(response) {
+              console.log(response)
               return response.json()
           }).then(function(text) {
+              console.log(text)
               return text.data.tasks;
           })
           .then(resp => {
@@ -260,6 +263,7 @@ export default {
         } else this.selectedItems.push(itemId);
       }
       this.fetchUpdateStatus(itemId)
+
     },
     handleContextMenu(vnode) {
       if (!this.selectedItems.includes(vnode.key)) {

@@ -56,7 +56,7 @@ export default {
     "page",
     "changePage",
     "handleContextMenu",
-    "onContextMenuAction"
+    "onContextMenuAction",
   ],
   methods: {
     linkGen(pageNum) {

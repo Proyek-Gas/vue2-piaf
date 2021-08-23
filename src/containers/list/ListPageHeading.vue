@@ -10,7 +10,7 @@
           class="top-right-button"
         >{{ $t('pages.add-new') }}</b-button>
         <mAddTask></mAddTask>
-        <b-button-group>
+        <!-- <b-button-group>
           <b-dropdown split right @click="selectAll(true)" class="check-button" variant="primary">
             <label
               class="custom-control custom-checkbox pl-4 mb-0 d-inline-block"
@@ -33,7 +33,7 @@
             <b-dropdown-item>{{$t('pages.delete')}}</b-dropdown-item>
             <b-dropdown-item>{{$t('pages.another-action')}}</b-dropdown-item>
           </b-dropdown>
-        </b-button-group>
+        </b-button-group> -->
       </div>
       <!-- <add-new-modal :categories="categories" :statuses="statuses"></add-new-modal> -->
       <piaf-breadcrumb />
