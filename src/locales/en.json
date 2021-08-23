@@ -133,7 +133,8 @@
     "sDetail": "Scheme Detail",
     "qDetail": "Quote Detail",
     "task": "Task",
-    "user": "User"
+    "user": "User",
+    "userTable" : "Table User"
   },
   "dashboards": {
     "pending-orders": "Pending Orders",
