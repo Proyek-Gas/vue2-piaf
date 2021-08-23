@@ -117,7 +117,7 @@
               <img :alt="currentUser.title" :src="currentUser.img" />
             </span>
           </template>
-          <b-dropdown-item>Profile</b-dropdown-item>
+          <b-dropdown-item to="../user/profile">Profile</b-dropdown-item>
           <b-dropdown-item to="../task/taskDetail">Task </b-dropdown-item>
           <b-dropdown-divider />
           <b-dropdown-item to="../user/setting">Setting</b-dropdown-item>

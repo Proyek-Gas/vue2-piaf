@@ -76,6 +76,8 @@ import { VueAutosuggest } from "vue-autosuggest";
 import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
 import Datepicker from "vuejs-datepicker";
+import { loadItems } from "../task/taskPage.vue"; 
+
 import { mapGetters } from "vuex";
 
 import {
@@ -177,55 +179,55 @@ export default {
                     }else{
                         str = `due_date:null`;
                     }
-                    // fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
-                    // method: 'POST',
-                    // headers: {
-                    // 'Content-Type': 'application/json',
-                    // 'Authorization' :'Bearer '+this.currentUser.jwt
-                    // },
-                    // body: JSON.stringify({
-                    //     query: `
-                    //         mutation{
-                    //             addTask(
-                    //                 params:{
-                    //                     description:"${this.notes}",
-                    //                     project_id:${this.project.id},
-                    //                     ${str}
-                    //                     recurring:${this.recur},
-                    //                     tags: 1
-                    //                 }
-                    //             ){
-                    //                 status
-                    //                 message
-                    //             }
-                    //         }   
-                    //      `,
-                    // }),
-                    // })
-                    // .then(function(response) {
-                    // 	return response.json()
-                    // })
-                    // .then(function(text) {
-                    //     console.log(text.data);
-                    // 	return text.data.addTask;
-                    // })
-                    // .then(resp => {
-                    // 	if(resp.status.toLowerCase() == "success"){
-                    //         this.$toast(resp.message, {
-                    //             type: "success",
-                    //             hideProgressBar: true,
-                    //             timeout: 2000
-                    //         });
-                    //         this.$refs[refname].hide();
-                    //         this.onFormReset();
-                    //     }else{
-                    //         this.$toast(resp.message, {
-                    //             type: "error",
-                    //             hideProgressBar: true,
-                    //             timeout: 2000
-                    //         });
-                    //     }
-                    // });
+                    fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+                    method: 'POST',
+                    headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization' :'Bearer '+this.currentUser.jwt
+                    },
+                    body: JSON.stringify({
+                        query: `
+                            mutation{
+                                addTask(
+                                    params:{
+                                        description:"${this.notes}",
+                                        project_id:${this.project.id},
+                                        ${str}
+                                        recurring:${this.recur},
+                                        tags: 1
+                                    }
+                                ){
+                                    status
+                                    message
+                                }
+                            }   
+                         `,
+                    }),
+                    })
+                    .then(function(response) {
+                    	return response.json()
+                    })
+                    .then(function(text) {
+                        console.log(text.data);
+                    	return text.data.addTask;
+                    })
+                    .then(resp => {
+                    	if(resp.status.toLowerCase() == "success"){
+                            this.$toast(resp.message, {
+                                type: "success",
+                                hideProgressBar: true,
+                                timeout: 2000
+                            });
+                            this.$refs[refname].hide();
+                            this.onFormReset();
+                        }else{
+                            this.$toast(resp.message, {
+                                type: "error",
+                                hideProgressBar: true,
+                                timeout: 2000
+                            });
+                        }
+                    });
                 }
             }else{
                 console.log("error");

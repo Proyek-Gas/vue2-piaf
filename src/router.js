@@ -13,7 +13,6 @@ const routes = [
     redirect: `${adminRoot}`,
     //redirect : "/user"
   },
-
   {
     path: adminRoot,
     component: () => import(/* webpackChunkName: "app" */ "./views/app"),
@@ -32,6 +31,11 @@ const routes = [
           {
             path: 'setting',
             component: () => import(/* webpackChunkName: "piaf" */ './views/app/user/settingPage'),
+            // meta: { roles: [UserRole.Admin, UserRole.Editor] },
+          },
+          {
+            path: 'profile',
+            component: () => import(/* webpackChunkName: "piaf" */ './views/app/user/page/profile'),
             // meta: { roles: [UserRole.Admin, UserRole.Editor] },
           },
         ]
@@ -152,6 +156,16 @@ const routes = [
           {
             path: 'quoteTable/qDetail',
             component: () => import(/* webpackChunkName: "piaf" */ './views/app/quote/page/quoteDetail'),
+            // meta: { roles: [UserRole.Admin, UserRole.Editor] },
+          },
+          {
+            path: 'userTable/add',
+            component: () => import(/* webpackChunkName: "piaf" */ './views/app/user/form/addUser'),
+            // meta: { roles: [UserRole.Admin, UserRole.Editor] },
+          },
+          {
+            path: 'userTable/uDetail/edit',
+            component: () => import(/* webpackChunkName: "piaf" */ './views/app/user/form/editUser'),
             // meta: { roles: [UserRole.Admin, UserRole.Editor] },
           },
         ],

@@ -84,6 +84,9 @@ export default {
                   id
                   name
                 }
+                omzet_rupiah
+                omzet_liter
+                reference_accurate_id
               }
               token
               refreshToken
@@ -113,6 +116,9 @@ export default {
               img: '/assets/img/profiles/l-1.jpg',
               date: 'Last seen today '+ new Date().getHours+":"+new Date().getMinutes,
               role: resp.user.role.id,
+              oRp: resp.user.omzet_rupiah,
+              oLtr: resp.user.omzet_liter,
+              ref: resp.user.reference_accurate_id,
               jwt : resp.token,
               refreshtoken : resp.refreshToken
             };
