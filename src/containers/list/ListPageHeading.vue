@@ -99,7 +99,7 @@
               <b-dropdown-item
                 v-for="(size,index) in pageSizes"
                 :key="index"
-                @click="changePageSize(size)"
+                @click="changePageSize(size,dataClone)"
               >{{ size }}</b-dropdown-item>
             </b-dropdown>
           </div>
@@ -127,6 +127,7 @@ export default {
     // "add-new-modal": AddNewModal
   },
   props: [
+    "dataClone",
     "title",
     "selectAll",
     "isSelectedAll",

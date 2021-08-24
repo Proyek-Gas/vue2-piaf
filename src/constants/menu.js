@@ -37,6 +37,12 @@ const data = [
     to: `${adminRoot}/datatable/quoteTable`,
     // roles: [UserRole.Admin, UserRole.Editor],
   },
+  {
+    icon: "simple-icon-paper-plane",
+    label: "menu.userTable",
+    to: `${adminRoot}/datatable/userTable`,
+    // roles: [UserRole.Admin, UserRole.Editor],
+  },
   ]
 }
 ];

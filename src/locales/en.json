@@ -134,7 +134,8 @@
     "qDetail": "Quote Detail",
     "task": "Task",
     "taskDetail": "Detail Task",
-    "user": "User"
+    "user": "User",
+    "userTable" : "Table User"
   },
   "dashboards": {
     "pending-orders": "Pending Orders",

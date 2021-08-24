@@ -8,7 +8,7 @@
         :isAnyItemSelected="isAnyItemSelected"
         :keymap="keymap"
         :displayMode="displayMode"
-
+        :dataClone="itemSClone"
         :changeOrderBy="changeOrderBy"
         :changePageSize="changePageSize"
         :sort="sort"
@@ -158,6 +158,7 @@ export default {
     },
 
     changePageSize(perPage,arr) {
+      console.log(arr)
       this.page = 1;
       this.total = arr.length
       this.perPage = perPage;
@@ -182,7 +183,7 @@ export default {
 
       console.log(this.items)
       this.itemSClone = this.items
-      this.changePageSize(this.perPage,this.items)
+      this.changePageSize(this.perPage,this.itemSClone)
       // this.to = this.perPage;
       // if(this.to>this.items.length) this.to = this.items.length
       // this.from = 1;
