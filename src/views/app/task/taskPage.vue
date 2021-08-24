@@ -22,7 +22,7 @@
       <b-row>
         <b-colxx xs="12" class="mb-3">
             <b-button v-b-modal.modalright2>Filter</b-button>
-            <filter-task :dataComponent="itemsClone2" v-on:answers="onUpdateAnswer"></filter-task>
+            <filter-task v-if="renderComponent" :dataComponent="itemsClone2" v-on:answers="onUpdateAnswer"></filter-task>
         </b-colxx>
       </b-row>
       <b-row>
@@ -82,18 +82,26 @@ export default {
       items: [],
       itemSClone : [],
       selectedItems: [],
-      itemsClone2 : []
+      itemsClone2 : [],
+      renderComponent: true,
     };
   },
   methods: {
-    loadItems() {
+    loadItems(a) {
+      
       this.isLoad = false;
+      let bearer;
+      if(a != ""){
+        bearer = 'Bearer '+a;
 
+      }else{
+        bearer = 'Bearer '+this.currentUser.jwt;
+      }
           fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
-                'Authorization' :'Bearer '+this.currentUser.jwt
+                'Authorization' : bearer
               },
               body: JSON.stringify({
                 query: `
@@ -133,9 +141,9 @@ export default {
                 this.selectedItems.push(resp[i].id)
               }
             }
+            
             this.itemSClone = resp;
             this.itemsClone2 = resp;
-            // console.log(resp)
             // this.items =  _.slice(this.itemSClone, this.from-1, this.to);
 
             // let ctr = this.total/ this.perPage
@@ -143,6 +151,7 @@ export default {
 
             // console.log(this.lastPage)
             this.changePageSize(this.perPage,this.itemSClone)
+
             this.isLoad = true
           });
 
@@ -411,11 +420,11 @@ export default {
       this.page = 1;
     },
     apiUrl() {
-      this.loadItems();
+      this.loadItems("");
     }
   },
   mounted() {
-    this.loadItems();
+    this.loadItems("");
   }
 };
 </script>

@@ -133,6 +133,7 @@
     "sDetail": "Scheme Detail",
     "qDetail": "Quote Detail",
     "task": "Task",
+    "taskDetail": "Detail Task",
     "user": "User"
   },
   "dashboards": {

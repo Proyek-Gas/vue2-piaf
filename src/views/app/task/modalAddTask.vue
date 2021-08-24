@@ -76,7 +76,7 @@ import { VueAutosuggest } from "vue-autosuggest";
 import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
 import Datepicker from "vuejs-datepicker";
-import { loadItems } from "../task/taskPage.vue"; 
+import Thing from "../task/taskPage.vue"; 
 
 import { mapGetters } from "vuex";
 
@@ -99,7 +99,7 @@ export default {
     components: {
         "v-select": vSelect,
         "vue-autosuggest": VueAutosuggest,
-        datepicker: Datepicker
+        datepicker: Datepicker,
     },
     props:['dataPassing'],
     data() {
@@ -163,75 +163,81 @@ export default {
         },
         onValitadeFormSubmit(refname) {
             this.$v.$touch();
-            console.log(this.proNama);
-            if(!this.$v.$invalid){
-                if(new Date(this.tglTask) < new Date()){
-                    this.$toast("Tanggal jatuh tempo tidak valid", {
-                        type: "warning",
-                        hideProgressBar: true,
-                        timeout: 2000
-                    });
-                }else{
-                    console.log("valid");
-                    let str;
-                    if(this.tglTask != ''){
-                        str = `due_date:"${this.formatDate(this.tglTask)}"`;
-                    }else{
-                        str = `due_date:null`;
-                    }
-                    fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
-                    method: 'POST',
-                    headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization' :'Bearer '+this.currentUser.jwt
-                    },
-                    body: JSON.stringify({
-                        query: `
-                            mutation{
-                                addTask(
-                                    params:{
-                                        description:"${this.notes}",
-                                        project_id:${this.project.id},
-                                        ${str}
-                                        recurring:${this.recur},
-                                        tags: 1
-                                    }
-                                ){
-                                    status
-                                    message
-                                }
-                            }   
-                         `,
-                    }),
-                    })
-                    .then(function(response) {
-                    	return response.json()
-                    })
-                    .then(function(text) {
-                        console.log(text.data);
-                    	return text.data.addTask;
-                    })
-                    .then(resp => {
-                    	if(resp.status.toLowerCase() == "success"){
-                            this.$toast(resp.message, {
-                                type: "success",
-                                hideProgressBar: true,
-                                timeout: 2000
-                            });
-                            this.$refs[refname].hide();
-                            this.onFormReset();
-                        }else{
-                            this.$toast(resp.message, {
-                                type: "error",
-                                hideProgressBar: true,
-                                timeout: 2000
-                            });
-                        }
-                    });
-                }
-            }else{
-                console.log("error");
-            }
+            setTimeout(() => {
+                Thing.methods.loadItems(this.currentUser.jwt);
+            }, 2000);
+            // console.log(this.proNama);
+            // if(!this.$v.$invalid){
+            //     if(new Date(this.tglTask) < new Date()){
+            //         this.$toast("Tanggal jatuh tempo tidak valid", {
+            //             type: "warning",
+            //             hideProgressBar: true,
+            //             timeout: 2000
+            //         });
+            //     }else{
+            //         console.log("valid");
+            //         let str;
+            //         if(this.tglTask != ''){
+            //             str = `due_date:"${this.formatDate(this.tglTask)}"`;
+            //         }else{
+            //             str = `due_date:null`;
+            //         }
+            //         fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+            //         method: 'POST',
+            //         headers: {
+            //         'Content-Type': 'application/json',
+            //         'Authorization' :'Bearer '+this.currentUser.jwt
+            //         },
+            //         body: JSON.stringify({
+            //             query: `
+            //                 mutation{
+            //                     addTask(
+            //                         params:{
+            //                             description:"${this.notes}",
+            //                             project_id:${this.project.id},
+            //                             ${str}
+            //                             recurring:${this.recur},
+            //                             tags: 1
+            //                         }
+            //                     ){
+            //                         status
+            //                         message
+            //                     }
+            //                 }   
+            //              `,
+            //         }),
+            //         })
+            //         .then(function(response) {
+            //         	return response.json()
+            //         })
+            //         .then(function(text) {
+            //             console.log(text.data);
+            //         	return text.data.addTask;
+            //         })
+            //         .then(resp => {
+            //         	if(resp.status.toLowerCase() == "success"){
+            //                 this.$toast(resp.message, {
+            //                     type: "success",
+            //                     hideProgressBar: true,
+            //                     timeout: 2000
+            //                 });
+            //                 this.$refs[refname].hide();
+            //                 this.onFormReset();
+            //                 setTimeout(() => {
+            //                     router.push('task')    
+            //                 }, 2000);
+            //             }else{
+            //                 this.$toast(resp.message, {
+            //                     type: "error",
+            //                     hideProgressBar: true,
+            //                     timeout: 2000
+            //                 });
+            //             }
+            //         });
+            //     }
+            // }else{
+            //     console.log("error");
+            // }
         },
         onFormReset(){
             this.customer = ""; this.project = "";
