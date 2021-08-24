@@ -9,34 +9,25 @@
      </b-row>
      <b-row>
         <b-colxx xxs="12">
-            <b-form-group label="Nama" v-if="vueSelected == '1'">
-                <b-form-input v-model="dataReturn.name"  placeholder="Masukkan Nama"/>
+            <b-form-group label="Status" v-if="vueSelected == '1'">
+                 <v-select v-model="dataReturn.status" :options="ListItemStatus" :reduce="ListItemStatus => ListItemStatus.value" label="name" placeholder="Silahkan Pilih Status"  />
             </b-form-group>
-             <b-form-group label="Item no" v-if="vueSelected == '2'">
-                <b-form-input v-model="dataReturn.no"  placeholder="Masukkan nomor"/>
+            <b-form-group label="Role" v-if="vueSelected == '2'">
+                <v-select v-model="dataReturn.role" :options="ListRole" multiple :reduce="ListRole => ListRole.id" label="name" placeholder="Silahkan Pilih Role"  />
             </b-form-group>
-            <b-form-group label="Warna" v-if="vueSelected == '3'">
-                <v-select
-                  v-model="dataReturn.warna"
-                  :options="ListWarna"
-                  label="ind_name"
-                  item-text="eng_name"
-                  placeholder ="Silahkan pilih warna"
-                >
-                  <template v-slot:option="option" style="width:auto">
-                     <div
-                        class="btn"
-                        style="width:100%; text-align :center"
-                        v-bind:style="returnColor(option.hex_code)"
-                      >{{ option.eng_name }} <br>{{option.ind_name}}</div>
-                  </template>
-                </v-select>
+            <b-form-group label="Omzet Rupiah " v-if="vueSelected == '3'">
+                 Minimum :
+                <b-form-input type="number" v-model="dataReturn.omzetrupiahmin"  placeholder="Minimum"/>
+                <br>
+                Maximum :
+                <b-form-input type="number" v-model="dataReturn.omzetrupiahmax"  placeholder="Maximum" />
             </b-form-group>
-            <b-form-group label="Kategori" v-if="vueSelected == '4'">
-              <v-select v-model="dataReturn.kategori" multiple :options="ListItemKategori" :reduce="ListItemKategori => ListItemKategori.id" label="name" placeholder="Silahkan Pilih Kategori"  />
-            </b-form-group>
-             <b-form-group label="Tipe" v-if="vueSelected == '5'">
-              <v-select v-model="dataReturn.tipe" multiple :options="ListItemTipe" :reduce="ListItemTipe => ListItemTipe.id" label="name" placeholder="Silahkan Pilih Tipe"  />
+            <b-form-group label="Omet Liter" v-if="vueSelected == '4'">
+                Minimum :
+                <b-form-input type="number" v-model="dataReturn.omzetlitermin"  placeholder="Minimum"/>
+                <br>
+                Maximum :
+                <b-form-input type="number" v-model="dataReturn.omzetlitermax"  placeholder="Maximum" />
             </b-form-group>
         </b-colxx>
      </b-row>
@@ -63,34 +54,45 @@ export default {
       selectData: [
         {
           value : "1",
-          label : "Name"
+          label : "Status"
         },
         {
           value : "2",
-          label : "No"
+          label : "Role"
         },
         {
           value : "3",
-          label : "Warna"
+          label : "Omzet Rupiah"
         },
         {
           value : "4",
-          label : "Kategori"
+          label : "Omzet Liter"
+        },
+
+      ],
+
+      ListItemStatus : [
+        {
+          name : "aktiv",
+          value : 1
         },
         {
-          value : "5",
-          label : "Tipe"
+          name : "non aktiv",
+          value : 0
+        },
+        {
+          name : "all",
+          value : -1
         }
       ],
-      ListWarna : [],
-      ListItemKategori : [],
-      ListItemTipe : [],
+      ListRole : [],
       dataReturn : {
-          name:'',
-         no : '',
-         kategori : "",
-         tipe : "",
-         warna : ""
+        status : -1,
+        role : [],
+        omzetlitermin : 0,
+        omzetlitermax : 0,
+        omzetrupiahmin : 0,
+        omzetrupiahmax :0
       }
     };
   },
@@ -114,100 +116,43 @@ export default {
     reset(){
       this.vueSelected = ""
       this.dataReturn = {
-         name:'',
-         no : '',
-         kategori : "",
-         tipe : "",
-         warna : ""
+        status : -1,
+        role : [],
+        omzetlitermin : 0,
+        omzetlitermax : 0,
+        omzetrupiahmin : 0,
+        omzetrupiahmax : 0
       }
     }
 
   },
   mounted(){
-      fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization' :'Bearer '+this.currentUser.jwt
-      },
-      body: JSON.stringify({
-        query: `
-          query{ralColors{
-            id_ral
-            ind_name
-            eng_name
-            hex_code
-          }
-          }
-        `,
-          variables: {
-          },
-        }),
-      }).then(function(response) {
-          return response.json()
-      }).then(function(text) {
-        console.log(text.data)
-          return text.data.ralColors;
-      })
-      .then(resp => {
-        this.ListWarna = resp
-      });
-
-     fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization' :'Bearer '+this.currentUser.jwt
-      },
-      body: JSON.stringify({
-        query: `
-          query{itemCategory{
-            id
-            name
-          }
-          }
-        `,
-          variables: {
-          },
-        }),
-      }).then(function(response) {
-          return response.json()
-      }).then(function(text) {
-        console.log(text.data)
-          return text.data.itemCategory;
-      })
-      .then(resp => {
-        this.ListItemKategori = resp
-      });
-
-
-
-      fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization' :'Bearer '+this.currentUser.jwt
-      },
-      body: JSON.stringify({
-        query: `
-          query{itemTypes{
-            id
-            name
-          }
-          }
-        `,
-          variables: {
-          },
-        }),
-      }).then(function(response) {
-          return response.json()
-      }).then(function(text) {
-        console.log(text.data)
-          return text.data.itemTypes;
-      })
-      .then(resp => {
-        this.ListItemTipe = resp
-      });
+       fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization' :'Bearer '+this.currentUser.jwt
+        },
+        body: JSON.stringify({
+          query: `
+            query{roles{
+              id
+              name
+            }
+            }
+          `,
+            variables: {
+            },
+          }),
+        }).then(function(response) {
+            return response.json()
+        }).then(function(text) {
+          console.log(text.data)
+            return text.data.roles;
+        })
+        .then(resp => {
+          this.ListRole = resp
+        });
   },
   computed:{
     ...mapGetters({

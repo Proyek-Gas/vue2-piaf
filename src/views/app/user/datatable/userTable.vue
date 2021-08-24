@@ -13,7 +13,7 @@
     <b-row class="mb-3">
       <b-colxx xxs="6">
         <b-button class="mb-1"  v-b-modal.modalright variant="success " >Filter</b-button>
-            <!-- <filter-item v-on:answers="onUpdateAnswer"></filter-item> -->
+            <filter-user v-on:answers="onUpdateAnswer"></filter-user>
       </b-colxx>
       <b-colxx xxs="6" style="text-align:left">
           <h5 v-if="tag.length >0">Filter By</h5>
@@ -56,10 +56,22 @@
               </b-row>
             </template>
             <template slot="omzet_rupiah" slot-scope="props">
-              {{shortNumber(props.rowData.omzet_rupiah)}}
+                <div  :id="'tool-nt'+props.rowData.id"> {{shortNumber(props.rowData.omzet_rupiah)}}</div>
+               <b-tooltip :target="'tool-nt'+props.rowData.id"
+                                placement="right"
+
+                                  >
+                        {{props.rowData.omzet_rupiah | currency}}
+                </b-tooltip>
             </template>
             <template slot="omzet_liter" slot-scope="props">
-              {{Number(props.rowData.omzet_liter).toFixed(2)}}
+              <div :id="'tool-lt'+props.rowData.id">{{Number(props.rowData.omzet_liter).toFixed(2)}}</div>
+              <b-tooltip :target="'tool-lt'+props.rowData.id"
+                                placement="right"
+
+                                  >
+                        {{props.rowData.omzet_liter}}
+                </b-tooltip>
             </template>
             <template slot="refence_db" slot-scope="props">
               {{props.rowData.reference_accurate_id}}
@@ -216,48 +228,60 @@ export default {
   //   },
   // },
   mounted() {
-    fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+    this.getData(null,1)
+
+  },
+  methods: {
+    getData (filter,arr){
+        let querys = `
+                  query{
+            users(filter : ${filter}){
+              count
+              users{
+                id
+                name
+                omzet_liter
+                omzet_rupiah
+                email
+                status
+                photo
+                role{
+                  name
+                  id
+                }
+                reference_accurate_id
+              }
+            }
+          }
+                        `
+          console.log(querys)
+        fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization' : 'Bearer ' + this.currentUser.jwt
         },
         body: JSON.stringify({
-          query: `
-        query{
-  users{
-    count
-    users{
-      id
-      name
-      omzet_liter
-      omzet_rupiah
-      email
-      status
-      photo
-      role{
-        name
-        id
-      }
-      reference_accurate_id
-    }
-  }
-}
-              `
-      }),
-    }).then(function(response) {
-        return response.json()
-    }).then(function(text) {
-        return text.data.users.users;
-    })
-    .then(resp => {
-        this.data = resp;
-        this.dataClone = resp;
-        this.isLoad = true
-      });
+          query: querys
+                }),
+              }).then(function(response) {
+                  return response.json()
+              }).then(function(text) {
+                  return text.data.users.users;
+              })
+              .then(resp => {
+                  this.data = resp;
+                  console.log(this.data)
+                  if(arr != null){
+                    this.dataClone = resp;
+                     this.isLoad = true
+                  }
+                  else{
+                    this.$refs.vuetable.refresh()
+                  }
+                });
 
-  },
-  methods: {
+    },
     movePageDetail(val){
       // console.log(val);
 			// window.location = window.location.href+"/iDetail?id="+val;
@@ -273,15 +297,7 @@ export default {
       console.log(paginationData);
       this.$refs.pagination.setPaginationData(paginationData);
     },
-    //  onCellClicked (data, field, event) {
-    //     console.log('cellClicked: ', field.name)
-    //     console.log(data.id)
-    //     this.$refs.vuetable.toggleDetailRow(data.id)
-    //   },
-    // cellClicked ($event, data) {
-    //   // console.log('cellClicked: ', $event)
-    //   this.$refs.vuetable.toggleDetailRow(data.id)
-    // },
+
     onChangePage(page) {
       this.$refs.vuetable.changePage(page);
     },
@@ -341,76 +357,71 @@ export default {
       this.search = val;
       this.$refs.vuetable.refresh();
     },
-  //   returnColor(a){
-  //     const style = {
-  //         "background-color": "#"+a,
-  //         "color" : "white"
 
-  //     }
-  //     return style
-  // },
-    // onUpdateAnswer: function(newAnswer){
-    //     let cek = true;
-    //     this.tag =[]
-    //     if(newAnswer){
-    //       if(newAnswer.name != ""){
-    //         this.data = this.data.filter(row => {
-    //             return row.name.toLowerCase().indexOf(newAnswer.name.toLowerCase())  !== -1 ;
-    //         });
-    //           cek = false;
-    //           this.tag.push("Nama")
-    //       }
-    //       if(newAnswer.no != ""){
-    //         this.data = this.data.filter(row=>{
-    //           return (row.id.toString()).indexOf(newAnswer.no)  !== -1 ;
-    //         })
-    //         cek = false;
-    //         this.tag.push("no")
-    //       }
+    onUpdateAnswer: function(newAnswer){
+      console.log(newAnswer)
+        let cek = true;
+        this.tag =[];
+        let status = null;
+        let role =null;
+        let filterOmzetliter = null;
+        let filterOmzetRupiah = null;
 
-    //       if(newAnswer.warna != ""){
-    //           cek = false;
-    //           this.data = this.data.filter(row=>{
-    //             return row.color.id_ral == newAnswer.warna.id_ral
-    //           })
-    //         this.tag.push("Warna")
-    //       }
+        if(newAnswer){
 
-    //        if(newAnswer.kategori != ""){
-    //           cek = false;
-    //           let newdata = []
-    //           for(let i=0; i< newAnswer.kategori.length ; i++){
-    //            for(let j=0; j<this.data.length; j++){
-    //              if(newAnswer.kategori[i] == this.data[j].itemCategory.id){
-    //                newdata.push(this.data[j])
-    //              }
-    //            }
-    //           }
-    //         this.data = newdata
-    //         this.tag.push("Kategori")
-    //       }
+          if(newAnswer.status != -1){
+            status = newAnswer.status
+            this.tag.push("status")
+          }
 
-    //        if(newAnswer.tipe   != ""){
-    //           cek = false;
-    //           let newdata = []
-    //           for(let i=0; i< newAnswer.tipe.length; i++){
-    //             for(let j=0; j< this.data.length; j++){
-    //               if(newAnswer.tipe [i] == this.data[j].type.id){
-    //                 newdata.push(this.data[j])
-    //               }
-    //             }
-    //           }
-    //          this.data = newdata
-    //         this.tag.push("Tipe")
-    //       }
-    //     }
-    //     if(cek){
-    //         this.search = ""
-    //       this.data = this.dataClone
-    //     }
 
-    //      this.$refs.vuetable.refresh()
-    // },
+          if(newAnswer.role.length>0){
+              role = `[`
+              for(let i=0; i< newAnswer.role.length; i++){
+                if(i <newAnswer.role.length-1){
+                  role = role+newAnswer.role[i] +","
+                }else{
+                  role = role+newAnswer.role[i]
+                }
+              }
+              role = role+`]`
+              this.tag.push("role")
+          }
+
+          if(newAnswer.omzetlitermin != 0 || newAnswer.omzetlitermax != 0 ){
+            filterOmzetliter = `{
+                min : ${newAnswer.omzetlitermin}
+                max : ${newAnswer.omzetlitermax}
+              }`
+              this.tag.push("omzet liter")
+          }
+
+          if(newAnswer.omzetrupiahmin != 0 || newAnswer.omzetrupiahmax != 0){
+            filterOmzetRupiah = `{
+                min : ${newAnswer.omzetrupiahmin}
+                max : ${newAnswer.omzetrupiahmax}
+            }`
+            this.tag.push("omzet rupiah")
+          }
+          cek = false
+        }
+        console.log(cek)
+        console.log(this.dataClone)
+        if(cek){
+            this.search = ""
+            this.data = this.dataClone
+        }else{
+            let filter = `{
+              omzet_liter : ${filterOmzetliter}
+              omzet_rupiah : ${filterOmzetRupiah}
+              status : ${status}
+              role : ${role}
+            }`
+            this.getData(filter,null)
+        }
+
+
+    },
   },
 
   computed: {

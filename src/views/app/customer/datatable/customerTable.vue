@@ -64,10 +64,10 @@
                   <i>{{props.rowData.workPhone}}</i>
               </template> -->
               <template slot="lastpro" slot-scope="props">
-                <router-link :to="returnPageProjectDetail(props.rowData)">{{props.rowData.lastquote.project.name}}</router-link>
+                <router-link :to="returnPageProjectDetail(props.rowData)">{{props.rowData.lastQuote.project.name}}</router-link>
               </template>
               <template slot="lastquote" slot-scope="props">
-                <router-link :to="returnPageQuoteDetail(props.rowData)" v-if="props.rowData.lastquote.project.id != null">{{timeLayout(props.rowData.lastquote.updated_at)  }}/ {{timeLayout(props.rowData.lastquote.closed_at)}}</router-link>
+                <router-link :to="returnPageQuoteDetail(props.rowData)" v-if="props.rowData.lastQuote.project.id != null">{{timeLayout(props.rowData.lastquote.updated_at)  }}/ {{timeLayout(props.rowData.lastquote.closed_at)}}</router-link>
               </template>
               <template slot="categoryName" slot-scope="props">
                 <b-badge  v-if="props.rowData.category" :variant="props.rowData.category.name === 'CUSTOMER' ?  'primary' : 'success'" >{{props.rowData.category.name}}</b-badge>
@@ -172,7 +172,7 @@ export default {
         {
           name : "__slot:lastpro",
           title : "Last Project",
-          sortField: "lastquote.project.name",
+          sortField: "lastQuote.project.name",
           titleClass : "",
           dataClass : "text-muted",
           width : "25%"
@@ -252,7 +252,7 @@ export default {
           id
           name
         }
-        lastquote{
+        lastQuote{
           id
           project{
             id
