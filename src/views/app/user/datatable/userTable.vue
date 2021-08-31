@@ -14,6 +14,7 @@
       <b-colxx xxs="6">
         <b-button class="mb-1"  v-b-modal.modalright variant="success " >Filter</b-button>
             <filter-user v-on:answers="onUpdateAnswer"></filter-user>
+        <b-button class="mb-1" variant="primary " :to="movePageAdd()">Add User</b-button>
       </b-colxx>
       <b-colxx xxs="6" style="text-align:left">
           <h5 v-if="tag.length >0">Filter By</h5>
@@ -282,6 +283,9 @@ export default {
                 });
 
     },
+    movePageAdd(){
+       return "userTable/add";
+		},
     movePageDetail(val){
       // console.log(val);
 			// window.location = window.location.href+"/iDetail?id="+val;

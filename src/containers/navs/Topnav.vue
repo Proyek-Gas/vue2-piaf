@@ -111,16 +111,19 @@
           menu-class="mt-3"
           no-caret
         >
-          <template slot="button-content">
-            <span class="name mr-1 strong">{{currentUser.title}}</span>
+          <template slot="button-content" >
+            <span class="name mr-1 strong" @click="getUrl">{{currentUser.title}}</span>
             <span>
-              <img :alt="currentUser.title" :src="currentUser.img" />
+              <img :alt="currentUser.title" :src="currentUser.img" @click="getUrl"/>
             </span>
           </template>
-          <b-dropdown-item to="../user/profile">Profile</b-dropdown-item>
-          <b-dropdown-item to="../task/taskDetail">Task </b-dropdown-item>
+          <b-dropdown-item v-if="length == 7" to="../../user/profile">Profile</b-dropdown-item>
+          <b-dropdown-item v-else to="../user/profile">Profile</b-dropdown-item>
+          <b-dropdown-item v-if="length == 7" to="../../task/taskDetail">Task </b-dropdown-item>
+          <b-dropdown-item v-else to="../task/taskDetail">Task </b-dropdown-item>
           <b-dropdown-divider />
-          <b-dropdown-item to="../user/setting">Setting</b-dropdown-item>
+          <b-dropdown-item v-if="length == 7" to="../../user/setting">Setting</b-dropdown-item>
+          <b-dropdown-item v-else to="../user/setting">Setting</b-dropdown-item>
           <b-dropdown-item @click="logout">Log out</b-dropdown-item>
         </b-dropdown>
       </div>
@@ -160,7 +163,8 @@ export default {
       buyUrl,
       notifications,
       isDarkActive: false,
-      adminRoot
+      adminRoot,
+      length: 0,
     };
   },
   methods: {
@@ -169,6 +173,10 @@ export default {
     search() {
       this.$router.push(`${this.searchPath}?search=${this.searchKeyword}`);
       this.searchKeyword = "";
+    },
+    getUrl(){
+      let a = window.location.href.split('/');
+      this.length = a.length;
     },
     searchClick() {
       if (window.innerWidth < this.menuHiddenBreakpoint) {
@@ -289,6 +297,6 @@ export default {
         );
       }
     }
-  }
+  },
 };
 </script>

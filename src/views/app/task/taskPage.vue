@@ -1,4 +1,5 @@
 <template>
+<div>
   <b-row>
     <b-colxx class="disable-text-selection">
       <list-page-heading
@@ -48,16 +49,18 @@
 
     </b-colxx>
   </b-row>
+  </div>
 </template>
 
 <script>
 import ListPageHeading from "../../../containers/list/ListPageHeading.vue";
-import ListPageListing from "../../../containers/list/ListPageListing";
+import ListPageListing from "../../../containers/list/ListPageListing.vue";
 import FilterTask from "./modalFilterTask.vue";
 import { mapGetters } from 'vuex';
 import _ from "lodash";
 
 export default {
+  name: "task",
   components: {
     "list-page-heading": ListPageHeading,
     "list-page-listing": ListPageListing,
@@ -88,7 +91,6 @@ export default {
   },
   methods: {
     loadItems(a) {
-
       this.isLoad = false;
       let bearer;
       if(a != ""){
@@ -119,6 +121,7 @@ export default {
                           project{
                             id
                             name
+                            customer_id
                           }
                         }
                       }
@@ -137,13 +140,14 @@ export default {
             this.selectedItems = [];
             for(let i=0; i<resp.length; i++){
               if(resp[i].status != 0){
-                console.log(resp[i].id+""+resp[i].status)
                 this.selectedItems.push(resp[i].id)
               }
             }
 
             this.itemSClone = resp;
             this.itemsClone2 = resp;
+            console.log(this.itemSClone.length);
+
             // this.items =  _.slice(this.itemSClone, this.from-1, this.to);
 
             // let ctr = this.total/ this.perPage
@@ -152,13 +156,13 @@ export default {
             // console.log(this.lastPage)
             this.changePageSize(this.perPage,this.itemSClone)
 
+              // Okay, now that everything is destroyed, lets build it up again
             this.isLoad = true
           });
 
     },
 
     changePageSize(perPage,arr) {
-      console.log(arr)
       this.page = 1;
       this.total = arr.length
       this.perPage = perPage;
@@ -184,13 +188,6 @@ export default {
       console.log(this.items)
       this.itemSClone = this.items
       this.changePageSize(this.perPage,this.itemSClone)
-      // this.to = this.perPage;
-      // if(this.to>this.items.length) this.to = this.items.length
-      // this.from = 1;
-      // this.items =  _.slice(this.items, this.from-1, this.to);
-      // let ctr = this.items.length/ this.perPage
-      // this.lastPage = ctr+1;
-
     },
 
     selectAll(isToggle) {
@@ -229,7 +226,7 @@ export default {
               body: JSON.stringify({
                 query: `
                    mutation{
-                    doneUndoneTask(task_id : ${id}){
+                    doneUndoneTask(task_id : ${id.id}){
                       status
                       message
                     }
@@ -237,22 +234,23 @@ export default {
             `
             }),
           }).then(function(response) {
-              console.log(response)
               return response.json()
           }).then(function(text) {
-              console.log(text)
               return text.data.tasks;
           })
           .then(resp => {
-
+            if(id.recurring == null || id.status == 1){
+              this.$root.$emit('task');
+            }
           });
 
     },
 
     toggleItem(event, itemId) {
+      let itemsForToggle = null;
       if (event.shiftKey && this.selectedItems.length > 0) {
-        let itemsForToggle = this.itemSClone;
-        var start = this.getIndex(itemId, itemsForToggle, "id");
+        itemsForToggle = this.itemSClone;
+        var start = this.getIndex(itemId.id, itemsForToggle, "id");
         var end = this.getIndex(
           this.selectedItems[this.selectedItems.length - 1],
           itemsForToggle,
@@ -268,9 +266,9 @@ export default {
           })
         );
       } else {
-        if (this.selectedItems.includes(itemId)) {
-          this.selectedItems = this.selectedItems.filter(x => x !== itemId);
-        } else this.selectedItems.push(itemId);
+        if (this.selectedItems.includes(itemId.id)) {
+          this.selectedItems = this.selectedItems.filter(x => x !== itemId.id);
+        } else this.selectedItems.push(itemId.id);
       }
       this.fetchUpdateStatus(itemId)
     },
@@ -425,6 +423,10 @@ export default {
   },
   mounted() {
     this.loadItems("");
+    this.$root.$on('task', () => {
+        // your code goes here
+        this.loadItems("");
+    });
   }
 };
 </script>

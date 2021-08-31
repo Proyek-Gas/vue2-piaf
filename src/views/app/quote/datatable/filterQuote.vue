@@ -407,6 +407,7 @@ export default {
           return text.data.projects.projects;
         })
         .then(resp => {
+
             this.listProjects = resp
             this.listProjectClone = resp
         })
