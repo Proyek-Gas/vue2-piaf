@@ -158,7 +158,7 @@
                     </b-colxx>
                     <b-colxx xxs="12" xl="6">
                         <b-form-group label-cols="3" horizontal label="Luas Area">
-                            <b-form-input type="number" step="0.01" v-model="areas.luas" />
+                            <b-form-input type="number" step="0.01" v-model="areas.luas" @change="countVolAgain(index)" />
                         </b-form-group>
                     </b-colxx>
                 </b-row>
@@ -332,6 +332,9 @@ export default {
     },
     data() {
         return {
+            arrayItemCount : [],
+            arrayVol : [],
+
             submit: false,
             isLoad: false,
             quote: "# 5037",
@@ -650,7 +653,7 @@ export default {
                     console.log(a);
                     console.log(new Date(this.tglUntil).toISOString());
                 }
-                
+
             }else{
                 console.log("error");
             }
@@ -914,7 +917,8 @@ export default {
                     item.coat = resp.items[i].coat;
                     item.dft = resp.items[i].dry_film_thickness;
                     item.vsl = resp.items[i].vs_volume_solid;
-                    item.item_id = resp.items[i].item_id
+                    item.item_id = resp.items[i].item_id;
+                    item.isPartScheme = resp.items[i].item_id
                     newArrItem.push(item)
                     this.fetchItemDetail(item,index,true)
               }
@@ -1012,11 +1016,17 @@ export default {
                 item.type = resp.type;
                 item.coat = dtTmp.coat;
                 item.isItem = false;
+                item.vol = this.countVol(item, index)
                 item.dft = dtTmp.dft;
-                item.vsl = dtTmp.vol;
+                item.vsl = dtTmp.vsl;
                 item.item_id = resp.id;
-                console.log(ctrItem);
+              //  console.log(ctrItem);
+                //perubhan hari ini
+                item.practical = 0
+                item.theory = 0
                 console.log(item);
+                this.arrayItemCount = []
+                this.arrayItemCount.push(item.agent_item_id)
                 this.arrKumpulanArea[index].selectedItem.push(item)
                 // if(ctrItem < item.length){;
                 //   this.fetchItemDetail(item,index,true,ctrItem+1)
@@ -1035,9 +1045,31 @@ export default {
                 item.price = resp.detailSellingPrice[0];
                 // item.liter = resp.liter;
                 // item.agent_item_id = resp.agent_item_id;
+                //perubahan hari ini
+                item.practical = 0;
+                item.theory = 0
                 this.arrKumpulanArea[index].selectedItem.push(item);
               }
             })
+        },
+        countVol(item,index){
+          console.log("woy")
+            let total_hit = this.arrKumpulanArea[index].luas/item.practical;
+            // 120
+            // item ini punya gandengan item laine
+            // anggepan e ak tau rasio item ini punya 80
+            console.log(this.arrayItemCount)
+            total_hit =total_hit
+            //
+            return total_hit
+
+        },
+        countVolAgain(index){
+            let selectedItem = this.arrKumpulanArea[index].selectedItem;
+            for(let i=0; i<selectedItem.length; i++){
+               // selectedItem[i].vol = this.arrKumpulanArea[index].luas
+               selectedItem[i].vol = this.countVol(this.selectedItem[i],index)
+            }
         },
         getSuggestionValue3(suggestion) {
 

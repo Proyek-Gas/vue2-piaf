@@ -8,7 +8,7 @@
                           :api-mode="false"
                           :fields="fields"
                           :data="dataComponent.selectedItem"
-                          @vuetable:row-changed="countVol"
+                          @vuetable:row-changed="countAll"
 
               >
                 <template slot="name" slot-scope="props">
@@ -32,7 +32,7 @@
                       <b-form-input
                           type="number"
                           v-model="props.rowData.vol"
-                          @change="countVol"
+                          @change="countAll"
                           class="mb-2 mr-sm-2 mb-sm-0"
                         />
                 </template>
@@ -51,7 +51,11 @@
                         />
                 </template>
                 <template slot="theory" slot-scope="props" v-if="props.rowData.type.id == 1">
-                   {{theory (props.rowData)}}
+                   {{
+                     theory (props.rowData)
+
+
+                   }}
                 </template>
                 <template slot="wft" slot-scope = "props" v-if="props.rowData.type.id == 1">
                     {{Math.round((props.rowData.dft/props.rowData.coat)*100)/100}}
@@ -63,7 +67,9 @@
                     {{subtotal(props.rowData)|currency}}
                 </template>
                 <template slot="practical" slot-scope = "props" v-if="props.rowData.type.id == 1">
-                  {{practical(props.rowData)}}
+                  {{practical(props.rowData)
+
+                  }}
                 </template>
                 <template slot="btndel" slot-scope="props">
                     <b-button class=" btn mb-1" variant="danger default" @click="deleteItem(props.rowData.id)" v-if="props.rowData.isItem == true">Delete <i class="simple-icon-close"></i></b-button>
@@ -115,7 +121,7 @@ export default{
         props.subtotal = props.price.price * props.vol
         return props.subtotal
       },
-      countVol(value){
+      countAll(value){
         let dttotal = this.dataComponent.selectedItem
         let totalhrg = 0;
         let total = 0
@@ -168,6 +174,7 @@ export default{
       theory(data){
         return data.theory= Math.round((data.coat *10 /data.dft)*100)/100
       },
+
 
       //  countTotal(){
       //       let data = this.dataComponent.selectedItem;
@@ -223,24 +230,24 @@ export default{
               dataClass : "text-muted",
               width : "5%"
             },
-            {
-              name : "__slot:theory",
-              title : "Theory",
-              dataClass : "text-muted",
-              width : "5%"
-            },
-            {
-             name : "vsl",
-             title : "VS Volume",
-             dataClass : "text-muted",
-             width : "5%"
-           },
-           {
-             name : "__slot:loss",
-             title : "LOSS",
-             dataClass : "text-muted",
-             width : "5%"
-           },
+          //   {
+          //     name : "__slot:theory",
+          //     title : "Theory",
+          //     dataClass : "text-muted",
+          //     width : "5%"
+          //   },
+          //   {
+          //    name : "vsl",
+          //    title : "VS Volume",
+          //    dataClass : "text-muted",
+          //    width : "5%"
+          //  },
+          //  {
+          //    name : "__slot:loss",
+          //    title : "LOSS",
+          //    dataClass : "text-muted",
+          //    width : "5%"
+          //  },
            {
              name : "__slot:vol",
              title : "VOL",

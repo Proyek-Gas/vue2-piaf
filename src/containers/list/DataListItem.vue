@@ -17,8 +17,6 @@
             </b-card-body>
             <div class="custom-control custom-checkbox pl-1 align-self-md-center align-self-start mr-4 pt-4">
                 <b-form-checkbox class="itemCheck mb-0"   v-if="data.recurring != null && !selectedItems.includes(data.id)"  :checked="selectedItems.includes(data.id)"  v-b-modal="'modalbasic' +data.id"   />
-
-
                 <b-form-checkbox :checked="selectedItems.includes(data.id)" class="itemCheck mb-0"   v-else/>
 
                 <b-modal :id="returnId(data.id)" :ref="returnId(data.id)" :title="$t('modal.modal-title')">
@@ -103,8 +101,7 @@ export default {
                 }),
               }).then(function(response) {
                  // this.loadItems()
-                  return response.json()
-
+                  return response.json();
               })
         },
         formatDate(date) {

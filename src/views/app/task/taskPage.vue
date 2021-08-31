@@ -88,7 +88,7 @@ export default {
   },
   methods: {
     loadItems(a) {
-      
+
       this.isLoad = false;
       let bearer;
       if(a != ""){
@@ -141,7 +141,7 @@ export default {
                 this.selectedItems.push(resp[i].id)
               }
             }
-            
+
             this.itemSClone = resp;
             this.itemsClone2 = resp;
             // this.items =  _.slice(this.itemSClone, this.from-1, this.to);
@@ -273,7 +273,6 @@ export default {
         } else this.selectedItems.push(itemId);
       }
       this.fetchUpdateStatus(itemId)
-
     },
     handleContextMenu(vnode) {
       if (!this.selectedItems.includes(vnode.key)) {

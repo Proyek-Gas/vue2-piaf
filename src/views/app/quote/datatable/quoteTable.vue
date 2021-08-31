@@ -326,14 +326,16 @@ export default {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          //'Authorization' :'Bearer '+this.currentUser.jwt
+          'Authorization' :'Bearer '+this.currentUser.jwt
         },
         body: JSON.stringify({
           query: querystring
       }),
     }).then(function(response) {
+      console.log(response)
         return response.json()
     }).then(function(text) {
+      console.log(text)
         return text.data.quotes.quotes
     })
     .then(resp => {
@@ -657,7 +659,7 @@ export default {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          //'Authorization' :'Bearer '+this.currentUser.jwt
+          'Authorization' :'Bearer '+this.currentUser.jwt
         },
         body: JSON.stringify({
           query: querystring
