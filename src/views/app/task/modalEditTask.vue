@@ -1,6 +1,6 @@
 <template>
-    <b-modal id="modalright" ref="modalright" title="Add Task" modal-class="modal-right">
-        <b-form v-if="isLoad2" @submit.prevent="onValitadeFormSubmit" class="av-tooltip tooltip-label-right">
+    <b-modal :id="reference" :ref="reference" title="Edit Task" modal-class="modal-right">
+        <b-form v-if="isLoad2 && isLoad3" @submit.prevent="onValitadeFormSubmit" class="av-tooltip tooltip-label-right">
             <b-form-group label="Notes">
                 <b-textarea v-model="notes"></b-textarea>
             </b-form-group>
@@ -60,8 +60,8 @@
         <template slot="modal-footer">
         <b-row>
             <b-colxx xxs="6" class="text-center">
-                <b-form @submit.prevent="onValitadeFormSubmit('modalright');" class="av-tooltip">
-                    <b-button type="submit" variant="primary" style="width: 100%" :disabled="!isLoad2">Add</b-button>
+                <b-form @submit.prevent="onValitadeFormSubmit('modalright3');" class="av-tooltip">
+                    <b-button type="submit" variant="primary" style="width: 100%" :disabled="!isLoad2">Edit</b-button>
                 </b-form>
             </b-colxx>
             <b-colxx xxs="6" class="text-center">
@@ -104,7 +104,10 @@ export default {
     data() {
         return {
             isLoad2: false,
+            isLoad3: false,
+            idTask: "",
             notes: "",
+            reference: "",
 
             customer: "",
             tmpCustNama: "",
@@ -139,15 +142,33 @@ export default {
         }
     },
     methods: {
+        loadField(params){
+            console.log(params);
+            this.idTask = params.id;
+            this.notes = params.description;
+            this.project = params.project;
+            if(params.due_date == null){
+                this.tglTask = "";
+            }else{
+                this.tglTask = params.due_date;
+            }
+            this.tmpProNama = this.project.name;
+            this.proNama = this.project.name;
+            this.fetchCustomer(this.project.customer_id)
+            if(params.recurring == null){
+                this.select = 0;
+            }else{
+                this.select = 1;
+            }
+            this.reference = "modalright3-"+this.idTask;
+            console.log(this.reference);
+        },
         selectRecurr(){
             if(this.select == 1){
                 this.select = 0;this.recur = null;
             }else{
                 this.select = 1;this.recur = 30;
             }
-        },
-        moveToDetail(){
-            
         },
         defaultRecur(){
             console.log("y");
@@ -174,7 +195,7 @@ export default {
             this.$v.$touch();
 
             if(!this.$v.$invalid){
-                if(new Date(this.tglTask) < new Date()){
+                if(this.tglTask != '' && new Date(this.tglTask) < new Date()){
                     this.$toast("Tanggal jatuh tempo tidak valid", {
                         type: "warning",
                         hideProgressBar: true,
@@ -197,7 +218,8 @@ export default {
                     body: JSON.stringify({
                         query: `
                             mutation{
-                                addTask(
+                                updateTask(
+                                    task_id:${this.idTask}
                                     params:{
                                         description:"${this.notes}",
                                         project_id:${this.project.id},
@@ -217,8 +239,8 @@ export default {
                     	return response.json()
                     })
                     .then(function(text) {
-                        console.log(text.data);
-                    	return text.data.addTask;
+                        console.log(text.data.updateTask);
+                    	return text.data.updateTask;
                     })
                     .then(resp => {
                     	if(resp.status.toLowerCase() == "success"){
@@ -426,6 +448,7 @@ export default {
                     this.custNama = resp.name;
                     this.tmpCustNama = resp.name;
                     this.customer = resp;
+                    this.isLoad3 = true;
                 }
             })
         },

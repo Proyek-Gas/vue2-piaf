@@ -84,7 +84,7 @@
                             <div class="d-flex flex-grow-1 min-width-zero">
                                 <div class="pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero">
                                     <div class="min-width-zero">
-                                        <b-button @click="$refs.fileInput2.$el.querySelector('input[type=file]').click()">Browse</b-button>
+                                        <b-button @click="$refs.fileInput2.$el.querySelector('input[type=file]').click()">Upload</b-button>
                                         <b-form-file v-model="image" accept=".jpg, .png, .gif" style="display: none;" ref="fileInput2" />
                                         <b-button size="m" variant="outline-primary" @click="clearImage">Reset</b-button>
                                     </div>
@@ -114,7 +114,7 @@
                             <div class="d-flex flex-grow-1 min-width-zero">
                                 <div class="pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero">
                                     <div class="min-width-zero">
-                                        <b-button @click="$refs.fileInput3.$el.querySelector('input[type=file]').click()">Browse</b-button>
+                                        <b-button @click="$refs.fileInput3.$el.querySelector('input[type=file]').click()">Upload</b-button>
                                         <b-form-file v-model="image2" accept=".jpg, .png, .gif" style="display: none;" ref="fileInput3" />
                                         <b-button size="m" variant="outline-primary" @click="clearImage2">Reset</b-button>
                                     </div>

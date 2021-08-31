@@ -1,15 +1,14 @@
 <template>
   <div>
-
     <b-row >
-      <b-colxx xxs="12" class="mb-3" v-for="(item,index) in items" :key="index" :id="item.id">
-        <data-list-item
-          :key="item.id"
-          :data="item"
-          :selected-items="selectedItems"
-          @toggle-item="toggleItem"
-        />
-      </b-colxx>
+        <b-colxx xxs="12" class="mb-3" v-for="(item,index) in items" :key="index" :id="item.id">
+          <data-list-item
+            :key="item.id"
+            :data="item"
+            :selected-items="selectedItems"
+            @toggle-item="toggleItem"
+          />
+         </b-colxx>
     </b-row>
     <b-row v-if="lastPage>1">
       <b-colxx xxs="12">
@@ -36,15 +35,21 @@
         </b-pagination-nav>
       </b-colxx>
     </b-row>
-
-
+    
   </div>
 </template>
 <script>
 import DataListItem from "./DataListItem";
+
 export default {
+  data(){
+    return{
+      newarrItem: "",
+      oldarrItem: ""
+    }
+  },
   components: {
-       "data-list-item": DataListItem
+        "data-list-item": DataListItem
   },
   props: [
     "displayMode",
@@ -61,7 +66,8 @@ export default {
   methods: {
     linkGen(pageNum) {
       return "#page-" + pageNum;
-    }
+    },
+    
   }
 };
 </script>

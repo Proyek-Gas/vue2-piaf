@@ -14,6 +14,23 @@ const routes = [
     //redirect : "/user"
   },
   {
+    path: "user",
+    component: () =>
+    import(/* webpackChunkName: "piaf" */ "./views/app/user"),
+    children : [
+      {
+        path: 'setting',
+        component: () => import(/* webpackChunkName: "piaf" */ './views/app/user/settingPage'),
+        // meta: { roles: [UserRole.Admin, UserRole.Editor] },
+      },
+      {
+        path: 'profile',
+        component: () => import(/* webpackChunkName: "piaf" */ './views/app/user/page/profile'),
+        // meta: { roles: [UserRole.Admin, UserRole.Editor] },
+      },
+    ]
+  },
+  {
     path: adminRoot,
     component: () => import(/* webpackChunkName: "app" */ "./views/app"),
     redirect: `${adminRoot}/datatable`,
