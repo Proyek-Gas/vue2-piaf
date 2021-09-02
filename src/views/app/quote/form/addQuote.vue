@@ -334,6 +334,8 @@ export default {
         return {
             arrayItemCount : [],
             arrayVol : [],
+            //dipakai ta ini?
+            arrayItemIdPair : [],
 
             submit: false,
             isLoad: false,
@@ -770,6 +772,39 @@ export default {
             this.arrKumpulanArea.splice(index,1)
         },
 
+        getSuggestItem(itemName){
+            this.arrayItemIdPair = []
+             fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                     'Authorization' :'Bearer '+this.currentUser.jwt
+                },
+                body: JSON.stringify({
+                    query: `
+                         query{
+                            items(filter: {search : "${itemName}"}){
+                                         id
+                                        }
+                                    }
+                                }
+                            }
+                    `,
+                }),
+            })
+            .then(function(response) {
+                return response.json()
+            })
+            .then(function(text) {
+                return text.data.items.items;
+            })
+            .then(resp => {
+               this.arrayItemIdPair = resp;
+               console.log(this.arrayItemIdPair)
+            })
+        },
+
+
         //autoSuggest item
         onAutoSuggestInputChange3(text, oldText) {
         if (text === "") {
@@ -798,6 +833,7 @@ export default {
           console.log($event.item)
           let cek = true
           let cekItem = $event.item.isItem
+          //cek apakah item kembar atau tidak
           for(let i=0; i<this.arrKumpulanArea[a].selectedItem.length; i++){
               if(this.arrKumpulanArea[a].selectedItem[i].id == $event.item.id){
                 cek = false
@@ -805,7 +841,7 @@ export default {
           }
           if(cek){
              //this.arrKumpulanArea[a].selectedItem.push($event.item)
-
+               this.arrayItemCount = []
              //cek untuk apakah ini item atau scheme
             if(cekItem){
                 this.fetchItemDetail($event.item,a,false,-1)
@@ -951,9 +987,15 @@ export default {
                   name
                   id
                   agent_item_id
+                  recommended_thinner_id
                   packaging_name
                   unit2Name
                   unit3Name
+                   ratio2
+                   ratio3
+                   ratio_agent
+                    ratio_agent_2
+                   ratio_recommended_thinner_id
                   liter
                     type{
                       name
@@ -1003,6 +1045,7 @@ export default {
               //   item.price = resp.detailSellingPrice;
               //   this.ctrFetch = this.ctrFetch+1;
               //   this.arrKumpulanArea[index].selectedItem.push(item)
+              // this.getSuggestItem(resp.name, resp.no)
               if(ck){
                 console.log(resp);
                 let dtTmp = item;
@@ -1025,8 +1068,12 @@ export default {
                 item.practical = 0
                 item.theory = 0
                 console.log(item);
-                this.arrayItemCount = []
-                this.arrayItemCount.push(item.agent_item_id)
+
+                this.arrayItemCount.push({
+                  "agent_id" : item.agent_item_id,
+                  "item_id" : item.id,
+                  "rasio_agent" : item.ratio_agent,
+                })
                 this.arrKumpulanArea[index].selectedItem.push(item)
                 // if(ctrItem < item.length){;
                 //   this.fetchItemDetail(item,index,true,ctrItem+1)
@@ -1050,25 +1097,39 @@ export default {
                 item.theory = 0
                 this.arrKumpulanArea[index].selectedItem.push(item);
               }
+
             })
         },
         countVol(item,index){
           console.log("woy")
             let total_hit = this.arrKumpulanArea[index].luas/item.practical;
-            // 120
-            // item ini punya gandengan item laine
-            // anggepan e ak tau rasio item ini punya 80
-            console.log(this.arrayItemCount)
-            total_hit =total_hit
+            let total = 0
+            console.log(total_hit)
+            if(total_hit != null && total_hit > 0 ){
+                total = item.liter;
+              // 120
+              // item ini punya gandengan item laine
+              // anggepan e ak tau rasio item ini punya 80
+              console.log(this.arrayItemCount)
+              for(let i=0; i<this.arrayItemCount.length; i++){
+                if(this.arrayItemCount[i].item_id == item.id && this.arrayItemCount[i].agent_id != null){
+                  total = item.liter + (this.arrayItemCount[i].rasio_agent / item.liter);
+                }
+              }
+            }
             //
-            return total_hit
+            return total
 
         },
         countVolAgain(index){
             let selectedItem = this.arrKumpulanArea[index].selectedItem;
+            console.log(selectedItem)
+            console.log(index)
             for(let i=0; i<selectedItem.length; i++){
                // selectedItem[i].vol = this.arrKumpulanArea[index].luas
-               selectedItem[i].vol = this.countVol(this.selectedItem[i],index)
+               selectedItem[i].vol = this.countVol(selectedItem[i],index)
+               //console.log(this.countVol(this.selectedItem[i],index))
+               console.log(selectedItem[i])
             }
         },
         getSuggestionValue3(suggestion) {

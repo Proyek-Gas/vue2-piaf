@@ -86,7 +86,8 @@ export default {
                 }
                 omzet_rupiah
                 omzet_liter
-                reference_accurate_id
+                reference_accurate_id_1
+                reference_accurate_id_2
               }
               token
               refreshToken
@@ -95,8 +96,10 @@ export default {
       `
       }),
     }).then(function(response) {
+      console.log(response)
         return response.json()
     }).then(function(text) {
+      console.log(text)
         return text.data.login;
     })
     .then(resp => {
@@ -118,7 +121,8 @@ export default {
               role: resp.user.role.id,
               oRp: resp.user.omzet_rupiah,
               oLtr: resp.user.omzet_liter,
-              ref: resp.user.reference_accurate_id,
+              ref1: resp.user.reference_accurate_id_1,
+              ref2 : resp.user.reference_accurate_id_2,
               jwt : resp.token,
               refreshtoken : resp.refreshToken
             };
