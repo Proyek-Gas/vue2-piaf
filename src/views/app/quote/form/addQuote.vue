@@ -767,7 +767,7 @@ export default {
             this.proId = suggestion.item.id;
             this.proNama = suggestion.item.name;
             this.proKat = suggestion.item.category;
-            this.fetchCustomer(suggestion.item.customer_id);
+            this.fetchCustomer(suggestion.item.customer.id);
             this.fetchArea(this.proKat.id);
             this.fetchSurface();
             return suggestion.item.name;
@@ -1243,7 +1243,9 @@ export default {
                             name
                             id
                             status
-
+                            customers{
+                                id
+                            }
                             category {
                                 id
                                 name
@@ -1255,14 +1257,13 @@ export default {
                 }),
             })
             .then(function(response) {
-                console.log(response)
                 return response.json()
             })
             .then(function(text) {
-                console.log(text)
                 return text.data.projects;
             })
             .then(resp => {
+                console.log(resp)
                 this.dataPro = resp;
             })
         },
