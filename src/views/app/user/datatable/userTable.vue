@@ -81,6 +81,11 @@
                 <b-badge v-if="props.rowData.status == 1" variant="primary">Aktif</b-badge>
                 <b-badge v-else variant="danger">Non Aktif</b-badge>
             </template>
+            <template slot="refrence_db" slot-scope = "props">
+                 <i> {{props.rowData.reference_accurate_id_1}} </i><br>
+                <i>{{props.rowData.reference_accurate_id_2}}</i>
+
+            </template>
             <template slot="action" slot-scope="props">
                 <b-dropdown text="Actions" variant="outline-secondary">
                   <b-dropdown-item :to="movePageDetail(props.rowData.id)">Detail</b-dropdown-item>
@@ -250,7 +255,8 @@ export default {
                   name
                   id
                 }
-                reference_accurate_id
+                reference_accurate_id_1
+                reference_accurate_id_2
               }
             }
           }

@@ -337,6 +337,10 @@ export default {
             //dipakai ta ini?
             arrayItemIdPair : [],
 
+            //untuk menampung ratio3 yang nanti dipakai dalam multiplier
+            ratiotmp : -1,
+            ratioThinner : -1,
+
             submit: false,
             isLoad: false,
             quote: "# 5037",
@@ -1073,6 +1077,10 @@ export default {
                   "agent_id" : item.agent_item_id,
                   "item_id" : item.id,
                   "rasio_agent" : item.ratio_agent,
+                  "rasio_thinner" : item.ratio_recommended_thinner_id,
+                  "ratio2" : item.ratio2,
+                  "ratio3" : item.ratio3,
+                  "type" : item.type.id
                 })
                 this.arrKumpulanArea[index].selectedItem.push(item)
                 // if(ctrItem < item.length){;
@@ -1101,19 +1109,51 @@ export default {
             })
         },
         countVol(item,index){
-          console.log("woy")
             let total_hit = this.arrKumpulanArea[index].luas/item.practical;
             let total = 0
+            console.log(item)
+
+            //cek patokan item umum atau tidak
+            //kalau umum maka ambil ratio3 sebagai patokan kemasan (diasumsikan kalau memakai ratio2, ratio3)
+            if(item.type.id == 1){
+                this.ratiotmp  = item.ratio_agent
+                this.ratioThinner = item.ratio_recommended_thinner_id
+            }
+            console.log(item.type.id)
+            console.log(this.ratiotmp)
+            console.log(item.ratio3)
+            console.log(item.ratio_agent)
+            //cek multiplier apakah sudah sesuai atau tidak
             console.log(total_hit)
+            let tmp_multi = total_hit/ this.ratiotmp
+            let remaider_tmp_multi = total_hit% this.ratiotmp
+            //kalau ada sisa maka dibulatkan ke atas
+            if(remaider_tmp_multi != 0){
+                console.log("ahh")
+                total_hit = (this.ratiotmp + 1) * tmp_multi
+            }
+            console.log(item.theory)
+            console.log(item.loss)
+            console.log("loss"+ (item.theory*((1- item.loss)/100)))
+
+
+            console.log(total_hit)
+            console.log(tmp_multi)
+            console.log(remaider_tmp_multi)
             if(total_hit != null && total_hit > 0 ){
-                total = item.liter;
+              if(item.type.id == 2){
+                    total = (this.ratiotmp- item.liter + 1) * item.liter;
+              } else if(item.type.id == 3){
+                  total = (this.ratioThinner - item.liter+1) * item.liter;
+              }
+
               // 120
               // item ini punya gandengan item laine
               // anggepan e ak tau rasio item ini punya 80
               console.log(this.arrayItemCount)
               for(let i=0; i<this.arrayItemCount.length; i++){
                 if(this.arrayItemCount[i].item_id == item.id && this.arrayItemCount[i].agent_id != null){
-                  total = item.liter + (this.arrayItemCount[i].rasio_agent / item.liter);
+                  total = (item.liter + (this.arrayItemCount[i].rasio_agent / item.liter) -1) * item.liter;
                 }
               }
             }
@@ -1203,7 +1243,7 @@ export default {
                             name
                             id
                             status
-                            customer_id
+
                             category {
                                 id
                                 name
@@ -1215,9 +1255,11 @@ export default {
                 }),
             })
             .then(function(response) {
+                console.log(response)
                 return response.json()
             })
             .then(function(text) {
+                console.log(text)
                 return text.data.projects;
             })
             .then(resp => {
