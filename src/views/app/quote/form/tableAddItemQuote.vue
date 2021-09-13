@@ -61,7 +61,7 @@
                     {{Math.round((props.rowData.dft/props.rowData.coat)*100)/100}}
                 </template>
                 <template slot="harga" slot-scope="props" >
-                    {{props.rowData.price.price | currency}}
+                    {{props.rowData.price[0].price | currency}}
                 </template>
                 <template slot="subtotal" slot-scope = "props">
                     {{subtotal(props.rowData)|currency}}
@@ -118,7 +118,7 @@ export default{
   props : ["dataComponent"],
   methods : {
       subtotal(props){
-        props.subtotal = props.price.price * props.vol
+        props.subtotal = props.price[0].price * props.vol
         return props.subtotal
       },
       countAll(value){
@@ -126,7 +126,7 @@ export default{
         let totalhrg = 0;
         let total = 0
         for(let i=0; i<dttotal.length; i++){
-          totalhrg = totalhrg+ parseInt(dttotal[i].vol )* parseInt(dttotal[i].price.price);
+          totalhrg = totalhrg+ parseInt(dttotal[i].vol )* parseInt(dttotal[i].price[0].price);
            total = total+ parseInt(dttotal[i].vol);
         }
         this.dataComponent.total_harga = totalhrg;

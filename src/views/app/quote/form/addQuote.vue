@@ -340,6 +340,7 @@ export default {
             //untuk menampung ratio3 yang nanti dipakai dalam multiplier
             ratiotmp : -1,
             ratioThinner : -1,
+            ratioTiga : -1,
 
             submit: false,
             isLoad: false,
@@ -767,7 +768,7 @@ export default {
             this.proId = suggestion.item.id;
             this.proNama = suggestion.item.name;
             this.proKat = suggestion.item.category;
-            this.fetchCustomer(suggestion.item.customer.id);
+          //  this.fetchCustomer(suggestion.item.customer.id);
             this.fetchArea(this.proKat.id);
             this.fetchSurface();
             return suggestion.item.name;
@@ -1054,6 +1055,8 @@ export default {
                 console.log(resp);
                 let dtTmp = item;
                 item = resp;
+                 item.practical = 0
+                item.theory = 0
                 console.log(resp);
                 console.log(item);
                  item.no = resp.no;
@@ -1063,14 +1066,13 @@ export default {
                 item.type = resp.type;
                 item.coat = dtTmp.coat;
                 item.isItem = false;
-                item.vol = this.countVol(item, index)
+
                 item.dft = dtTmp.dft;
                 item.vsl = dtTmp.vsl;
                 item.item_id = resp.id;
               //  console.log(ctrItem);
                 //perubhan hari ini
-                item.practical = 0
-                item.theory = 0
+
                 console.log(item);
 
                 this.arrayItemCount.push({
@@ -1082,6 +1084,8 @@ export default {
                   "ratio3" : item.ratio3,
                   "type" : item.type.id
                 })
+
+                item.vol = this.countVol(item, index)
                 this.arrKumpulanArea[index].selectedItem.push(item)
                 // if(ctrItem < item.length){;
                 //   this.fetchItemDetail(item,index,true,ctrItem+1)
@@ -1110,7 +1114,13 @@ export default {
         },
         countVol(item,index){
             let total_hit = this.arrKumpulanArea[index].luas/item.practical;
+            //total sebagai variabel penampung total origin
             let total = 0
+            //total_ret sebagai variabel penampung total sebenarnya
+
+
+            //untuk pengali rationya volume
+            let rt
             console.log(item)
 
             //cek patokan item umum atau tidak
@@ -1118,6 +1128,10 @@ export default {
             if(item.type.id == 1){
                 this.ratiotmp  = item.ratio_agent
                 this.ratioThinner = item.ratio_recommended_thinner_id
+                this.ratioTiga = this.arrKumpulanArea[index].luas/ item.ratio3
+                // kok ga isoo :V
+
+
             }
             console.log(item.type.id)
             console.log(this.ratiotmp)
@@ -1142,9 +1156,9 @@ export default {
             console.log(remaider_tmp_multi)
             if(total_hit != null && total_hit > 0 ){
               if(item.type.id == 2){
-                    total = (this.ratiotmp- item.liter + 1) * item.liter;
+                    total = (this.ratiotmp- item.liter + 1) * this.ratioTiga ;
               } else if(item.type.id == 3){
-                  total = (this.ratioThinner - item.liter+1) * item.liter;
+                    total = (this.ratioThinner - item.liter+1) * this.ratioTiga;
               }
 
               // 120
@@ -1153,10 +1167,11 @@ export default {
               console.log(this.arrayItemCount)
               for(let i=0; i<this.arrayItemCount.length; i++){
                 if(this.arrayItemCount[i].item_id == item.id && this.arrayItemCount[i].agent_id != null){
-                  total = (item.liter + (this.arrayItemCount[i].rasio_agent / item.liter) -1) * item.liter;
+                  total = (item.liter + (this.arrayItemCount[i].rasio_agent / item.liter) -1) * this.ratioTiga ;
                 }
               }
             }
+
             //
             return total
 
@@ -1243,9 +1258,7 @@ export default {
                             name
                             id
                             status
-                            customers{
-                                id
-                            }
+
                             category {
                                 id
                                 name
@@ -1254,6 +1267,25 @@ export default {
                         }
                         }
                     `,
+
+                    //  `
+                    //     query {projects ${str}{
+                    //     count
+                    //     projects{
+                    //         name
+                    //         id
+                    //         status
+                    //         customer{
+                    //             id
+                    //         }
+                    //         category {
+                    //             id
+                    //             name
+                    //         }
+                    //     }
+                    //     }
+                    //     }
+                    // `
                 }),
             })
             .then(function(response) {
