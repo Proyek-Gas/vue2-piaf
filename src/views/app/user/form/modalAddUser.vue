@@ -1,52 +1,44 @@
 <template>
-<div v-if="isLoad">
-<b-row>
-    <b-colxx xxs="12">
-        <h1>Edit User</h1>
-        <div class="separator mb-5"></div>
-    </b-colxx>
-    <b-colxx xxs="12" xl="8">
-        <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip tooltip-label-right">
-            <b-card class="mb-4" title="Profil User">
-                <b-form-group label-cols="3" horizontal label="Nama">
-                    <b-form-input type="text" v-model="$v.nama.$model" :state="!$v.nama.$error" placeholder="Masukkan nama" />
-                    <b-form-invalid-feedback v-if="!$v.nama.required">Harap isi nama</b-form-invalid-feedback>
-                    <b-form-invalid-feedback v-else-if="!$v.nama.minLength || !$v.nama.maxLength">Panjang nama 3-50 karakter</b-form-invalid-feedback>
-                </b-form-group>
+<b-modal id="modalrightAdd" ref="modalrightAdd" title="Add User" modal-class="modal-right">
+    <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip tooltip-label-right">
+        <b-form-group label-cols="3" horizontal label="Nama">
+            <b-form-input type="text" v-model="$v.nama.$model" :state="!$v.nama.$error" placeholder="Masukkan nama" />
+            <b-form-invalid-feedback v-if="!$v.nama.required">Harap isi nama</b-form-invalid-feedback>
+            <b-form-invalid-feedback v-else-if="!$v.nama.minLength || !$v.nama.maxLength">Panjang nama 3-50 karakter</b-form-invalid-feedback>
+        </b-form-group>
 
-                <b-form-group label-cols="3" horizontal label="Email">
-                    <b-form-input type="text" v-model="$v.email.$model" :state="!$v.email.$error" placeholder="Masukkan email"/>
-                    <b-form-invalid-feedback v-if="!$v.email.email">Struktur email tidak valid</b-form-invalid-feedback>
-                </b-form-group>
-            </b-card>
-        </b-form>
-    </b-colxx>
-    <b-colxx xxs="12" xl="4" class="col-right">
-            <b-card class="mb-4" style="position: sticky; top: 20vh">
-                <b-card-title>Summary</b-card-title>
-                <p v-if="nama != ''" class="mb-3">{{ nama }}</p>
-                <p v-else class="text-muted mb-3" style="font-style: italic;">Nama user</p>
-                
-                <p v-if="email != ''" class="mb-3">{{ email }}</p>
-                <p v-else class="text-muted mb-3" style="font-style: italic;">Email user</p>
+        <b-form-group label-cols="3" horizontal label="Email">
+            <b-form-input type="text" v-model="$v.email.$model" :state="!$v.email.$error" placeholder="Masukkan email"/>
+            <b-form-invalid-feedback v-if="!$v.email.email">Struktur email tidak valid</b-form-invalid-feedback>
+        </b-form-group>
 
-                <b-row>
-                    <b-colxx xxs="6" class="text-center">
-                    <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip">
-                        <b-button type="submit" variant="primary" style="width: 100%">Edit</b-button>
-                    </b-form>
-                    </b-colxx>
-                    <b-colxx xxs="6" class="text-center">
-                    <b-button @click="onFormReset" type="submit" variant="danger" style="width: 100%">Reset</b-button>
-                    </b-colxx>
-                </b-row>
-            </b-card>
+        <b-form-group label-cols="3" horizontal label="Password">
+            <b-form-input type="password" v-model="$v.password.$model" :state="!$v.password.$error" placeholder="Masukkan password"/>
+            <password v-if="$v.password.$model != ''" v-model="$v.password.$model" :strength-meter-only="true"/>
+            <b-form-invalid-feedback v-if="!$v.password.required">Harap isi password</b-form-invalid-feedback>
+            <b-form-invalid-feedback v-else-if="!$v.password.minLength || !$v.password.maxLength">Panjang nama 8-20 karakter</b-form-invalid-feedback>
+        </b-form-group>
+
+        <b-form-group label-cols="3" horizontal label="Handphone">
+            <b-form-input type="text" v-model="$v.hp.$model" :state="!$v.hp.$error" placeholder="Masukkan nomor handphone aktif"/>
+                <b-form-invalid-feedback v-if="!$v.hp.required">Harap isi nomor handphone</b-form-invalid-feedback>
+            <b-form-invalid-feedback v-else-if="!$v.hp.numeric">Nomor handphone hanya angka</b-form-invalid-feedback>
+            <b-form-invalid-feedback v-else-if="!$v.hp.minLength || !$v.hp.maxLength">Panjang nomor handphone antara 10-13 katakter</b-form-invalid-feedback>
+        </b-form-group>
+    </b-form>   
+    <template slot="modal-footer">
+    <b-row>
+        <b-colxx xxs="6" class="text-center">
+            <b-form @submit.prevent="onValitadeFormSubmit('modalright');" class="av-tooltip">
+                <b-button type="submit" variant="primary" style="width: 100%">Add</b-button>
+            </b-form>
         </b-colxx>
-</b-row>
-</div>
-<div v-else>
-    <div class="loading"></div>
-</div>
+        <b-colxx xxs="6" class="text-center">
+            <b-button @click="onFormReset()" type="submit" variant="danger" style="width: 100%">Reset</b-button>
+        </b-colxx>
+        </b-row>
+    </template>
+</b-modal>
 </template>
 
 <script>
@@ -92,6 +84,8 @@ export default {
             submit: false,
             nama: "",
             email: "",
+            password: "",
+            hp: "",
         };
     },
     mixins: [validationMixin],
@@ -104,6 +98,17 @@ export default {
         email: {
             email
         },
+        password: {
+          required,
+          minLength: minLength(8),
+          maxLength: maxLength(20),
+        },
+        hp:{
+            required,
+            numeric,
+            minLength: minLength(10),
+            maxLength: maxLength(13),
+        },
     },
     watch:{
     },
@@ -111,8 +116,7 @@ export default {
         onValitadeFormSubmit() {
             this.$v.$touch();
             if(this.currentUser.role == 2){
-                if(!this.$v.$invalid && !this.submit){
-                    this.submit = true;
+                if(!this.$v.$invalid){
                     console.log("valid");
                     fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
                         method: 'POST',
@@ -123,9 +127,11 @@ export default {
                         body: JSON.stringify({
                             query: `
                                 mutation{
-                                    updateUser(param:{
+                                    register(params:{
                                         name:"${this.nama}"
                                         email:"${this.email}"
+                                        phone:"${this.hp}"
+                                        password:"${this.password}"
                                     }){
                                         status
                                         message
@@ -138,7 +144,7 @@ export default {
                         return response.json()
                     })
                     .then(function(text) {
-                        return text.data.updateUser;
+                        return text.data.register;
                     })
                     .then(resp => {
                         if(resp.status.toLowerCase() == "success"){
@@ -170,60 +176,17 @@ export default {
             }
         },
         onFormReset(){
-            this.nama = this.detail[0].name;
-            this.email = this.detail[0].email;
+            this.nama= "";this.email= "";this.password= "";this.hp= "";
             this.$v.$reset();
         },
     },
     async mounted(){
-        console.log(this.currentUser);
-        this.userId = this.$route.query.id;
-        fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
-			method: 'POST',
-			headers: {
-			'Content-Type': 'application/json',
-            'Authorization' :'Bearer '+this.currentUser.jwt
-			},
-			body: JSON.stringify({
-				query: `
-					query{
-                        users(filter:{
-                            id: ${this.userId}
-                        }){
-                            count
-                            users{
-                            id
-                            name
-                            email
-                            }
-                        }
-                    }
-				`,
-			}),
-		})
-		.then(function(response) {
-			return response.json()
-		})
-		.then(function(text) {
-			return text.data.users.users;
-		})
-		.then(resp => {
-            this.detail = resp
-            console.log(this.detail);
-            this.nama = this.detail[0].name;
-            this.email = this.detail[0].email;
-            this.isLoad = true;
-		})
     },
     computed:{
         ...mapGetters({
         currentUser: "currentUser",
 
-        }),
-        hasImage() {
-            return !!this.image;
-        }
-        
+        })       
     }
 };
 </script>

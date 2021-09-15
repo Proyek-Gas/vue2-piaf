@@ -301,6 +301,7 @@
         </b-colxx>
     </b-row>
 </div>
+<div v-else><div class="loading"></div></div>
 </template>
 
 <script>
@@ -633,12 +634,8 @@ export default {
                             id
                             name
                             workPhone
-                            category{
-                                name
-                            }
-                            priceCategory{
-                                name
-                            }
+                            category
+                            priceCategory
 						}
 						category{
                             id
@@ -665,8 +662,7 @@ export default {
 			if(this.detail == null){
 				window.location = window.location.origin +"/error?id=404&name=project";
 			}else{
-                this.isLoad = true;
-				this.custId = this.detail.customer.id;
+                this.custId = this.detail.customer.id;
 				this.namaCust = this.detail.customer.name;
                 this.katPro = this.detail.category.name;
                 this.katArea = this.detail.areaCategories;
@@ -685,6 +681,7 @@ export default {
                 }
                 this.katHargaCust = this.detail.customer.priceCategory;
                 console.log(this.detail);
+                this.isLoad = true;
                 this.fetching();
 			}
 		})

@@ -190,6 +190,11 @@ const routes = [
             component: () => import(/* webpackChunkName: "piaf" */ './views/app/user/form/editUser'),
             // meta: { roles: [UserRole.Admin, UserRole.Editor] },
           },
+          {
+            path: 'userTable/uDetail',
+            component: () => import(/* webpackChunkName: "piaf" */ './views/app/user/page/userDetail'),
+            // meta: { roles: [UserRole.Admin, UserRole.Editor] },
+          },
         ],
       },
       {

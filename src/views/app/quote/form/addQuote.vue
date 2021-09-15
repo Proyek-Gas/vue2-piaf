@@ -1258,7 +1258,7 @@ export default {
                             name
                             id
                             status
-
+                            customer_id
                             category {
                                 id
                                 name
@@ -1369,12 +1369,8 @@ export default {
                         name
                         email
                         workPhone
-                        category{
-                            name
-                        }
-                        priceCategory{
-                            name
-                        }
+                        category
+                        priceCategory
                     }}
                     }
 				`,

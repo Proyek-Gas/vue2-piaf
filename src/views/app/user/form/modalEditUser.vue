@@ -1,52 +1,35 @@
 <template>
-<div v-if="isLoad">
-<b-row>
-    <b-colxx xxs="12">
-        <h1>Edit User</h1>
-        <div class="separator mb-5"></div>
-    </b-colxx>
-    <b-colxx xxs="12" xl="8">
+    <b-modal :id="reference" :ref="reference" title="Edit User" modal-class="modal-right">
+        <div v-if="isLoad">
         <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip tooltip-label-right">
-            <b-card class="mb-4" title="Profil User">
-                <b-form-group label-cols="3" horizontal label="Nama">
-                    <b-form-input type="text" v-model="$v.nama.$model" :state="!$v.nama.$error" placeholder="Masukkan nama" />
-                    <b-form-invalid-feedback v-if="!$v.nama.required">Harap isi nama</b-form-invalid-feedback>
-                    <b-form-invalid-feedback v-else-if="!$v.nama.minLength || !$v.nama.maxLength">Panjang nama 3-50 karakter</b-form-invalid-feedback>
-                </b-form-group>
+            <b-form-group label-cols="3" horizontal label="Nama">
+                <b-form-input type="text" v-model="$v.nama.$model" :state="!$v.nama.$error" placeholder="Masukkan nama" />
+                <b-form-invalid-feedback v-if="!$v.nama.required">Harap isi nama</b-form-invalid-feedback>
+                <b-form-invalid-feedback v-else-if="!$v.nama.minLength || !$v.nama.maxLength">Panjang nama 3-50 karakter</b-form-invalid-feedback>
+            </b-form-group>
 
-                <b-form-group label-cols="3" horizontal label="Email">
-                    <b-form-input type="text" v-model="$v.email.$model" :state="!$v.email.$error" placeholder="Masukkan email"/>
-                    <b-form-invalid-feedback v-if="!$v.email.email">Struktur email tidak valid</b-form-invalid-feedback>
-                </b-form-group>
-            </b-card>
+            <b-form-group label-cols="3" horizontal label="Email">
+                <b-form-input type="text" v-model="$v.email.$model" :state="!$v.email.$error" placeholder="Masukkan email"/>
+                <b-form-invalid-feedback v-if="!$v.email.email">Struktur email tidak valid</b-form-invalid-feedback>
+            </b-form-group>
         </b-form>
-    </b-colxx>
-    <b-colxx xxs="12" xl="4" class="col-right">
-            <b-card class="mb-4" style="position: sticky; top: 20vh">
-                <b-card-title>Summary</b-card-title>
-                <p v-if="nama != ''" class="mb-3">{{ nama }}</p>
-                <p v-else class="text-muted mb-3" style="font-style: italic;">Nama user</p>
-                
-                <p v-if="email != ''" class="mb-3">{{ email }}</p>
-                <p v-else class="text-muted mb-3" style="font-style: italic;">Email user</p>
-
-                <b-row>
-                    <b-colxx xxs="6" class="text-center">
-                    <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip">
-                        <b-button type="submit" variant="primary" style="width: 100%">Edit</b-button>
-                    </b-form>
-                    </b-colxx>
-                    <b-colxx xxs="6" class="text-center">
-                    <b-button @click="onFormReset" type="submit" variant="danger" style="width: 100%">Reset</b-button>
-                    </b-colxx>
-                </b-row>
-            </b-card>
-        </b-colxx>
-</b-row>
-</div>
-<div v-else>
-    <div class="loading"></div>
-</div>
+        </div>
+        <div v-else>
+            <div class="loading"></div>  
+        </div>
+        <template slot="modal-footer">
+        <b-row>
+            <b-colxx xxs="6" class="text-center">
+                <b-form @submit.prevent="onValitadeFormSubmit('modalright3');" class="av-tooltip">
+                    <b-button type="submit" variant="primary" style="width: 100%">Edit</b-button>
+                </b-form>
+            </b-colxx>
+            <b-colxx xxs="6" class="text-center">
+                <b-button @click="onFormReset()" type="submit" variant="danger" style="width: 100%">Reset</b-button>
+            </b-colxx>
+            </b-row>
+        </template>
+    </b-modal>
 </template>
 
 <script>
@@ -92,6 +75,7 @@ export default {
             submit: false,
             nama: "",
             email: "",
+            reference: ""
         };
     },
     mixins: [validationMixin],
@@ -108,6 +92,12 @@ export default {
     watch:{
     },
     methods: {
+        loadField(params){
+            console.log(params);
+            this.fetchUser(params.id);
+            this.reference = "modalrightEdit-"+params.id;
+            console.log(this.reference);
+        },
         onValitadeFormSubmit() {
             this.$v.$touch();
             if(this.currentUser.role == 2){
@@ -174,46 +164,48 @@ export default {
             this.email = this.detail[0].email;
             this.$v.$reset();
         },
+        fetchUser(val){
+            fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                'Authorization' :'Bearer '+this.currentUser.jwt
+                },
+                body: JSON.stringify({
+                    query: `
+                        query{
+                            users(filter:{
+                                id: ${val}
+                            }){
+                                count
+                                users{
+                                id
+                                name
+                                email
+                                }
+                            }
+                        }
+                    `,
+                }),
+            })
+            .then(function(response) {
+                return response.json()
+            })
+            .then(function(text) {
+                return text.data.users.users;
+            })
+            .then(resp => {
+                this.detail = resp
+                console.log(this.detail);
+                this.nama = this.detail[0].name;
+                this.email = this.detail[0].email;
+                this.isLoad = true;
+            })
+        }
     },
     async mounted(){
         console.log(this.currentUser);
-        this.userId = this.$route.query.id;
-        fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
-			method: 'POST',
-			headers: {
-			'Content-Type': 'application/json',
-            'Authorization' :'Bearer '+this.currentUser.jwt
-			},
-			body: JSON.stringify({
-				query: `
-					query{
-                        users(filter:{
-                            id: ${this.userId}
-                        }){
-                            count
-                            users{
-                            id
-                            name
-                            email
-                            }
-                        }
-                    }
-				`,
-			}),
-		})
-		.then(function(response) {
-			return response.json()
-		})
-		.then(function(text) {
-			return text.data.users.users;
-		})
-		.then(resp => {
-            this.detail = resp
-            console.log(this.detail);
-            this.nama = this.detail[0].name;
-            this.email = this.detail[0].email;
-            this.isLoad = true;
-		})
+        
     },
     computed:{
         ...mapGetters({

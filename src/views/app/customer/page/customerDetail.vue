@@ -555,12 +555,8 @@ export default {
 				billStreet
                 workPhone
                 mobilePhone
-				category{
-					name
-				}
-				priceCategory{
-					name
-				}
+				category
+				priceCategory
 				customerLimitAmountValue
 				}
 			}

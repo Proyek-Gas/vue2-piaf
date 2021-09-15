@@ -14,7 +14,8 @@
       <b-colxx xxs="6">
         <b-button class="mb-1"  v-b-modal.modalright variant="success " >Filter</b-button>
             <filter-user v-on:answers="onUpdateAnswer"></filter-user>
-        <b-button class="mb-1" variant="primary " :to="movePageAdd()">Add User</b-button>
+        <b-button class="mb-1" variant="primary" v-b-modal.modalrightAdd>Add User</b-button>
+        <mAddUser></mAddUser>
       </b-colxx>
       <b-colxx xxs="6" style="text-align:left">
           <h5 v-if="tag.length >0">Filter By</h5>
@@ -89,7 +90,7 @@
             <template slot="action" slot-scope="props">
                 <b-dropdown text="Actions" variant="outline-secondary">
                   <b-dropdown-item :to="movePageDetail(props.rowData.id)">Detail</b-dropdown-item>
-                  <b-dropdown-item :to="movePageEdit(props.rowData.id)">Edit</b-dropdown-item>
+                  <b-dropdown-item @click="select(props.rowData)" v-b-modal="'modalrightEdit-' + props.rowData.id">Edit</b-dropdown-item>
               </b-dropdown>
             </template>
           </vuetable>
@@ -120,6 +121,7 @@
         <span>Delete</span>
       </v-contextmenu-item>
     </v-contextmenu>
+  <mEditUser ref="editUser"></mEditUser>
   </div>
 </template>
 <script>
@@ -127,6 +129,8 @@ import Vuetable from "vuetable-2/src/components/Vuetable";
 import VuetablePaginationBootstrap from "../../../../components/Common/VuetablePaginationBootstrap";
 import DatatableHeading from "../../../../containers/datatable/DatatableHeading";
 import _ from "lodash";
+import mAddUser from "../form/modalAddUser.vue";
+import mEditUser from "../form/modalEditUser.vue";
 //import MyDetailRow from "./MyDetailRow";
 import filterUser from "./filterUser"
 
@@ -138,10 +142,10 @@ export default {
     vuetable: Vuetable,
     "vuetable-pagination-bootstrap": VuetablePaginationBootstrap,
     "datatable-heading": DatatableHeading,
-    "filter-user" : filterUser
+    "filter-user" : filterUser,
+    "mAddUser": mAddUser,
+    "mEditUser": mEditUser
    //"my-detail-row" : MyDetailRow //->ini ga error namun ga ada datanya
-
-
   },
   data() {
     return {
@@ -238,6 +242,10 @@ export default {
 
   },
   methods: {
+    select(a){
+      console.log('modalrightEdit-' + a.id);
+      this.$refs.editUser.loadField(a);
+    },
     getData (filter,arr){
         let querys = `
                   query{
@@ -295,10 +303,10 @@ export default {
     movePageDetail(val){
       // console.log(val);
 			// window.location = window.location.href+"/iDetail?id="+val;
-      return "itemTable/iDetail?id=" + val;
+      return "userTable/uDetail?id=" + val;
 		},
     movePageEdit(val){
-			return "itemTable/iDetail/edit?id="+val;
+			return "userTable/uDetail/edit?id="+val;
 		},
     onPaginationData(paginationData) {
       this.from = paginationData.from;
