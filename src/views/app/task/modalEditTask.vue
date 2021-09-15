@@ -1,6 +1,7 @@
 <template>
     <b-modal :id="reference" :ref="reference" title="Edit Task" modal-class="modal-right">
-        <b-form v-if="isLoad2 && isLoad3" @submit.prevent="onValitadeFormSubmit" class="av-tooltip tooltip-label-right">
+        <div v-if="isLoad2 && isLoad3">
+        <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip tooltip-label-right">
             <b-form-group label="Notes">
                 <b-textarea v-model="notes"></b-textarea>
             </b-form-group>
@@ -57,15 +58,19 @@
                 </b-input-group>
             </b-form-group>  
         </b-form>
+        </div>
+        <div v-else>
+            <div class="loading"></div>  
+        </div>
         <template slot="modal-footer">
         <b-row>
             <b-colxx xxs="6" class="text-center">
                 <b-form @submit.prevent="onValitadeFormSubmit('modalright3');" class="av-tooltip">
-                    <b-button type="submit" variant="primary" style="width: 100%" :disabled="!isLoad2">Edit</b-button>
+                    <b-button type="submit" variant="primary" style="width: 100%" :disabled="!isLoad2 && !isLoad3">Edit</b-button>
                 </b-form>
             </b-colxx>
             <b-colxx xxs="6" class="text-center">
-                <b-button @click="onFormReset()" type="submit" variant="danger" style="width: 100%" :disabled="!isLoad2">Reset</b-button>
+                <b-button @click="onFormReset()" type="submit" variant="danger" style="width: 100%" :disabled="!isLoad2 && !isLoad3">Reset</b-button>
             </b-colxx>
             </b-row>
         </template>

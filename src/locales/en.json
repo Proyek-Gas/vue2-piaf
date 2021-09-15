@@ -126,16 +126,17 @@
     "schemeTable" : "Table Scheme",
     "itemTable" : "Table Item",
     "quoteTable" : "Table Quote",
+    "userTable" : "Table User",
     "detail": "Customer Detail",
     "cDetail": "Customer Detail",
     "pDetail": "Project Detail",
     "iDetail": "Item Detail",
     "sDetail": "Scheme Detail",
     "qDetail": "Quote Detail",
+    "uDetail": "User Detail",
     "task": "Task",
     "taskDetail": "Detail Task",
-    "user": "User",
-    "userTable" : "Table User"
+    "user": "User"
   },
   "dashboards": {
     "pending-orders": "Pending Orders",

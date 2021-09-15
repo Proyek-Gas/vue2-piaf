@@ -1,62 +1,67 @@
 <template>
     <b-modal id="modalright" ref="modalright" title="Add Task" modal-class="modal-right">
-        <b-form v-if="isLoad2" @submit.prevent="onValitadeFormSubmit" class="av-tooltip tooltip-label-right">
-            <b-form-group label="Notes">
-                <b-textarea v-model="notes"></b-textarea>
-            </b-form-group>
-            <b-form-group label="Customer">
-                    <vue-autosuggest
-                        class="autosuggest suggest"
-                        :input-props="{id:'autosuggest__input', class:'form-control', placeholder:'Ketik nama customer'}"
-                        :suggestions="filteredOptions"
-                        :render-suggestion="renderSuggestion"
-                        :get-suggestion-value="getSuggestionValue"
-                        :limit="6"
-                        clearable
-                        v-model="tmpCustNama"
-                        @selected="onAutosuggestSelected"
-                        @input="onAutoSuggestInputChange"
-                    >
-                    </vue-autosuggest>
-                <b-form-input type="text" v-model="$v.custNama.$model" :state="!$v.custNama.$error" style="display:none;"/>
-                <b-form-invalid-feedback v-if="!$v.custNama.required">Harap pilih customer</b-form-invalid-feedback>
-            </b-form-group>
+        <div v-if="isLoad2">
+            <b-form @submit.prevent="onValitadeFormSubmit" class="av-tooltip tooltip-label-right">
+                <b-form-group label="Notes">
+                    <b-textarea v-model="notes"></b-textarea>
+                </b-form-group>
+                <b-form-group label="Customer">
+                        <vue-autosuggest
+                            class="autosuggest suggest"
+                            :input-props="{id:'autosuggest__input', class:'form-control', placeholder:'Ketik nama customer'}"
+                            :suggestions="filteredOptions"
+                            :render-suggestion="renderSuggestion"
+                            :get-suggestion-value="getSuggestionValue"
+                            :limit="6"
+                            clearable
+                            v-model="tmpCustNama"
+                            @selected="onAutosuggestSelected"
+                            @input="onAutoSuggestInputChange"
+                        >
+                        </vue-autosuggest>
+                    <b-form-input type="text" v-model="$v.custNama.$model" :state="!$v.custNama.$error" style="display:none;"/>
+                    <b-form-invalid-feedback v-if="!$v.custNama.required">Harap pilih customer</b-form-invalid-feedback>
+                </b-form-group>
 
-            <b-form-group label="Project">
-                    <vue-autosuggest
-                        class="autosuggest suggest"
-                        :input-props="{id:'autosuggest__input2', class:'form-control', placeholder:'Ketik judul proyek'}"
-                        :suggestions="filteredOptions2"
-                        :render-suggestion="renderSuggestion2"
-                        :get-suggestion-value="getSuggestionValue2"
-                        :limit="6"
-                        clearable
-                        v-model="tmpProNama"
-                        @selected="onAutosuggestSelected2"
-                        @input="onAutoSuggestInputChange2"
-                    >
-                    </vue-autosuggest>
-                <b-form-input type="text" v-model="$v.proNama.$model" :state="!$v.proNama.$error" style="display:none;"/>
-                <b-form-invalid-feedback v-if="!$v.proNama.required">Harap pilih project</b-form-invalid-feedback>
-            </b-form-group>
-            <b-form-group label="Tanggal Jatuh Tempo">
-                <datepicker
-                    :bootstrap-styling="true"
-                    :placeholder="$t('form-components.date')"
-                    :clear-button="true"
-                    @cleared="clear"
-                    v-model="tglTask"
-                ></datepicker>
-            </b-form-group>
-            <b-form-checkbox class="mb-3" @change="selectRecurr" :checked="select == 1">Reccuring</b-form-checkbox>
-            <b-form-group label="Reccuring" v-if="select == 1">
-                <b-input-group append="hari" class="mb-3">
-                    <b-form-input type="number" step="1" v-model="$v.recur.$model" :state="!$v.recur.$error" @blur="defaultRecur" placeholder="Masukkan jumlah hari" />
-                    <b-form-invalid-feedback v-if="!$v.recur.minValue">Minimum 0</b-form-invalid-feedback>
-                    <b-form-invalid-feedback v-else-if="!$v.recur.maxValue">Maksimal 365</b-form-invalid-feedback>
-                </b-input-group>
-            </b-form-group>  
-        </b-form>
+                <b-form-group label="Project">
+                        <vue-autosuggest
+                            class="autosuggest suggest"
+                            :input-props="{id:'autosuggest__input2', class:'form-control', placeholder:'Ketik judul proyek'}"
+                            :suggestions="filteredOptions2"
+                            :render-suggestion="renderSuggestion2"
+                            :get-suggestion-value="getSuggestionValue2"
+                            :limit="6"
+                            clearable
+                            v-model="tmpProNama"
+                            @selected="onAutosuggestSelected2"
+                            @input="onAutoSuggestInputChange2"
+                        >
+                        </vue-autosuggest>
+                    <b-form-input type="text" v-model="$v.proNama.$model" :state="!$v.proNama.$error" style="display:none;"/>
+                    <b-form-invalid-feedback v-if="!$v.proNama.required">Harap pilih project</b-form-invalid-feedback>
+                </b-form-group>
+                <b-form-group label="Tanggal Jatuh Tempo">
+                    <datepicker
+                        :bootstrap-styling="true"
+                        :placeholder="$t('form-components.date')"
+                        :clear-button="true"
+                        @cleared="clear"
+                        v-model="tglTask"
+                    ></datepicker>
+                </b-form-group>
+                <b-form-checkbox class="mb-3" @change="selectRecurr" :checked="select == 1">Reccuring</b-form-checkbox>
+                <b-form-group label="Reccuring" v-if="select == 1">
+                    <b-input-group append="hari" class="mb-3">
+                        <b-form-input type="number" step="1" v-model="$v.recur.$model" :state="!$v.recur.$error" @blur="defaultRecur" placeholder="Masukkan jumlah hari" />
+                        <b-form-invalid-feedback v-if="!$v.recur.minValue">Minimum 0</b-form-invalid-feedback>
+                        <b-form-invalid-feedback v-else-if="!$v.recur.maxValue">Maksimal 365</b-form-invalid-feedback>
+                    </b-input-group>
+                </b-form-group>  
+            </b-form>     
+        </div>
+        <div v-else>
+            <div class="loading"></div>
+        </div>
         <template slot="modal-footer">
         <b-row>
             <b-colxx xxs="6" class="text-center">

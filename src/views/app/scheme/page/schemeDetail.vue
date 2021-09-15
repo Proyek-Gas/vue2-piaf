@@ -108,32 +108,98 @@
     <b-colxx class="text-center" xxs="12" lg="4">
         <h5 class="mb-2 card-title">Agent</h5>
         <div class="separator mb-5"></div>
+            <div v-if="dataAg.length == 0" style="font-style: italic;">No Item</div>
+            <div v-else v-for="item in dataAg" :key="item.item_id">
             <b-card class="mb-4" no-body>
-                <div class="position-relative">
-                <img src="/assets/img/cards/thumb-1.jpg" class="card-img-top" />
-                <b-badge variant="primary" pill class="position-absolute badge-top-left">NEW</b-badge>
-                <b-badge variant="secondary" pill class="position-absolute badge-top-left-2">TRENDING</b-badge>
-                </div>
-                <b-card-body>
-                <h6 class="mb-4 card-subtitle">Homemade Cheesecake with Fresh Berries and Mint</h6>
-                <p class="card-text text-muted text-small mb-0 font-weight-light">09.04.2018</p>
-                </b-card-body>
-          </b-card>
+                <b-row>
+                    <b-colxx class="text-center" xxs="6" lg="6">
+                        <b-card-body class="text-left">
+                        <p class="card-text text-muted text-small mb-4 font-weight-light">{{ item.item_id }}</p>
+                            <h6 class="mb-5 card-subtitle">Harga item</h6>
+                        </b-card-body>
+                    </b-colxx>
+                    <b-colxx class="text-center" xxs="6" lg="6">
+                        <b-card-body class="text-left">
+                            <p class="card-text text-muted text-small mb-4 font-weight-light">XXX/XXX</p>
+                            <div
+                                style="width:100%; text-align :center; color: black;"
+                                :style="returnColor(item.color.hex_code)"
+                                >
+                                <label class="mt-2">{{ item.color.ind_name }}</label><br>
+                            </div>
+                        </b-card-body>
+                    </b-colxx>
+                </b-row>
+                <b-card-title style="margin-top: -20px;">Nama item</b-card-title>
+                <b-colxx xxs="12" lg="12">
+                    <b-row>
+                        <b-colxx class="text-center" xxs="4" lg="4">
+                            <h6>
+                                <b-badge class="mb-2" pill :variant="detail.status === 1 ?  'success' : 'danger'">Coat: {{ item.coat }}</b-badge>
+                            </h6>
+                        </b-colxx>
+                        <b-colxx class="text-center" xxs="4" lg="4">
+                            <h6>
+                                <b-badge class="mb-2" pill :variant="detail.status === 1 ?  'success' : 'danger'">Dft: {{ item.dry_film_thickness }}</b-badge>
+                            </h6>
+                        </b-colxx>
+                        <b-colxx class="text-center" xxs="4" lg="4">
+                            <h6>
+                                <b-badge class="mb-2" pill :variant="detail.status === 1 ?  'success' : 'danger'">Loss: {{ item.loss }}</b-badge>
+                            </h6>
+                        </b-colxx>
+                    </b-row>
+                </b-colxx>
+            </b-card>
+        </div>
     </b-colxx>
     <b-colxx class="text-center" xxs="12" lg="4">
         <h5 class="mb-2 card-title">Thinner</h5>
         <div class="separator mb-5"></div>
+            <div v-if="dataTh.length == 0" style="font-style: italic;">No Item</div>
+            <div v-else v-for="item in dataTh" :key="item.item_id">
             <b-card class="mb-4" no-body>
-                <div class="position-relative">
-                    <img src="/assets/img/cards/thumb-1.jpg" class="card-img-top" />
-                    <b-badge variant="primary" pill class="position-absolute badge-top-left">NEW</b-badge>
-                    <b-badge variant="secondary" pill class="position-absolute badge-top-left-2">TRENDING</b-badge>
-                </div>
-                <b-card-body>
-                    <h6 class="mb-4 card-subtitle">Homemade Cheesecake with Fresh Berries and Mint</h6>
-                    <p class="card-text text-muted text-small mb-0 font-weight-light">09.04.2018</p>
-                </b-card-body>
+                <b-row>
+                    <b-colxx class="text-center" xxs="6" lg="6">
+                        <b-card-body class="text-left">
+                        <p class="card-text text-muted text-small mb-4 font-weight-light">{{ item.item_id }}</p>
+                            <h6 class="mb-5 card-subtitle">Harga item</h6>
+                        </b-card-body>
+                    </b-colxx>
+                    <b-colxx class="text-center" xxs="6" lg="6">
+                        <b-card-body class="text-left">
+                            <p class="card-text text-muted text-small mb-4 font-weight-light">XXX/XXX</p>
+                            <div
+                                style="width:100%; text-align :center; color: black;"
+                                :style="returnColor(item.color.hex_code)"
+                                >
+                                <label class="mt-2">{{ item.color.ind_name }}</label><br>
+                            </div>
+                        </b-card-body>
+                    </b-colxx>
+                </b-row>
+                <b-card-title style="margin-top: -20px;">Nama item</b-card-title>
+                <b-colxx xxs="12" lg="12">
+                    <b-row>
+                        <b-colxx class="text-center" xxs="4" lg="4">
+                            <h6>
+                                <b-badge class="mb-2" pill :variant="detail.status === 1 ?  'success' : 'danger'">Coat: {{ item.coat }}</b-badge>
+                            </h6>
+                        </b-colxx>
+                        <b-colxx class="text-center" xxs="4" lg="4">
+                            <h6>
+                                <b-badge class="mb-2" pill :variant="detail.status === 1 ?  'success' : 'danger'">Dft: {{ item.dry_film_thickness }}</b-badge>
+                            </h6>
+                        </b-colxx>
+                        <b-colxx class="text-center" xxs="4" lg="4">
+                            <h6>
+                                <b-badge class="mb-2" pill :variant="detail.status === 1 ?  'success' : 'danger'">Loss: {{ item.loss }}</b-badge>
+                            </h6>
+                        </b-colxx>
+                    </b-row>
+                </b-colxx>
             </b-card>
+        </div>
     </b-colxx>
     </b-row>
 </div>
@@ -158,6 +224,7 @@ export default {
             ind:"",
             eng:"",
     	    detail: [],
+            arrItem: [],
             dataUt: [],
             dataAg: [],
             dataTh: [],
@@ -222,7 +289,46 @@ export default {
             }
             return style
         },
-        
+        dividedItems(arr){
+            for (let i = 0; i < arr.length; i++) {
+                fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+                    method: 'POST',
+                    headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization' :'Bearer '+this.currentUser.jwt
+                    },
+                    body: JSON.stringify({
+                        query: `
+                            query{
+                            itemDetail(item_id: ${arr[i].item_id}){
+                                type{
+                                id
+                                name
+                                }
+                            }
+                            }
+                        
+                        `,
+                    })
+                    })
+                    .then(function(response) {
+                        return response.json()
+                    })
+                    .then(function(text) {
+                        console.log(text.data);
+                        return text.data.itemDetail;
+                    })
+                    .then(resp => {
+                        if(resp.type.id == 1){
+                            this.dataUt.push(arr[i]);
+                        }else if(resp.type.id == 2){
+                            this.dataAg.push(arr[i]);
+                        }else{
+                            this.dataTh.push(arr[i]);
+                        }
+                    })
+            }
+        }
     },
     async mounted() {
         this.schId = this.$route.query.id;
@@ -285,8 +391,8 @@ export default {
                     this.hex = this.detail.color.hex_code;
                     this.ind = this.detail.color.ind_name;
                     this.eng = this.detail.color.eng_name;
-                    this.dataUt = this.detail.items;
-                    console.log(this.dataUt);
+                    this.arrItem = this.detail.items;
+                    this.dividedItems(this.arrItem);
                     if(!this.detail.notes){
                         this.detail.notes = '';
                     }

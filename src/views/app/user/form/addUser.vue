@@ -1,4 +1,5 @@
 <template>
+<div v-if="isLoad">
 <b-row>
     <b-colxx xxs="12">
         <h1>Add User</h1>
@@ -25,18 +26,18 @@
                     <b-form-invalid-feedback v-else-if="!$v.password.minLength || !$v.password.maxLength">Panjang nama 8-20 karakter</b-form-invalid-feedback>
                 </b-form-group>
 
-                <b-form-group label-cols="3" horizontal label="Role">
-                    <v-select v-model="role" :options="roleOption" :reduce="roleOption => roleOption.name" label="name" placeholder="Pilih role"/>
-                </b-form-group>
-
                 <b-form-group label-cols="3" horizontal label="Handphone">
                     <b-form-input type="text" v-model="$v.hp.$model" :state="!$v.hp.$error" placeholder="Masukkan nomor handphone aktif"/>
                      <b-form-invalid-feedback v-if="!$v.hp.required">Harap isi nomor handphone</b-form-invalid-feedback>
                     <b-form-invalid-feedback v-else-if="!$v.hp.numeric">Nomor handphone hanya angka</b-form-invalid-feedback>
                     <b-form-invalid-feedback v-else-if="!$v.hp.minLength || !$v.hp.maxLength">Panjang nomor handphone antara 10-13 katakter</b-form-invalid-feedback>
                 </b-form-group>
+                <!-- <b-form-group label-cols="3" horizontal label="Role">
+                    <v-select v-model="role" :options="roleOption" :reduce="roleOption => roleOption.name" label="name" placeholder="Pilih role"/>
+                </b-form-group> -->
 
-                <b-form-group label-cols="3" horizontal label="Omzet Rupiah">
+
+                <!-- <b-form-group label-cols="3" horizontal label="Omzet Rupiah">
                     <b-form-input type="text" v-model="$v.oRp.$model" :state="!$v.oRp.$error" placeholder="Masukkan jumlah omzet rupiah"/>
                     <b-form-invalid-feedback v-if="!$v.oRp.numeric">Omzet rupiah hanya angka</b-form-invalid-feedback>
                     <b-form-invalid-feedback v-else-if="!$v.oRp.minLength || !$v.oRp.maxLength">Panjang nominal antara 6-12 katakter</b-form-invalid-feedback>
@@ -46,7 +47,7 @@
                     <b-form-input type="text" v-model="$v.oLtr.$model" :state="!$v.oLtr.$error" placeholder="Masukkan jumlah omzet liter"/>
                     <b-form-invalid-feedback v-if="!$v.oLtr.numeric">Omzet liter hanya angka</b-form-invalid-feedback>
                     <b-form-invalid-feedback v-else-if="!$v.oLtr.minLength || !$v.oLtr.maxLength">Panjang nilai liter antara 3-8 katakter</b-form-invalid-feedback>
-                </b-form-group>
+                </b-form-group> -->
 
                 <!-- <b-form-group label-cols="3" horizontal label="Reference Accurate DB 1">
                     <v-select v-model="acc1" :options="accDb1Option" :reduce="accDb1Option => accDb1Option.name" label="name" placeholder="Pilih role"/>
@@ -60,7 +61,7 @@
                     <b-form-invalid-feedback v-if="!$v.acc2.required">Harap pilih referensi</b-form-invalid-feedback>
                 </b-form-group> -->
                 
-                <b-row>
+                <!-- <b-row>
                     <b-colxx xxs="12" xl="6">
                         <b-form-group label="Foto">
 
@@ -84,7 +85,7 @@
                             <div class="d-flex flex-grow-1 min-width-zero">
                                 <div class="pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero">
                                     <div class="min-width-zero">
-                                        <b-button @click="$refs.fileInput2.$el.querySelector('input[type=file]').click()">Upload</b-button>
+                                        <b-button @click="$refs.fileInput2.$el.querySelector('input[type=file]').click()">Browse</b-button>
                                         <b-form-file v-model="image" accept=".jpg, .png, .gif" style="display: none;" ref="fileInput2" />
                                         <b-button size="m" variant="outline-primary" @click="clearImage">Reset</b-button>
                                     </div>
@@ -114,7 +115,7 @@
                             <div class="d-flex flex-grow-1 min-width-zero">
                                 <div class="pl-0 align-self-center d-flex flex-column flex-lg-row justify-content-between min-width-zero">
                                     <div class="min-width-zero">
-                                        <b-button @click="$refs.fileInput3.$el.querySelector('input[type=file]').click()">Upload</b-button>
+                                        <b-button @click="$refs.fileInput3.$el.querySelector('input[type=file]').click()">Browse</b-button>
                                         <b-form-file v-model="image2" accept=".jpg, .png, .gif" style="display: none;" ref="fileInput3" />
                                         <b-button size="m" variant="outline-primary" @click="clearImage2">Reset</b-button>
                                     </div>
@@ -122,7 +123,7 @@
                             </div>
                         </b-form-group>
                     </b-colxx>
-                </b-row>
+                </b-row> -->
             </b-card>
         </b-form>
     </b-colxx>
@@ -135,17 +136,17 @@
                 <p v-if="email != ''" class="mb-3">{{ email }}</p>
                 <p v-else class="text-muted mb-3" style="font-style: italic;">Email user</p>
 
-                <p v-if="role != ''" class="mb-3">{{ role }}</p>
-                <p v-else class="text-muted mb-3" style="font-style: italic;">Role user</p>
+                <!-- <p v-if="role != ''" class="mb-3">{{ role }}</p>
+                <p v-else class="text-muted mb-3" style="font-style: italic;">Role user</p> -->
 
                 <p v-if="hp != ''" class="mb-3">{{ hp }}</p>
                 <p v-else class="text-muted mb-3" style="font-style: italic;">Nomor handphone user</p>
 
-                <p v-if="oRp != ''" class="mb-3">{{ oRp | currency }}</p>
+                <!-- <p v-if="oRp != ''" class="mb-3">{{ oRp | currency }}</p>
                 <p v-else class="text-muted mb-3" style="font-style: italic;">Omzet rupiah user</p>
 
                 <p v-if="oLtr != ''" class="mb-3">{{ oLtr }} liter</p>
-                <p v-else class="text-muted mb-3" style="font-style: italic;">Omzet liter user</p>
+                <p v-else class="text-muted mb-3" style="font-style: italic;">Omzet liter user</p> -->
 
                 <b-row>
                     <b-colxx xxs="6" class="text-center">
@@ -160,6 +161,10 @@
             </b-card>
         </b-colxx>
 </b-row>
+</div>
+<div v-else>
+    <div class="loading"></div>
+</div>
 </template>
 
 <script>
@@ -176,13 +181,13 @@ import {
     validationMixin
 } from "vuelidate";
 
-const base64Encode = data =>
-  new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(data);
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = error => reject(error);
-  });
+// const base64Encode = data =>
+//   new Promise((resolve, reject) => {
+//     const reader = new FileReader();
+//     reader.readAsDataURL(data);
+//     reader.onload = () => resolve(reader.result);
+//     reader.onerror = error => reject(error);
+//   });
 
 const {
     required,
@@ -208,6 +213,8 @@ export default {
     },
     data() {
         return {
+            isLoad: false,
+            detail: [],
             submit: false,
             nama: "",
             email: "",
@@ -268,38 +275,38 @@ export default {
         // },
     },
     watch:{
-        image(newValue, oldValue) {
-            if (newValue !== oldValue) {
-                if (newValue) {
-                base64Encode(newValue)
-                    .then(value => {
-                    this.imageSrc = value;
-                    this.select1 = 1;
-                    })
-                    .catch(() => {
-                    this.imageSrc = null;
-                    });
-                } else {
-                this.imageSrc = null;
-                }
-            }
-        },
-        image2(newValue, oldValue) {
-            if (newValue !== oldValue) {
-                if (newValue) {
-                base64Encode(newValue)
-                    .then(value => {
-                    this.imageSrc2 = value;
-                    this.select2 = 1;
-                    })
-                    .catch(() => {
-                    this.imageSrc2 = null;
-                    });
-                } else {
-                this.imageSrc2 = null;
-                }
-            }
-        },
+        // image(newValue, oldValue) {
+        //     if (newValue !== oldValue) {
+        //         if (newValue) {
+        //         base64Encode(newValue)
+        //             .then(value => {
+        //             this.imageSrc = value;
+        //             this.select1 = 1;
+        //             })
+        //             .catch(() => {
+        //             this.imageSrc = null;
+        //             });
+        //         } else {
+        //         this.imageSrc = null;
+        //         }
+        //     }
+        // },
+        // image2(newValue, oldValue) {
+        //     if (newValue !== oldValue) {
+        //         if (newValue) {
+        //         base64Encode(newValue)
+        //             .then(value => {
+        //             this.imageSrc2 = value;
+        //             this.select2 = 1;
+        //             })
+        //             .catch(() => {
+        //             this.imageSrc2 = null;
+        //             });
+        //         } else {
+        //         this.imageSrc2 = null;
+        //         }
+        //     }
+        // },
     },
     methods: {
         clearImage() {
@@ -340,15 +347,8 @@ export default {
             let gam2 = this.cekGambar(this.image2, this.select2);
             console.log(gam1,gam2);
             if(this.currentUser.role == 2){
-                if(!this.$v.$invalid && !this.submit && gam1 && gam2){
+                if(!this.$v.$invalid && this.submit){
                     console.log("valid");
-                    this.submit = true;
-                    let floatLimit = 0;
-                    if(this.limit != ''){
-                        floatLimit = parseFloat(this.limit);
-                    }else{
-                        floatLimit = 0;
-                    }
                     fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
                         method: 'POST',
                         headers: {
@@ -375,8 +375,7 @@ export default {
                         return response.json()
                     })
                     .then(function(text) {
-                        console.log(text.data);
-                        //return text.data.register;
+                        return text.data.register;
                     })
                     .then(resp => {
                         if(resp.status.toLowerCase() == "success"){
@@ -386,7 +385,7 @@ export default {
                                 timeout: 2000
                             });
                             setTimeout(() => {
-                                window.location = window.location.origin+"/app/datatable/customerTable";
+                                window.location = window.location.origin+"/app/datatable/userTable";
                             }, 1000);
                         }else{
                             this.$toast(resp.message, {
@@ -399,6 +398,65 @@ export default {
                 }else{
                     console.log("error");
                 }
+                //if(!this.$v.$invalid && !this.submit && gam1 && gam2){
+                    //console.log("valid");
+                    //this.submit = true;
+                    // let floatLimit = 0;
+                    // if(this.limit != ''){
+                    //     floatLimit = parseFloat(this.limit);
+                    // }else{
+                    //     floatLimit = 0;
+                    // }
+                    // fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+                    //     method: 'POST',
+                    //     headers: {
+                    //     'Content-Type': 'application/json',
+                    //     'Authorization' :'Bearer '+this.currentUser.jwt
+                    //     },
+                    //     body: JSON.stringify({
+                    //         query: `
+                    //             mutation{
+                    //                 register(params:{
+                    //                     name:"${this.nama}"
+                    //                     email:"${this.email}"
+                    //                     phone:"${this.hp}"
+                    //                     password:"${this.password}"
+                    //                 }){
+                    //                     status
+                    //                     message
+                    //                 }
+                    //             }
+                    //         `,
+                    //     }),
+                    // })
+                    // .then(function(response) {
+                    //     return response.json()
+                    // })
+                    // .then(function(text) {
+                    //     console.log(text.data);
+                    //     //return text.data.register;
+                    // })
+                    // .then(resp => {
+                    //     if(resp.status.toLowerCase() == "success"){
+                    //         this.$toast(resp.message, {
+                    //             type: "success",
+                    //             hideProgressBar: true,
+                    //             timeout: 2000
+                    //         });
+                    //         setTimeout(() => {
+                    //             window.location = window.location.origin+"/app/datatable/customerTable";
+                    //         }, 1000);
+                    //     }else{
+                    //         this.$toast(resp.message, {
+                    //             type: "error",
+                    //             hideProgressBar: true,
+                    //             timeout: 2000
+                    //         });
+                    //     }
+                    // });
+                //}else{
+                //    console.log("error");
+                //}
             }else{
                 this.$toast("Harap login sebagai manager", {
                     type: "error",
@@ -408,10 +466,10 @@ export default {
             }
         },
         onFormReset(){
-            this.nama= "",this.email= "",this.password= "",
-            this.role = this.roleOption[1].name;
-            this.hp= "",this.oRp= "",this.oLtr= "",
-            this.clearImage(); this.clearImage2();
+            this.nama= "";this.email= "";this.password= "";this.hp= "";
+            //this.role = this.roleOption[1].name;      
+            //this.oRp= "",this.oLtr= "",
+            //this.clearImage(); this.clearImage2();
             this.$v.$reset();
         },
         fetchAccurateDb(ref){
@@ -474,10 +532,13 @@ export default {
 		.then(resp => {
             this.roleOption = resp
             this.role = this.roleOption[1].name;
+            this.isLoad = true;
 		})
 
         this.fetchAccurateDb(0);
         this.fetchAccurateDb(1);
+
+        
     },
     computed:{
         ...mapGetters({
