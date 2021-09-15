@@ -1154,6 +1154,7 @@ export default {
             console.log(total_hit)
             console.log(tmp_multi)
             console.log(remaider_tmp_multi)
+            console.log("ini ratio tiga:" + this.ratioTiga)
             if(total_hit != null && total_hit > 0 ){
               if(item.type.id == 2){
                     total = (this.ratiotmp- item.liter + 1) * this.ratioTiga ;
