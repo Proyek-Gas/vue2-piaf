@@ -634,8 +634,12 @@ export default {
                             id
                             name
                             workPhone
-                            category
-                            priceCategory
+                            category{
+                                name
+                            }
+                            priceCategory{
+                                name
+                            }
 						}
 						category{
                             id

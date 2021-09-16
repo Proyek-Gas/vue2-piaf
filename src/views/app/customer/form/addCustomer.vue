@@ -46,7 +46,7 @@
                 <b-form-group label-cols="3" horizontal label="Handphone">
                     <b-form-input type="text" v-model="$v.hp.$model" :state="!$v.hp.$error" placeholder="Masukkan nomor"/>
                     <b-form-invalid-feedback v-if="!$v.hp.numeric">Nomor handphone hanya angka</b-form-invalid-feedback>
-                     <b-form-invalid-feedback v-else-if="!$v.hp.minLength || !$v.hp.maxLength">Panjang nomor handphone antara 10-13 katakter</b-form-invalid-feedback>
+                    <b-form-invalid-feedback v-else-if="!$v.hp.minLength || !$v.hp.maxLength">Panjang nomor handphone antara 10-13 katakter</b-form-invalid-feedback>
                 </b-form-group>
                 <b-form-group label-cols="3" horizontal label="NPWP">
                     <b-form-input type="text" v-model="$v.npwp.$model" :state="!$v.npwp.$error" v-mask="'##.###.###.#-###.###'" placeholder="Masukakan nomor NPWP"/>
