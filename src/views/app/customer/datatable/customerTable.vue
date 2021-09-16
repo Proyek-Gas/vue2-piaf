@@ -70,7 +70,7 @@
                 <router-link :to="returnPageQuoteDetail(props.rowData)" v-if="props.rowData.lastQuote.project.id != null">{{timeLayout(props.rowData.lastQuote.updated_at)  }}/ {{timeLayout(props.rowData.lastQuote.closed_at)}}</router-link>
               </template>
               <template slot="categoryName" slot-scope="props">
-                <b-badge  v-if="props.rowData.category" :variant="props.rowData.category.name === 'CUSTOMER' ?  'primary' : 'success'" >{{props.rowData.category.name}}</b-badge>
+                <b-badge  v-if="props.rowData.category" :variant="props.rowData.category === 'CUSTOMER' ?  'primary' : 'success'" >{{props.rowData.category}}</b-badge>
               </template>
               <template slot="id" slot-scope="props">
                 <i  class="simple-icon-arrow-down" @click="cellClicked($event, props.rowData)"></i>
@@ -194,7 +194,7 @@ export default {
         },
         {
           name: "__slot:categoryName",
-          sortField: "category.name",
+          sortField: "category",
           title: "Kategori",
           titleClass: "",
           dataClass: "text-muted",
@@ -248,10 +248,7 @@ export default {
         email
   			customerNo
   			npwpNo
-        priceCategory{
-          id
-          name
-        }
+        priceCategory
         lastQuote{
           id
           project{
@@ -270,10 +267,7 @@ export default {
             isInAccurate
   		    city
           province
-        category{
-          name
-          id
-        }
+        category
           }
 
     }

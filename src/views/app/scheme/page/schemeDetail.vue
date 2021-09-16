@@ -57,151 +57,35 @@
           </b-card>
         </b-colxx>
     </b-row>
-    <b-row>
-    <b-colxx class="text-center" xxs="12" lg="4">
-        <h5 class="mb-2 card-title">Utama</h5>
-        <div class="separator mb-5"></div>
-        <div v-for="item in dataUt" :key="item.item_id">
-            <b-card class="mb-4" no-body>
-                <b-row>
-                    <b-colxx class="text-center" xxs="6" lg="6">
-                        <b-card-body class="text-left">
-                        <p class="card-text text-muted text-small mb-4 font-weight-light">{{ item.item_id }}</p>
-                            <h6 class="mb-5 card-subtitle">Harga item</h6>
-                        </b-card-body>
-                    </b-colxx>
-                    <b-colxx class="text-center" xxs="6" lg="6">
-                        <b-card-body class="text-left">
-                            <p class="card-text text-muted text-small mb-4 font-weight-light">XXX/XXX</p>
-                            <div
-                                style="width:100%; text-align :center; color: black;"
-                                :style="returnColor(item.color.hex_code)"
-                                >
-                                <label class="mt-2">{{ item.color.ind_name }}</label><br>
-                            </div>
-                        </b-card-body>
-                    </b-colxx>
-                </b-row>
-                <b-card-title style="margin-top: -20px;">Nama item</b-card-title>
-                <b-colxx xxs="12" lg="12">
-                    <b-row>
-                        <b-colxx class="text-center" xxs="4" lg="4">
-                            <h6>
-                                <b-badge class="mb-2" pill :variant="detail.status === 1 ?  'success' : 'danger'">Coat: {{ item.coat }}</b-badge>
-                            </h6>
-                        </b-colxx>
-                        <b-colxx class="text-center" xxs="4" lg="4">
-                            <h6>
-                                <b-badge class="mb-2" pill :variant="detail.status === 1 ?  'success' : 'danger'">Dft: {{ item.dry_film_thickness }}</b-badge>
-                            </h6>
-                        </b-colxx>
-                        <b-colxx class="text-center" xxs="4" lg="4">
-                            <h6>
-                                <b-badge class="mb-2" pill :variant="detail.status === 1 ?  'success' : 'danger'">Loss: {{ item.loss }}</b-badge>
-                            </h6>
-                        </b-colxx>
-                    </b-row>
-                </b-colxx>
-            </b-card>
-        </div>
-    </b-colxx>
-    <b-colxx class="text-center" xxs="12" lg="4">
-        <h5 class="mb-2 card-title">Agent</h5>
-        <div class="separator mb-5"></div>
-            <div v-if="dataAg.length == 0" style="font-style: italic;">No Item</div>
-            <div v-else v-for="item in dataAg" :key="item.item_id">
-            <b-card class="mb-4" no-body>
-                <b-row>
-                    <b-colxx class="text-center" xxs="6" lg="6">
-                        <b-card-body class="text-left">
-                        <p class="card-text text-muted text-small mb-4 font-weight-light">{{ item.item_id }}</p>
-                            <h6 class="mb-5 card-subtitle">Harga item</h6>
-                        </b-card-body>
-                    </b-colxx>
-                    <b-colxx class="text-center" xxs="6" lg="6">
-                        <b-card-body class="text-left">
-                            <p class="card-text text-muted text-small mb-4 font-weight-light">XXX/XXX</p>
-                            <div
-                                style="width:100%; text-align :center; color: black;"
-                                :style="returnColor(item.color.hex_code)"
-                                >
-                                <label class="mt-2">{{ item.color.ind_name }}</label><br>
-                            </div>
-                        </b-card-body>
-                    </b-colxx>
-                </b-row>
-                <b-card-title style="margin-top: -20px;">Nama item</b-card-title>
-                <b-colxx xxs="12" lg="12">
-                    <b-row>
-                        <b-colxx class="text-center" xxs="4" lg="4">
-                            <h6>
-                                <b-badge class="mb-2" pill :variant="detail.status === 1 ?  'success' : 'danger'">Coat: {{ item.coat }}</b-badge>
-                            </h6>
-                        </b-colxx>
-                        <b-colxx class="text-center" xxs="4" lg="4">
-                            <h6>
-                                <b-badge class="mb-2" pill :variant="detail.status === 1 ?  'success' : 'danger'">Dft: {{ item.dry_film_thickness }}</b-badge>
-                            </h6>
-                        </b-colxx>
-                        <b-colxx class="text-center" xxs="4" lg="4">
-                            <h6>
-                                <b-badge class="mb-2" pill :variant="detail.status === 1 ?  'success' : 'danger'">Loss: {{ item.loss }}</b-badge>
-                            </h6>
-                        </b-colxx>
-                    </b-row>
-                </b-colxx>
-            </b-card>
-        </div>
-    </b-colxx>
-    <b-colxx class="text-center" xxs="12" lg="4">
-        <h5 class="mb-2 card-title">Thinner</h5>
-        <div class="separator mb-5"></div>
-            <div v-if="dataTh.length == 0" style="font-style: italic;">No Item</div>
-            <div v-else v-for="item in dataTh" :key="item.item_id">
-            <b-card class="mb-4" no-body>
-                <b-row>
-                    <b-colxx class="text-center" xxs="6" lg="6">
-                        <b-card-body class="text-left">
-                        <p class="card-text text-muted text-small mb-4 font-weight-light">{{ item.item_id }}</p>
-                            <h6 class="mb-5 card-subtitle">Harga item</h6>
-                        </b-card-body>
-                    </b-colxx>
-                    <b-colxx class="text-center" xxs="6" lg="6">
-                        <b-card-body class="text-left">
-                            <p class="card-text text-muted text-small mb-4 font-weight-light">XXX/XXX</p>
-                            <div
-                                style="width:100%; text-align :center; color: black;"
-                                :style="returnColor(item.color.hex_code)"
-                                >
-                                <label class="mt-2">{{ item.color.ind_name }}</label><br>
-                            </div>
-                        </b-card-body>
-                    </b-colxx>
-                </b-row>
-                <b-card-title style="margin-top: -20px;">Nama item</b-card-title>
-                <b-colxx xxs="12" lg="12">
-                    <b-row>
-                        <b-colxx class="text-center" xxs="4" lg="4">
-                            <h6>
-                                <b-badge class="mb-2" pill :variant="detail.status === 1 ?  'success' : 'danger'">Coat: {{ item.coat }}</b-badge>
-                            </h6>
-                        </b-colxx>
-                        <b-colxx class="text-center" xxs="4" lg="4">
-                            <h6>
-                                <b-badge class="mb-2" pill :variant="detail.status === 1 ?  'success' : 'danger'">Dft: {{ item.dry_film_thickness }}</b-badge>
-                            </h6>
-                        </b-colxx>
-                        <b-colxx class="text-center" xxs="4" lg="4">
-                            <h6>
-                                <b-badge class="mb-2" pill :variant="detail.status === 1 ?  'success' : 'danger'">Loss: {{ item.loss }}</b-badge>
-                            </h6>
-                        </b-colxx>
-                    </b-row>
-                </b-colxx>
-            </b-card>
-        </div>
-    </b-colxx>
+    <b-row style="margin-bottom:2vh">
+        <b-colxx xxs="12"  style="display:inline-block">
+           <!-- <span class="mr-3 d-inline-block float-md-left">
+            <a
+              :class="{'mr-2 view-icon':true,'active':mode==='list'}"
+              @click="changemode"
+            >
+              <data-list-icon />
+            </a>
+
+            <a
+              :class="{'mr-2 view-icon':true,'active': mode==='card'}"
+              @click="changemode"
+            >
+              <image-list-icon />
+            </a>
+          </span> -->
+            <b-button @click="changemode" :class="{'btn' : true,'active' : mode=='card'}" variant="outline-primary">
+              Card
+            </b-button>
+            <b-button @click="changemode" :class="{'btn' : true,'active' : mode=='list'}" variant="outline-primary">
+              List
+            </b-button>
+        </b-colxx>
     </b-row>
+
+    <detail-thumb v-if="mode == 'card'" :dataComponent='dataAll' :detail='detail' ></detail-thumb>
+    <detail-list v-if="mode == 'list'" :dataComponent='dataAll' :detail='detail' ></detail-list>
+
 </div>
 </template>
 
@@ -210,12 +94,24 @@ import IconCard from '../../../../components/Cards/IconCard';
 import vTableProject from '../../project/datatable/projectTable'
 import vTableQuote from '../../quote/datatable/quoteTable'
 import { mapGetters } from "vuex";
+import Detail_thumb from './detail_thumb';
+import Detail_list from './detail_list.vue';
+import {
+  DataListIcon,
+  ThumbListIcon,
+  ImageListIcon
+} from "../../../../components/Svg"
 
 export default {
     components: {
         'icon-card': IconCard,
         'table-project' : vTableProject,
-        'table-quote' : vTableQuote
+        'table-quote' : vTableQuote,
+        'detail-thumb' : Detail_thumb,
+        "data-list-icon": DataListIcon,
+        "thumb-list-icon": ThumbListIcon,
+       "image-list-icon": ImageListIcon,
+        'detail-list' : Detail_list
     },
     data() {
         return {
@@ -223,11 +119,18 @@ export default {
             hex: "",
             ind:"",
             eng:"",
-    	    detail: [],
+    	      detail: [],
             arrItem: [],
-            dataUt: [],
-            dataAg: [],
-            dataTh: [],
+            mode : 'card',
+            ctrLoad : 0,
+            ctrLoadCompare:0,
+            displaymode : 'thumb',
+            dataAll : {
+               dataUt: [],
+              dataAg: [],
+              dataTh: [],
+
+            },
         }
     },
     methods: {
@@ -289,6 +192,13 @@ export default {
             }
             return style
         },
+        changemode(){
+            if(this.mode == 'card'){
+              this.mode = 'list';
+            }else{
+              this.mode = 'card';
+            }
+        },
         dividedItems(arr){
             for (let i = 0; i < arr.length; i++) {
                 fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
@@ -301,13 +211,21 @@ export default {
                         query: `
                             query{
                             itemDetail(item_id: ${arr[i].item_id}){
+                                name
+                                  detailSellingPrice{
+                                    priceCategory{
+                                      id
+                                      name
+                                    }
+                                    price
+                                  }
                                 type{
                                 id
                                 name
                                 }
                             }
                             }
-                        
+
                         `,
                     })
                     })
@@ -319,15 +237,19 @@ export default {
                         return text.data.itemDetail;
                     })
                     .then(resp => {
+                        arr[i].name = resp.name;
+                        arr[i].detailSellingPrice = resp.detailSellingPrice;
                         if(resp.type.id == 1){
-                            this.dataUt.push(arr[i]);
+                            this.dataAll.dataUt.push(arr[i]);
                         }else if(resp.type.id == 2){
-                            this.dataAg.push(arr[i]);
+                            this.dataAll.dataAg.push(arr[i]);
                         }else{
-                            this.dataTh.push(arr[i]);
+                            this.dataAll.dataTh.push(arr[i]);
                         }
+                        this.ctrLoad ++;
                     })
             }
+
         }
     },
     async mounted() {
@@ -368,7 +290,7 @@ export default {
                             }
                         }
                     }
-                
+
                 `,
             })
             })
@@ -392,10 +314,12 @@ export default {
                     this.ind = this.detail.color.ind_name;
                     this.eng = this.detail.color.eng_name;
                     this.arrItem = this.detail.items;
+                    this.ctrLoadCompare = this.arrItem.length
                     this.dividedItems(this.arrItem);
                     if(!this.detail.notes){
                         this.detail.notes = '';
                     }
+                    this.load = true
                 }
             })
         }else{
@@ -406,6 +330,6 @@ export default {
         ...mapGetters({
         currentUser: "currentUser",
     })
-    } 
+    }
 }
 </script>

@@ -556,7 +556,15 @@ export default {
                 workPhone
                 mobilePhone
 				category
+        {
+          id
+          name
+        }
 				priceCategory
+        {
+          id
+          name
+        }
 				customerLimitAmountValue
 				}
 			}
@@ -567,7 +575,7 @@ export default {
 			return response.json()
 		})
 		.then(function(text) {
-            console.log(text.data);
+            console.log(text);
 			return text.data.customerDetail;
 		})
 		.then(resp => {

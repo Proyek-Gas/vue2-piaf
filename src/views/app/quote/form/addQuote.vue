@@ -1290,9 +1290,11 @@ export default {
                 }),
             })
             .then(function(response) {
+              console.log(response)
                 return response.json()
             })
             .then(function(text) {
+              console.log(text)
                 return text.data.projects;
             })
             .then(resp => {

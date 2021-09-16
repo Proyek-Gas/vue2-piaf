@@ -14,7 +14,7 @@
     </div>
     <div class="row">
       <div class="col-6" style="text-align:right"><b>Price Category: </b></div>
-      <div class="col-6"> <b-badge :variant="rowData.priceCategory.name === 'Umum' ? '3' ? 'primary' : 'success' : 'danger'" close-transition>{{rowData.priceCategory.name}}</b-badge></div>
+      <div class="col-6"> <b-badge :variant="rowData.priceCategory === 'Umum' ? '3' ? 'primary' : 'success' : 'danger'" close-transition>{{rowData.priceCategory}}</b-badge></div>
     </div>
     <!-- <div class="row">
       <div class="col-6" style="text-align:right"><b>Last Project Name :</b></div>

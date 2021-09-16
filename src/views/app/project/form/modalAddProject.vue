@@ -274,21 +274,19 @@ export default {
                         id
                         name
                         email
-                        category{
-                            name
-                        }
-                        priceCategory{
-                            name
-                        }
+                        category
+                        priceCategory
                     }}
                     }
 				`,
 			}),
 		})
 		.then(function(response) {
+      console.log(response)
 			return response.json()
 		})
 		.then(function(text) {
+      console.log(text)
 			return text.data.customers;
 		})
 		.then(resp => {
@@ -300,7 +298,7 @@ export default {
         ...mapGetters({
         currentUser: "currentUser",
     })
-    } 
+    }
 
 };
 </script>

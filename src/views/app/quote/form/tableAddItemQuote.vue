@@ -61,7 +61,7 @@
                     {{Math.round((props.rowData.dft/props.rowData.coat)*100)/100}}
                 </template>
                 <template slot="harga" slot-scope="props" >
-                    {{props.rowData.price[0].price | currency}}
+                    {{props.rowData.price.price | currency}}
                 </template>
                 <template slot="subtotal" slot-scope = "props">
                     {{subtotal(props.rowData)|currency}}
