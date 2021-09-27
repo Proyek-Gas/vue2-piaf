@@ -251,7 +251,7 @@
                 <p class="text-muted m-3" style="font-style: italic;">No customer selected</p>
             </b-card>
             <p class="text text-medium mb-2">Area</p>
-            <b-row v-if="arrKumpulanArea.length >0" class="text-left">
+            <b-row v-if="arrKumpulanArea.length >0" class="text-left mb-3">
                 <b-colxx xxs="12">
                   <b-row v-for="(areas) in arrKumpulanArea" v-bind:key="areas.id">
                     <b-colxx  xxs="6"><p style="width:100%">{{areas.name}}</p></b-colxx>
@@ -267,7 +267,8 @@
             <b-row>
                 <b-colxx xxs="6" class="text-center">
                 <b-form @submit.prevent="onValitadeFormSubmit(btn1)" class="av-tooltip">
-                    <b-button type="submit" variant="primary" style="width: 100%" @click="alrt">{{ btn1 }}</b-button>
+                    <b-button type="submit" variant="primary" style="width: 100%" @click="showmodal(arrKumpulanArea)" v-b-modal.modalConfirm>{{ btn1 }}</b-button>
+                    <mConfirm ref="confirm" :countTotalHarga="countTotalHarga"></mConfirm>
                 </b-form>
                 </b-colxx>
                 <b-colxx xxs="6" class="text-center">
@@ -294,7 +295,8 @@ import Switches from "vue-switches";
 import TableItem from "./tableAddItemQuote.vue"
 import mAddCustomer from "../../customer/form/modalAddCustomer.vue";
 import mAddProject from "../../project/form/modalAddProject.vue";
-import {mapGetters} from 'vuex'
+import mConfirm from "./modalConfirmQuote.vue";
+import {mapGetters} from 'vuex';
 
 
 import {
@@ -328,6 +330,7 @@ export default {
         "selectCategory": selectCategory,
         "mAddCustomer" : mAddCustomer,
         "mAddProject" : mAddProject,
+        "mConfirm" : mConfirm,
         datepicker: Datepicker,
     },
     data() {
@@ -526,16 +529,13 @@ export default {
                 this.arrTmp = resp;
                 var parsedyourElement = JSON.parse(JSON.stringify(this.arrTmp));
                 this.arrFilter = parsedyourElement;
-                //this.proNama = this.arrFilter.projects[this.arrFilter.count-1].name;
-                //this.proKat = this.arrFilter.projects[this.arrFilter.count-1].category.name;
-                //console.log(this.proNama);
             });
         },
         movePageDetail(val){
             return "/app/datatable/customerTable/cDetail?id="+val
 		    },
-        alrt(){
-          console.log(this.arrKumpulanArea)
+        showmodal(a){
+          this.$refs.confirm.loadField(a);
         },
         countTotal(index){
             let data = this.arrKumpulanArea[index].selectedItem;
@@ -709,17 +709,12 @@ export default {
             this.filteredOptions2 = [];
             this.custCate = suggestion.item.category.name +" - "+ suggestion.item.priceCategory.name;
             this.dataPassing = suggestion.item;
-            console.log(this.dataPassing);
             return suggestion.item.name;
         },
 
         //autoSuggest project
         onAutoSuggestInputChange2(text, oldText) {
         if (text === "") {
-            /* Maybe the text is null but you wanna do
-            *  something else, but don't filter by null.
-            */
-            console.log("masuk");
             this.proKat = '';
             this.dataPro = [];
             this.filteredOptions2 = [];
@@ -851,7 +846,8 @@ export default {
             if(cekItem){
                 this.fetchItemDetail($event.item,a,false,-1)
             }else{
-               this.fetchSchemeDetail($event.item,a)
+                console.log($event.item);
+                this.fetchSchemeDetail($event.item,a)
             }
 
           }
@@ -1133,28 +1129,13 @@ export default {
 
 
             }
-            console.log(item.type.id)
-            console.log(this.ratiotmp)
-            console.log(item.ratio3)
-            console.log(item.ratio_agent)
             //cek multiplier apakah sudah sesuai atau tidak
-            console.log(total_hit)
             let tmp_multi = total_hit/ this.ratiotmp
             let remaider_tmp_multi = total_hit% this.ratiotmp
             //kalau ada sisa maka dibulatkan ke atas
             if(remaider_tmp_multi != 0){
-                console.log("ahh")
                 total_hit = (this.ratiotmp + 1) * tmp_multi
             }
-            console.log(item.theory)
-            console.log(item.loss)
-            console.log("loss"+ (item.theory*((1- item.loss)/100)))
-
-
-            console.log(total_hit)
-            console.log(tmp_multi)
-            console.log(remaider_tmp_multi)
-            console.log("ini ratio tiga:" + this.ratioTiga)
             if(total_hit != null && total_hit > 0 ){
               if(item.type.id == 2){
                     total = (this.ratiotmp- item.liter + 1) * this.ratioTiga ;
@@ -1165,15 +1146,12 @@ export default {
               // 120
               // item ini punya gandengan item laine
               // anggepan e ak tau rasio item ini punya 80
-              console.log(this.arrayItemCount)
               for(let i=0; i<this.arrayItemCount.length; i++){
                 if(this.arrayItemCount[i].item_id == item.id && this.arrayItemCount[i].agent_id != null){
                   total = (item.liter + (this.arrayItemCount[i].rasio_agent / item.liter) -1) * this.ratioTiga ;
                 }
               }
             }
-
-            //
             return total
 
         },
@@ -1345,8 +1323,6 @@ export default {
         },
     },
     async mounted(){
-      console.log(window.innerWidth)
-        console.log(this.currentUser.role);
         this.status = this.$route.query.status;
         if(this.status){
             if(this.status == 1){

@@ -371,7 +371,7 @@ export default {
 					return response.json()
 				})
 				.then(function(text) {
-          console.log(text)
+                    console.log(text)
 					return text.data.addScheme;
 				})
 				.then(resp => {
@@ -627,7 +627,7 @@ export default {
                     vs_volume_solid
                     agent_item_id
                     recommended_thinner_id
-                  detailSellingPrice{
+                    detailSellingPrice{
                     priceCategory{
                       id
                       name

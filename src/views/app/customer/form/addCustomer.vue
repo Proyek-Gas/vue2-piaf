@@ -266,7 +266,6 @@ export default {
                     return response.json()
                 })
                 .then(function(text) {
-                    console.log(text.data);
                     return text.data.addCustomerDB;
                     
                 })

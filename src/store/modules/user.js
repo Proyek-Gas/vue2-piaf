@@ -71,7 +71,6 @@ export default {
         },
         body: JSON.stringify({
           query: `
-
           query{
             login(phone:"${payload.email}" password:"${payload.password}"){
               user{

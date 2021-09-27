@@ -266,9 +266,6 @@ export default {
                     floatAg = parseFloat(this.rAgent);
                     floatThin = parseFloat(this.rThun);
                 }
-                console.log(parseFloat(this.vs));
-                console.log(this.kemas);
-                console.log(parseFloat(this.liter));
                 fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
                     method: 'POST',
                     headers: {
@@ -301,11 +298,9 @@ export default {
 					return response.json()
 				})
 				.then(function(text) {
-					console.log(text);
 					return text.data.addItem;
 				})
 				.then(resp => {
-					console.log(resp.message);
 					if(resp.status.toLowerCase() == "success"){
                         this.$toast(resp.message, {
                             type: "success",

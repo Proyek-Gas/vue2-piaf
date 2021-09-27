@@ -32,7 +32,7 @@
                     <b-row class="icon-cards-row mb-0">
                         <b-colxx xxs="12" sm="12" md="12" lg="12">
                         <b-card class="mb-0 text-center" style="height: 185px;">
-                            
+                            Ini rencana buat grafik
                         </b-card>
                         </b-colxx>
                     </b-row>
@@ -40,11 +40,11 @@
             </b-row>
             <b-card class="mb-4" no-body>
                 <b-tabs card no-fade>
-                    <b-tab :title="$t('menu.quoteTable')" active>
+                    <b-tab :title="$t('menu.cAssigned')" active>
                         <b-row>
                             <b-colxx sm="12">
                                 <b-card-text>
-                                    
+                                    <table-cus-assigned :data="1"></table-cus-assigned>
                                 </b-card-text>
                             </b-colxx>
                         </b-row>
@@ -68,6 +68,16 @@
                     </b-tab>
                 </b-tabs>
             </b-card>
+            <b-card class="mb-4">
+                <b-card-title>Activity
+                </b-card-title>
+                <div v-if="timelineItems.length == 0">
+                    No Activity
+                </div>
+                <div v-else>
+                    <VueTimeline :timeline-items="timelineItems"/>
+                </div>
+            </b-card>
         </b-colxx>
         <b-colxx xxs="12" xl="4" class="col-right">
             <b-card class="mb-4">
@@ -75,7 +85,6 @@
                 <div class="top-right-button-container">
                     <b-button
                         class="glyph-icon simple-icon-pencil"
-                        v-b-modal.modalright
                         variant="warning"
                         size="sm"
                         @click="update"
@@ -119,7 +128,9 @@
 
 <script>
 import IconCard from '../../../../components/Cards/IconCard';
-import {mapGetters} from 'vuex'
+import {mapGetters} from 'vuex';
+import tableCusAssigned from '../datatable/customerAssignedTable.vue';
+import VueTimeline from 'bs-vue-timeline'
 
 import {
     validationMixin
@@ -140,6 +151,8 @@ const {
 export default {
     components: {
         'icon-card': IconCard,
+        'table-cus-assigned': tableCusAssigned,
+        VueTimeline
     },
     computed :{
       ...mapGetters({
@@ -155,7 +168,9 @@ export default {
             nama: "",
             email: "",
             phone: "",
-            role: ""
+            role: "",
+            tmp: [],
+            timelineItems: []
         }
     },
     mixins: [validationMixin],
@@ -280,11 +295,70 @@ export default {
                 this.role = this.detail[0].role.name;
                 this.isLoad = true;
             })
-        }
+        },
+        fetchDailyReport(val, a){
+            this.isLoad = false;
+            let bearer;
+            if(a != ""){
+                bearer = 'Bearer '+a;
+
+            }else{
+                bearer = 'Bearer '+this.currentUser.jwt;
+            }
+            fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                'Authorization' :'Bearer '+this.currentUser.jwt
+                },
+                body: JSON.stringify({
+                    query: `
+                        query{
+                        dailyReport(user_id:${val}){
+                            id
+                            name
+                            type
+                            date
+                            status{
+                            name
+                            }
+                        }
+                        }
+                    `,
+                }),
+            })
+            .then(function(response) {
+                return response.json()
+            })
+            .then(function(text) {
+                return text.data.dailyReport;
+            })
+            .then(resp => {
+                this.tmp = resp
+                console.log(this.tmp);
+                for (let i = 0; i < this.tmp.length; i++) {
+                    let data = {
+                        from: this.tmp[i].date,
+                        to: "",
+                        title: this.tmp[i].name,
+                        subtitle: this.tmp[i].status.name,
+                        content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+                        image: '../../../../img/progressing.png'
+
+                    }
+                    
+                    this.timelineItems.push(data);
+                    
+                }
+                this.isLoad = true;
+                console.log(this.timelineItems);
+            })
+        },
     },
     async mounted() {
         this.userId = this.$route.query.id;
         this.fetchDetail(this.userId, "");
+        this.fetchDailyReport(this.userId, "");
         // this.$root.$on('userDetail', () => {
         //     this.fetchDetail(this.userId, "");
         // });

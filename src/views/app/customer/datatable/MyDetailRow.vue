@@ -51,7 +51,6 @@ export default {
   },
   methods: {
     onClick (event) {
-      console.log('my-detail-row: on-click', event.target)
     },
     shortNumber(n) {
         if (n < 1e3) return n;

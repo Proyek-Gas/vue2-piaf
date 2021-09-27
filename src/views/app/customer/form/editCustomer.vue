@@ -267,7 +267,6 @@ export default {
                     return response.json()
                 })
                 .then(function(text) {
-                    console.log(text.data);
                     return text.data.updateCustomer;
                     
                 })
@@ -371,18 +370,13 @@ export default {
                 return response.json()
             })
             .then(function(text) {
-                console.log(text.data);
                 return text.data.customerDetail;
             })
             .then(resp => {
                 this.detail = resp
                 if(this.detail == null){
                     console.log("masuk");
-                    // setTimeout(() => {
-                    //     window.location = window.location.origin +"/error?id=404&name=customer";
-                    // }, 50)
                 }else{
-                    console.log(this.detail.name);
                     this.kode = this.detail.customerNo;
                     this.name = this.detail.name;
                     this.kategori = this.detail.category.name;

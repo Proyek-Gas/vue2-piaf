@@ -351,7 +351,6 @@ export default {
 				return response.json()
 			})
 			.then(function(text) {
-                console.log(text.data);
 				if(text.data.performanceQuotesCustomer == null){
 					return null;
 				}
@@ -371,8 +370,6 @@ export default {
 						}
 					});
 				}
-				console.log("Recent: "+this.recent.length);
-				console.log("Previous: "+this.previous.length);
 				if(this.recent.length > 0){
 					for (let i = 0; i < this.recent.length; i++) {
 						if(this.recent.length == 1){
@@ -409,8 +406,6 @@ export default {
                                 this.angkaPre.push(0);
                             }
                             for (let i = 0; i < this.recent.length; i++) {
-                                console.log(this.recent[i].value);
-                                console.log(this.recent[i].quote);
                                 if(this.recent[i].value > 0 || this.recent[i].quote > 0){
                                     this.arrow.push(2);
                                 }else{
@@ -425,8 +420,6 @@ export default {
                         }else{
                             let ctr = 0;
                             for (let i = 0; i < this.recent.length; i++) {
-                                console.log(this.recent[i].value);
-                                console.log(this.recent[i].quote);
                                 if(this.recent[i].value > 0 ){
                                     this.arrow.push(2);
                                     ctr++;
@@ -575,19 +568,16 @@ export default {
 			return response.json()
 		})
 		.then(function(text) {
-            console.log(text);
 			return text.data.customerDetail;
 		})
 		.then(resp => {
 			this.detail = resp
 			if(this.detail == null){
-                console.log("masuk");
                 setTimeout(() => {
                     window.location = window.location.origin +"/error?id=404&name=customer";
                 }, 50)
 			}else{
                 this.isLoad = true;
-				console.log(this.detail.name);
 				this.nama = this.detail.name;
 				this.katCust = this.detail.category.name;
 				this.katHargaCust = this.detail.priceCategory.name;

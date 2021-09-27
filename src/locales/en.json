@@ -137,7 +137,8 @@
     "uDetail": "User Detail",
     "task": "Task",
     "taskDetail": "Detail Task",
-    "user": "User"
+    "user": "User",
+    "cAssigned": "Table Customer Assigned"
   },
   "dashboards": {
     "pending-orders": "Pending Orders",

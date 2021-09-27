@@ -13,6 +13,7 @@
     "@glidejs/glide": "^3.4.1",
     "axios": "^0.19.2",
     "bootstrap-vue": "^2.15.0",
+    "bs-vue-timeline": "^0.1.4",
     "chart.js": "2.9.3",
     "core-js": "^3.6.5",
     "express": "^4.17.1",

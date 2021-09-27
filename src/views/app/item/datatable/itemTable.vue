@@ -248,8 +248,6 @@ export default {
   },
   methods: {
     movePageDetail(val){
-      // console.log(val);
-			// window.location = window.location.href+"/iDetail?id="+val;
       return "itemTable/iDetail?id=" + val;
 		},
     movePageEdit(val){
@@ -259,16 +257,12 @@ export default {
       this.from = paginationData.from;
       this.to = paginationData.to;
       this.total = paginationData.total;
-      console.log(paginationData);
       this.$refs.pagination.setPaginationData(paginationData);
     },
      onCellClicked (data, field, event) {
-        console.log('cellClicked: ', field.name)
-        console.log(data.id)
         this.$refs.vuetable.toggleDetailRow(data.id)
       },
     cellClicked ($event, data) {
-      // console.log('cellClicked: ', $event)
       this.$refs.vuetable.toggleDetailRow(data.id)
     },
     onChangePage(page) {
@@ -285,13 +279,11 @@ export default {
      // if (this.data.length < 1) return;
 
       let local = this.data;
-      console.log(this.search);
       local = local.filter(row => {
         return row.name.toLowerCase().indexOf(this.search.toLowerCase()) !== -1 ;
       });
       // sortOrder can be empty, so we have to check for that as well
       if (sortOrder.length > 0) {
-        console.log("orderBy:", sortOrder[0].sortField, sortOrder[0].direction);
         local = _.orderBy(
           local,
           sortOrder[0].sortField,
@@ -303,7 +295,6 @@ export default {
         local.length,
         this.perPage
       );
-      console.log("pagination:", pagination);
       let from = pagination.from - 1;
       let to = from + this.perPage;
 
@@ -314,7 +305,6 @@ export default {
     },
     changePageSize(perPage) {
       this.perPage = perPage;
-      console.log(this.perPage);
       this.$refs.vuetable.refresh();
     },
      showAvatar(row){

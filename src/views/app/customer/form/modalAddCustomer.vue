@@ -122,7 +122,6 @@ export default {
             this.$v.name.$touch();
             this.$v.limit.$touch();
             if(!this.$v.kode.$invalid && !this.$v.name.$invalid && !this.$v.limit.$invalid){
-                console.log("valid");
                 let floatLimit = 0;
                 if(this.limit != ''){
                     floatLimit = parseFloat(this.limit);
@@ -157,7 +156,6 @@ export default {
                     return response.json()
                 })
                 .then(function(text) {
-                    console.log(text.data);
                     return text.data.addCustomerDB;
 
                 })
