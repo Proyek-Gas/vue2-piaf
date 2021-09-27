@@ -195,6 +195,11 @@ const routes = [
             component: () => import(/* webpackChunkName: "piaf" */ './views/app/user/page/userDetail'),
             // meta: { roles: [UserRole.Admin, UserRole.Editor] },
           },
+          {
+            path: 'salesorderTable',
+            component: () => import(/* webpackChunkName: "piaf" */ './views/app/salesorder/datatable/salesorderTable'),
+            // meta: { roles: [UserRole.Admin, UserRole.Editor] },
+          },
         ],
       },
       {

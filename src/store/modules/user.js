@@ -84,8 +84,8 @@ export default {
                   id
                   name
                 }
-                omzet_rupiah
-                omzet_liter
+                target_liter
+                target_rupiah
                 reference_accurate_id_1
                 reference_accurate_id_2
               }
@@ -94,6 +94,28 @@ export default {
             }
           }
       `
+
+      // query{
+      //   login(phone:"${payload.email}" password:"${payload.password}"){
+      //     user{
+      //       name
+      //       id
+      //       phone
+      //       photo
+      //       email
+      //       role{
+      //         id
+      //         name
+      //       }
+      //       omzet_rupiah
+      //       omzet_liter
+      //       reference_accurate_id_1
+      //       reference_accurate_id_2
+      //     }
+      //     token
+      //     refreshToken
+      //   }
+      // }
       }),
     }).then(function(response) {
       console.log(response)
@@ -119,8 +141,8 @@ export default {
               img: '/assets/img/profiles/l-1.jpg',
               date: 'Last seen today '+ new Date().getHours+":"+new Date().getMinutes,
               role: resp.user.role.id,
-              oRp: resp.user.omzet_rupiah,
-              oLtr: resp.user.omzet_liter,
+              oRp: resp.user.target_rupiah,
+              oLtr: resp.user.target_liter,
               ref1: resp.user.reference_accurate_id_1,
               ref2 : resp.user.reference_accurate_id_2,
               jwt : resp.token,

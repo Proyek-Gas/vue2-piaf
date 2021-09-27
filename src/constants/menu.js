@@ -43,6 +43,12 @@ const data = [
     to: `${adminRoot}/datatable/userTable`,
     // roles: [UserRole.Admin, UserRole.Editor],
   },
+  {
+    icon: "simple-icon-paper-plane",
+    label: "menu.salesOrderTable",
+    to: `${adminRoot}/datatable/salesorderTable`,
+    // roles: [UserRole.Admin, UserRole.Editor],
+  },
   ]
 }
 ];

@@ -1,7 +1,7 @@
 <template>
   <div>
     <datatable-heading
-      :title="$t('menu.userTable')"
+      :title="$t('menu.salesOrderTable')"
       :changePageSize="changePageSize"
       :searchChange="searchChange"
       :from="from"
@@ -13,9 +13,9 @@
     <b-row class="mb-3">
       <b-colxx xxs="6">
         <b-button class="mb-1"  v-b-modal.modalright variant="success " >Filter</b-button>
-            <filter-user v-on:answers="onUpdateAnswer"></filter-user>
-        <b-button class="mb-1" variant="primary" v-b-modal.modalrightAdd>Add User</b-button>
-        <mAddUser></mAddUser>
+            <filter-sales v-on:answers="onUpdateAnswer"></filter-sales>
+        <!-- <b-button class="mb-1" variant="primary" v-b-modal.modalrightAdd>Add User</b-button>
+        <mAddUser></mAddUser> -->
       </b-colxx>
       <b-colxx xxs="6" style="text-align:left">
           <h5 v-if="tag.length >0">Filter By</h5>
@@ -35,57 +35,31 @@
               :per-page="perPage"
               :data-manager="dataManager"
               detail-row-transition="expand"
+              :detail-row-component="detailRow"
               pagination-path="pagination"
               class="order-with-arrow"
               @vuetable:pagination-data="onPaginationData"
+               @vuetable:cell-clicked="onCellClicked"
             >
-            <template slot="avatar" slot-scope="props">
-                  <div
-                    src="/assets/img/profiles/l-1.jpg"
-                    alt="Card image cap"
-                    class="align-self-center list-thumbnail-letters rounded-circle small"
-                  >
-                  {{showAvatar(props.rowData.name)}}
-                  </div>
-                    <b-badge variant="success"  class="position-absolute badge-top-left" style="margin-top:-1vh" v-if="props.rowData.isInAccurate == true"><i class="simple-icon-check"></i></b-badge>
+            <template slot="date" slot-scope="props">
+                <p>Transaction date : {{props.rowData.transDate}}</p>
+                <p>Shipment date : {{props.rowData.shipDate}}</p>
             </template>
-            <template slot="name" slot-scope="props">
-              <b-row>
-                  <b-colxx xs='12'><h4>{{props.rowData.name}}</h4></b-colxx>
-              </b-row>
-              <b-row>
-                <b-colxx xs="12"><b-badge>{{props.rowData.role.name}}</b-badge></b-colxx>
-              </b-row>
-            </template>
-            <template slot="omzet_rupiah" slot-scope="props">
-                <div  :id="'tool-nt'+props.rowData.id"> {{shortNumber(props.rowData.target_rupiah)}}</div>
+            <template slot="totalAmount" slot-scope="props">
+                <div  :id="'tool-nt'+props.rowData.id"> {{shortNumber(props.rowData.totalAmount)}}</div>
                <b-tooltip :target="'tool-nt'+props.rowData.id"
                                 placement="right"
 
                                   >
-                        {{props.rowData.target_rupiah | currency}}
+                        {{props.rowData.totalAmount | currency}}
                 </b-tooltip>
-            </template>
-            <template slot="omzet_liter" slot-scope="props">
-              <div :id="'tool-lt'+props.rowData.id">{{Number(props.rowData.target_liter).toFixed(2)}}</div>
-              <b-tooltip :target="'tool-lt'+props.rowData.id"
-                                placement="right"
-
-                                  >
-                        {{props.rowData.target_liter}}
-                </b-tooltip>
-            </template>
-            <template slot="refence_db" slot-scope="props">
-              {{props.rowData.reference_accurate_id}}
             </template>
             <template slot="status" slot-scope="props">
                 <b-badge v-if="props.rowData.status == 1" variant="primary">Aktif</b-badge>
                 <b-badge v-else variant="danger">Non Aktif</b-badge>
             </template>
-            <template slot="refrence_db" slot-scope = "props">
-                 <i> {{props.rowData.reference_accurate_id_1}} </i><br>
-                <i>{{props.rowData.reference_accurate_id_2}}</i>
-
+            <template slot="id" slot-scope="props">
+              <i  class="simple-icon-arrow-down" @click="cellClicked($event, props.rowData)"></i>
             </template>
             <template slot="action" slot-scope="props">
                 <b-dropdown text="Actions" variant="outline-secondary">
@@ -129,10 +103,10 @@ import Vuetable from "vuetable-2/src/components/Vuetable";
 import VuetablePaginationBootstrap from "../../../../components/Common/VuetablePaginationBootstrap";
 import DatatableHeading from "../../../../containers/datatable/DatatableHeading";
 import _ from "lodash";
-import mAddUser from "../form/modalAddUser.vue";
-import mEditUser from "../form/modalEditUser.vue";
-//import MyDetailRow from "./MyDetailRow";
-import filterUser from "./filterUser"
+import MyDetailRow from "./MyDetailRow";
+//import mAddUser from "../form/modalAddUser.vue";
+//import mEditUser from "../form/modalEditUser.vue";
+import filterSales from "./filterSalesOrder"
 
 import { mapGetters } from "vuex";
 
@@ -142,72 +116,71 @@ export default {
     vuetable: Vuetable,
     "vuetable-pagination-bootstrap": VuetablePaginationBootstrap,
     "datatable-heading": DatatableHeading,
-    "filter-user" : filterUser,
-    "mAddUser": mAddUser,
-    "mEditUser": mEditUser
+    "filter-sales" : filterSales,
+   // "mAddUser": mAddUser,
+   // "mEditUser": mEditUser
    //"my-detail-row" : MyDetailRow //->ini ga error namun ga ada datanya
   },
   data() {
     return {
       isLoad: false,
-   //   detailRow : MyDetailRow,
+      detailRow : MyDetailRow,
       dataClone : [],
       loadCek : true,
       fields: [
         {
-          name:"__slot:avatar",
-          title:"",
+          name:"id",
+          title:"ID",
           titleClass: "",
           dataClass:"text-muted"
           , width :"5%"
         },
         {
-          name: "__slot:name",
-          sortField: "name",
-          title: "Name",
+          name: "__slot:date",
+          title: "Date ",
           titleClass: "",
           dataClass: "text-muted",
           width:"15%"
 
         },
         {
-          name:"email",
-          sortField: "email",
-          title : "Email",
+          name:"toAddress",
+          sortField: "toAddress",
+          title : "Alamat",
           titleClass : "",
           dataClass : "",
           width: "10%"
         },
         {
-          name:"__slot:omzet_rupiah",
-          sortField:"target_rupiah",
-          title: "Omzet Rupiah",
+          name:"__slot:totalAmount",
+          sortField:"totalAmount",
+          title: "Jumlah Total",
           titleClass: "",
           dataClass : "",
           width : "10%"
         },
         {
-          name: "__slot:omzet_liter",
-          sortField: "target_liter",
-          title: "Omzer Liter",
+          name: "customer.name",
+          sortField: "customer.name",
+          title: "Customer",
           titleClass: "",
           dataClass: "text-muted",
           togglable : true,
           width:"10%"
         },
-        {
-          name: "__slot:refrence_db",
-          title: "Refrence DB",
-          titleClass: "",
-          dataClass: "text-muted",
-          togglable : true,
-          width:"5%"
-        },
+
 
         {
           name: "__slot:status",
           title :"Status",
           sortField : "status",
+          width: "5%",
+          titleClass: "center aligned",
+          dataClass: "center aligned",
+        },
+        {
+          name: "__slot:id",
+          title :"",
           width: "5%",
           titleClass: "center aligned",
           dataClass: "center aligned",
@@ -248,26 +221,32 @@ export default {
     },
     getData (filter,arr){
         let querys = `
-                  query{
-            users(filter : ${filter}){
-              count
-              users{
-                id
-                name
-                target_liter
-                target_rupiah
-                email
-                status
-                photo
-                role{
-                  name
-                  id
+                query{
+                  salesOrder(filter :${filter} ){
+                    count
+                    sales_order
+                    {
+                      id
+                      transDate
+                      shipDate
+                      tax1Amount
+                      customer{
+                        id
+                        name
+                      }
+                      status
+                      subTotal
+                      cashDiscount
+                      toAddress
+                      totalAmount
+                      poNumber
+                      paymentTerm{
+                        id
+                        name
+                      }
+                    }
+                  }
                 }
-                reference_accurate_id_1
-                reference_accurate_id_2
-              }
-            }
-          }
                         `
           console.log(querys)
         fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
@@ -283,7 +262,7 @@ export default {
                   return response.json()
               }).then(function(text) {
                 console.log(text)
-                  return text.data.users.users;
+                  return text.data.salesOrder.sales_order;
               })
               .then(resp => {
                   this.data = resp;
@@ -333,7 +312,7 @@ export default {
       let local = this.data;
       console.log(this.search);
       local = local.filter(row => {
-        return row.name.toLowerCase().indexOf(this.search.toLowerCase()) !== -1 ;
+        return row.customer.name.toLowerCase().indexOf(this.search.toLowerCase()) !== -1 ;
       });
       // sortOrder can be empty, so we have to check for that as well
       if (sortOrder.length > 0) {
@@ -363,6 +342,21 @@ export default {
       console.log(this.perPage);
       this.$refs.vuetable.refresh();
     },
+
+    formatDate(date) {
+          var d = new Date(date),
+              month = '' + (d.getMonth() + 1),
+              day = '' + d.getDate(),
+              year = d.getFullYear();
+
+          if (month.length < 2)
+              month = '0' + month;
+          if (day.length < 2)
+              day = '0' + day;
+
+          return [year, month, day].join('-');
+      },
+
      showAvatar(row){
       const tmp = row.split(' ');
       if(tmp.length  == 1){
@@ -377,51 +371,58 @@ export default {
       this.$refs.vuetable.refresh();
     },
 
+    onCellClicked (data, field, event) {
+        this.$refs.vuetable.toggleDetailRow(data.id)
+      },
+    cellClicked ($event, data) {
+
+      this.$refs.vuetable.toggleDetailRow(data.id)
+    },
+
     onUpdateAnswer: function(newAnswer){
       console.log(newAnswer)
         let cek = true;
         this.tag =[];
         let status = null;
-        let role =null;
-        let filterOmzetliter = null;
-        let filterOmzetRupiah = null;
+        let customer =null;
+        let formDate = null;
 
         if(newAnswer){
-
+          console.log(newAnswer);
           if(newAnswer.status != -1){
             status = newAnswer.status
             this.tag.push("status")
           }
 
 
-          if(newAnswer.role.length>0){
-              role = `[`
-              for(let i=0; i< newAnswer.role.length; i++){
-                if(i <newAnswer.role.length-1){
-                  role = role+newAnswer.role[i] +","
-                }else{
-                  role = role+newAnswer.role[i]
-                }
-              }
-              role = role+`]`
-              this.tag.push("role")
+          if(newAnswer.customer != null){
+              customer = parseInt(newAnswer.customer)
+              this.tag.push("customer")
           }
 
-          if(newAnswer.omzetlitermin != 0 || newAnswer.omzetlitermax != 0 ){
-            filterOmzetliter = `{
-                min : ${newAnswer.omzetlitermin}
-                max : ${newAnswer.omzetlitermax}
-              }`
-              this.tag.push("omzet liter")
+          let ckdt1 = true;
+          let ckdt2 = true;
+          formDate = `{`;
+          if(newAnswer.dateAwal != null){
+           formDate = formDate +`date_min:"${ this.formatDate(newAnswer.dateAwal)}"`
+            this.tag.push("Tanggal transaksi dateMin")
+          }else{
+            formDate = formDate+ `date_min:null`
+            ckdt1 = false
           }
 
-          if(newAnswer.omzetrupiahmin != 0 || newAnswer.omzetrupiahmax != 0){
-            filterOmzetRupiah = `{
-                min : ${newAnswer.omzetrupiahmin}
-                max : ${newAnswer.omzetrupiahmax}
-            }`
-            this.tag.push("omzet rupiah")
-          }
+
+           if(newAnswer.dateAkhir != null){
+            formDate = formDate+ ` date_max:"${this.formatDate(newAnswer.dateAkhir)}"`+`}`
+              this.tag.push("Tanggal transaksi dateMax")
+            }else{
+              formDate =  formDate +` date_max:null`+`}`
+              ckdt2 = false
+            }
+
+            if(!ckdt1 && !ckdt2 ){
+              formDate = null
+            }
           cek = false
         }
         console.log(cek)
@@ -429,13 +430,13 @@ export default {
         if(cek){
             this.search = ""
             this.data = this.dataClone
+            console.log(this.dataClone)
             this.$refs.vuetable.refresh();
         }else{
             let filter = `{
-              target_liter : ${filterOmzetliter}
-              target_rupiah : ${filterOmzetRupiah}
+              trans_date : ${formDate}
               status : ${status}
-              role : ${role}
+              customer_id : ${customer}
             }`
             this.getData(filter,null)
         }

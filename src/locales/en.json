@@ -123,6 +123,7 @@
     "datatable": "Datatable",
     "customerTable": "Table Customer",
     "projectTable" : "Table Project",
+    "salesOrderTable" : "Table Sales Order",
     "schemeTable" : "Table Scheme",
     "itemTable" : "Table Item",
     "quoteTable" : "Table Quote",
