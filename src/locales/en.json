@@ -130,6 +130,7 @@
     "userTable" : "Table User",
     "detail": "Customer Detail",
     "cDetail": "Customer Detail",
+    "soDetail" : "Sales Order Detail",
     "pDetail": "Project Detail",
     "iDetail": "Item Detail",
     "sDetail": "Scheme Detail",

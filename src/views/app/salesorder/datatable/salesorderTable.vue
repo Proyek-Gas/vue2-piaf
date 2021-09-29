@@ -283,7 +283,7 @@ export default {
     movePageDetail(val){
       // console.log(val);
 			// window.location = window.location.href+"/iDetail?id="+val;
-      return "userTable/uDetail?id=" + val;
+      return "salesorderTable/soDetail?id=" + val;
 		},
     movePageEdit(val){
 			return "userTable/uDetail/edit?id="+val;
