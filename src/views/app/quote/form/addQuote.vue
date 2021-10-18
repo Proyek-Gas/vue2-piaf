@@ -672,9 +672,6 @@ export default {
         //autoSuggest customer
         onAutoSuggestInputChange(text, oldText) {
         if (text === "") {
-            /* Maybe the text is null but you wanna do
-            *  something else, but don't filter by null.
-            */
             this.custEmail = '';
             this.custCate = '';this.custId = '';
             this.proNama = '';this.proKat = '';
@@ -912,7 +909,7 @@ export default {
                     ind_name
                   }
                   items{
-                    item_id
+                    id
                     color{
                       id_ral
                       hex_code
@@ -954,8 +951,8 @@ export default {
                     item.coat = resp.items[i].coat;
                     item.dft = resp.items[i].dry_film_thickness;
                     item.vsl = resp.items[i].vs_volume_solid;
-                    item.item_id = resp.items[i].item_id;
-                    item.isPartScheme = resp.items[i].item_id
+                    item.id = resp.items[i].id;
+                    item.isPartScheme = resp.items[i].id
                     newArrItem.push(item)
                     this.fetchItemDetail(item,index,true)
               }
@@ -967,7 +964,7 @@ export default {
               //   item.coat = resp.items[i].coat;
               //   item.dft = resp.items[i].dry_film_thickness;
               //   item.vol = resp.items[i].vs_volume_solid;
-              //   item.item_id = resp.items[i].item_id
+              //   item.id = resp.items[i].id
               //   this.fetchItemDetail(item,index,true)
               // }while(this.ctrFetch<resp.items.length)
 
@@ -976,18 +973,18 @@ export default {
        fetchItemDetail(item, index,ck,ctrItem){
              let id = null
              if(ck){
-               id = item.item_id
+               id = item.id
                console.log("ahh"+id)
              }else{
                id = item.id
              }
              console.log(id)
               let querystring = `query{
-                itemDetail(item_id:${id} customer_id : "${this.custId}" ){
+                itemDetail(id:${id} customer_id : "${this.custId}" ){
                   no
                   name
                   id
-                  agent_item_id
+                  agent_id
                   recommended_thinner_id
                   packaging_name
                   unit2Name
@@ -1065,15 +1062,15 @@ export default {
 
                 item.dft = dtTmp.dft;
                 item.vsl = dtTmp.vsl;
-                item.item_id = resp.id;
+                item.id = resp.id;
               //  console.log(ctrItem);
                 //perubhan hari ini
 
                 console.log(item);
 
                 this.arrayItemCount.push({
-                  "agent_id" : item.agent_item_id,
-                  "item_id" : item.id,
+                  "agent_id" : item.agent_id,
+                  "id" : item.id,
                   "rasio_agent" : item.ratio_agent,
                   "rasio_thinner" : item.ratio_recommended_thinner_id,
                   "ratio2" : item.ratio2,
@@ -1099,7 +1096,7 @@ export default {
                 // item.price = bolox;
                 item.price = resp.detailSellingPrice[0];
                 // item.liter = resp.liter;
-                // item.agent_item_id = resp.agent_item_id;
+                // item.agent_id = resp.agent_id;
                 //perubahan hari ini
                 item.practical = 0;
                 item.theory = 0
@@ -1147,7 +1144,7 @@ export default {
               // item ini punya gandengan item laine
               // anggepan e ak tau rasio item ini punya 80
               for(let i=0; i<this.arrayItemCount.length; i++){
-                if(this.arrayItemCount[i].item_id == item.id && this.arrayItemCount[i].agent_id != null){
+                if(this.arrayItemCount[i].id == item.id && this.arrayItemCount[i].agent_id != null){
                   total = (item.liter + (this.arrayItemCount[i].rasio_agent / item.liter) -1) * this.ratioTiga ;
                 }
               }

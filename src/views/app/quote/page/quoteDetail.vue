@@ -927,7 +927,7 @@ export default {
                         message
                     }
                 }`
-            }
+            }else if (a.toLowerCase() === "forward to so")
             fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
                 method: 'POST',
                 headers: {
@@ -1346,9 +1346,9 @@ export default {
                 }
                 else if (this.status.id == 7){
                     if(this.currentUser.role == 2){
-                        this.btn1 = "";
-                        this.btn2 = "";
-                        this.btn3 = "Cancel";
+                        this.btn1 = "Forward to SO";
+                        this.btn2 = "Cancel";
+                        this.btn3 = "";
                     }
                 }
     

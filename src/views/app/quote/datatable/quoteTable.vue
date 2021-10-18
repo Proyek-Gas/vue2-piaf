@@ -434,8 +434,6 @@ export default {
       }
     },
     movePageAdd(){
-
-			//window.location = window.location.href+"/add";
       return "quoteTable/add";
 		},
     fetchDetailCustomer(id){

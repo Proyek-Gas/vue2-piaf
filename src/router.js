@@ -176,6 +176,11 @@ const routes = [
             // meta: { roles: [UserRole.Admin, UserRole.Editor] },
           },
           {
+            path: 'forwardsoform',
+            component: () => import(/* webpackChunkName: "piaf" */ './views/app/quote/form/intermediateForwardSo'),
+            // meta: { roles: [UserRole.Admin, UserRole.Editor] },
+          },
+          {
             path: 'userTable',
             component: () => import(/* webpackChunkName: "piaf" */ './views/app/user/datatable/userTable'),
             // meta: { roles: [UserRole.Admin, UserRole.Editor] },
@@ -200,6 +205,12 @@ const routes = [
             component: () => import(/* webpackChunkName: "piaf" */ './views/app/salesorder/datatable/salesorderTable'),
             // meta: { roles: [UserRole.Admin, UserRole.Editor] },
           },
+          {
+            path: 'salesorderTable/add',
+            component: () => import(/* webpackChunkName: "piaf" */ './views/app/salesorder/form/addSalesOrder'),
+            // meta: { roles: [UserRole.Admin, UserRole.Editor] },
+          },
+          
         ],
       },
       {

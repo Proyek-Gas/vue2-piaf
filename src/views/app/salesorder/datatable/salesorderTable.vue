@@ -12,10 +12,9 @@
 
     <b-row class="mb-3">
       <b-colxx xxs="6">
-        <b-button class="mb-1"  v-b-modal.modalright variant="success " >Filter</b-button>
+        <b-button class="mb-1"  v-b-modal.modalright variant="success">Filter</b-button>
             <filter-sales v-on:answers="onUpdateAnswer"></filter-sales>
-        <!-- <b-button class="mb-1" variant="primary" v-b-modal.modalrightAdd>Add User</b-button>
-        <mAddUser></mAddUser> -->
+        <b-button class="mb-1" variant="primary" :to="movePageAdd()">Add Sales Order</b-button>
       </b-colxx>
       <b-colxx xxs="6" style="text-align:left">
           <h5 v-if="tag.length >0">Filter By</h5>
@@ -104,8 +103,6 @@ import VuetablePaginationBootstrap from "../../../../components/Common/VuetableP
 import DatatableHeading from "../../../../containers/datatable/DatatableHeading";
 import _ from "lodash";
 import MyDetailRow from "./MyDetailRow";
-//import mAddUser from "../form/modalAddUser.vue";
-//import mEditUser from "../form/modalEditUser.vue";
 import filterSales from "./filterSalesOrder"
 
 import { mapGetters } from "vuex";
@@ -277,8 +274,8 @@ export default {
                 });
 
     },
-    movePageAdd(){
-       return "userTable/add";
+      movePageAdd(){
+      return "salesorderTable/add";
 		},
     movePageDetail(val){
       // console.log(val);
