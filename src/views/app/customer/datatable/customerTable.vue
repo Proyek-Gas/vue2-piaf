@@ -64,10 +64,10 @@
                   <i>{{props.rowData.workPhone}}</i>
               </template> -->
               <template slot="lastpro" slot-scope="props">
-                <router-link :to="returnPageProjectDetail(props.rowData)">{{props.rowData.lastQuote.project.name}}</router-link>
+                <router-link :to="returnPageProjectDetail(props.rowData)"  v-if="props.rowData.lastQuote.project != null">{{props.rowData.lastQuote.project.name}}</router-link>
               </template>
               <template slot="lastquote" slot-scope="props">
-                <router-link :to="returnPageQuoteDetail(props.rowData)" v-if="props.rowData.lastQuote.project.id != null">{{timeLayout(props.rowData.lastQuote.updated_at)  }}/ {{timeLayout(props.rowData.lastQuote.closed_at)}}</router-link>
+                 <router-link :to="returnPageQuoteDetail(props.rowData)" v-if="props.rowData.lastQuote.project != null">{{timeLayout(props.rowData.lastQuote.updated_at)  }}/ {{timeLayout(props.rowData.lastQuote.closed_at)}}</router-link>
               </template>
               <template slot="categoryName" slot-scope="props">
                 <b-badge  v-if="props.rowData.category" :variant="props.rowData.category === 'CUSTOMER' ?  'primary' : 'success'" >{{props.rowData.category}}</b-badge>
@@ -277,6 +277,7 @@ export default {
     }).then(function(response) {
         return response.json()
     }).then(function(text) {
+        console.log(text)
         return text.data.customers.customers;
     })
     .then(resp => {
@@ -288,10 +289,14 @@ export default {
   },
   methods: {
     returnPageQuoteDetail(props){
-      return "quoteTable/qDetail?id="+props.lastQuote.id+"&ver="+props.lastQuote.id
+      if(props.lastQuote.id != null){
+        return "quoteTable/qDetail?id="+props.lastQuote.id+"&ver="+props.lastQuote.id
+      }
     },
     returnPageProjectDetail(props){
-      return "projectTable/pDetail?id="+props.lastQuote.project.id
+      if(props.lastQuote.project != null){
+         return "projectTable/pDetail?id="+props.lastQuote.project.id
+      }
     },
      timeLayout(n){
       if(n!= null){

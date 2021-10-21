@@ -67,29 +67,34 @@
           >
             <template slot="button-content">
               <i class="simple-icon-bell" />
-              <span class="count">3</span>
+              <span class="count" v-if="count_notifiaction != 0">
+                {{count_notifiaction}}
+              </span>
             </template>
             <vue-perfect-scrollbar :settings="{ suppressScrollX: true, wheelPropagation: false }">
+              <b-button style="width:100%" v-if="btnLoadNotif" @click="readAll" class="btn mb-4 ">Read All</b-button>
               <div
                 class="d-flex flex-row mb-3 pb-3 border-bottom"
-                v-for="(n,index) in notifications"
+                v-for="(n,index) in notification_tmp"
                 :key="index"
               >
                 <router-link tag="a" to="#">
                   <img
-                    :src="n.img"
-                    :alt="n.title"
+                    :src="currentUser.img"
+                    alt="foto"
                     class="img-thumbnail list-thumbnail xsmall border-0 rounded-circle"
                   />
                 </router-link>
                 <div class="pl-3 pr-2">
                   <router-link tag="a" to="#">
-                    <p class="font-weight-medium mb-1">{{n.title}}</p>
-                    <p class="text-muted mb-0 text-small">{{n.date}}</p>
+                    <p class="font-weight-small mb-1">{{n.project.name}}</p>
+                    <p class="text-muted mb-0 text-small">{{timeLayout(n.created_at)}}</p>
                   </router-link>
                 </div>
               </div>
+              <!-- <b-button style="width:100%" v-if="btnLoadNotif" @click="loadMore">Load More</b-button> -->
             </vue-perfect-scrollbar>
+
           </b-dropdown>
         </div>
         <div class="position-relative d-none d-sm-inline-block">
@@ -151,6 +156,9 @@ export default {
     "mobile-menu-icon": MobileMenuIcon,
     switches: Switches
   },
+  mounted(){
+    this.fetchNotification();
+  },
   data() {
     return {
       searchKeyword: "",
@@ -161,10 +169,14 @@ export default {
       searchPath,
       localeOptions,
       buyUrl,
-      notifications,
+      //notifications,
       isDarkActive: false,
       adminRoot,
       length: 0,
+      notification : [],
+      notification_tmp : [],
+      count_notifiaction : 0,
+      btnLoadNotif : true
     };
   },
   methods: {
@@ -190,6 +202,12 @@ export default {
         this.search();
       }
     },
+
+    loadMore(){
+      this.btnLoadNotif= false;
+      this.notification_tmp = this.notification
+    },
+
     handleDocumentforMobileSearch() {
       if (!this.isSearchOver) {
         this.isMobileSearch = false;
@@ -238,6 +256,70 @@ export default {
       }
       this.fullScreen = !isInFullScreen;
     },
+
+
+    readAll(){
+      this.count_notifiaction = 0;
+    },
+
+    fetchNotification(){
+         fetch('https://dev.quotation.node.zoomit.co.id/graphql', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization' :'Bearer '+this.currentUser.jwt
+            },
+            body: JSON.stringify({
+              query: `
+              query{
+                  notifications {
+                    count
+                    notifications{
+                      id
+                      name
+                      customer_id
+                      project{
+                        id
+                        name
+                      }
+                      manager {
+                        id
+                        name
+                      }
+                      total
+                      total_hpp
+                      quote_status{
+                        id
+                        name
+                      }
+                      created_at
+                    }
+                  }
+                }
+                  `
+          }),
+        }).then(function(response) {
+            return response.json()
+        }).then(function(text) {
+          console.log(text)
+            return text.data.notifications;
+        })
+        .then(resp => {
+          console.log(resp)
+           this.notification = resp.notifications;
+           for(let i=0; i<5; i++){
+             this.notification_tmp[i] = resp.notifications[i];
+           }
+           this.count_notifiaction = resp.count;
+          });
+    },
+
+     timeLayout(n){
+      if(n!= null){
+       return n.split("T")[0];
+      }
+
+    },
     isInFullScreen() {
       return (
         (document.fullscreenElement && document.fullscreenElement !== null) ||
@@ -254,7 +336,8 @@ export default {
       currentUser: "currentUser",
       menuType: "getMenuType",
       menuClickCount: "getMenuClickCount",
-      selectedMenuHasSubItems: "getSelectedMenuHasSubItems"
+      selectedMenuHasSubItems: "getSelectedMenuHasSubItems",
+      currentUser: "currentUser",
     })
   },
   beforeDestroy() {
