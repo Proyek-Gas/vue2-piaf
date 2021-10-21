@@ -210,7 +210,7 @@ const routes = [
             component: () => import(/* webpackChunkName: "piaf" */ './views/app/salesorder/form/addSalesOrder'),
             // meta: { roles: [UserRole.Admin, UserRole.Editor] },
           },
-          
+          {
             path: 'salesorderTable/soDetail',
             component: () => import(/* webpackChunkName: "piaf" */ './views/app/salesorder/page/salesorderDetail'),
             // meta: { roles: [UserRole.Admin, UserRole.Editor] },
